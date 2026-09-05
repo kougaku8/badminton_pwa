@@ -46,6 +46,15 @@
     </script>
 
     <script>
+      // 初始化本地数据库
+openDB()
+  .then(() => {
+    console.log("IndexedDB 初始化成功");
+  })
+  .catch(error => {
+    console.error("IndexedDB 初始化失败:", error);
+  });
+      
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker
