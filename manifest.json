@@ -6,5 +6,11 @@
   "background_color": "#ffffff",
   "theme_color": "#1976d2",
   "description": "羽毛球活动报名、签到与通知系统 / バドミントンの参加登録・チェックイン・通知システム",
-  "icons": []
+  "icons": [
+    {
+      "src": "./heian-bado-yoyaku-icon_512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
 }
