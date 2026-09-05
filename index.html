@@ -1,66 +1,55 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
 
-<head>
-  <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
+    <meta name="theme-color" content="#1976d2" />
 
-  <meta name="theme-color" content="#1976d2">
-  
-  <link rel="manifest" href="./manifest.json">
-  
-  <title>羽毛球报名系统</title>
-</head>
+    <link rel="manifest" href="./manifest.json" />
 
-<body>
+    <title>羽毛球报名系统</title>
+  </head>
 
-  <h1>🏸 羽毛球报名系统</h1>
+  <body>
+    <h1>🏸 羽毛球报名系统</h1>
 
-  <p>新的 PWA 前端正在建设中。</p>
+    <p>新的 PWA 前端正在建设中。</p>
 
-  <p id="networkStatus">
-    正在检查网络状态……
-  </p>
+    <p id="networkStatus">正在检查网络状态……</p>
 
-  <script>
+    <script>
+      function updateNetworkStatus() {
+        const element = document.getElementById("networkStatus");
 
-    function updateNetworkStatus() {
-
-      const element =
-        document.getElementById("networkStatus");
-
-      if (navigator.onLine) {
-
-        element.textContent =
-          "🟢 当前网络正常";
-
-      } else {
-
-        element.textContent =
-          "🔴 当前没有网络";
-
+        if (navigator.onLine) {
+          element.textContent = "🟢 当前网络正常";
+        } else {
+          element.textContent = "🔴 当前没有网络";
+        }
       }
 
-    }
+      updateNetworkStatus();
 
-    updateNetworkStatus();
+      window.addEventListener("online", updateNetworkStatus);
 
-    window.addEventListener(
-      "online",
-      updateNetworkStatus
-    );
+      window.addEventListener("offline", updateNetworkStatus);
+    </script>
 
-    window.addEventListener(
-      "offline",
-      updateNetworkStatus
-    );
-
-  </script>
-
-</body>
-
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("./sw.js")
+            .then(() => {
+              console.log("Service Worker 注册成功");
+            })
+            .catch((error) => {
+              console.error("Service Worker 注册失败:", error);
+            });
+        });
+      }
+    </script>
+  </body>
 </html>
