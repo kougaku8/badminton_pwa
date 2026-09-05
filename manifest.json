@@ -1,0 +1,10 @@
+{
+  "name": "羽毛球报名系统 / バドミントン予約システム",
+  "short_name": "羽毛球报名 / バドミントン",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1976d2",
+  "description": "羽毛球活动报名、签到与通知系统 / バドミントンの参加登録・チェックイン・通知システム",
+  "icons": []
+}
