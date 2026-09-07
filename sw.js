@@ -1,8 +1,9 @@
-const CACHE_NAME = "badminton-pwa-v1";
+const CACHE_NAME = "badminton-pwa-v2";
 
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
+  "./db.js",
   "./manifest.json",
   "./heian-bado-yoyaku-icon_512.png"
 ];
