@@ -9,23 +9,49 @@
 
     <link rel="manifest" href="./manifest.json" />
 
-    <link
-  rel="icon"
-  type="image/png"
-  href="./heian-bado-yoyaku-icon_512.png"
-/>
+    <link rel="icon" type="image/png" href="./heian-bado-yoyaku-icon_512.png" />
 
     <title>羽毛球报名系统</title>
   </head>
 
   <body>
     <h1>🏸 羽毛球报名系统</h1>
-    
+
     <script src="./db.js"></script>
-    
+
     <p>新的 PWA 前端正在建设中。</p>
 
     <p id="networkStatus">正在检查网络状态……</p>
+
+    <p id="dbStatus">正在检查本地数据库……</p>
+
+    <script>
+      async function testLocalDB() {
+        const element = document.getElementById("dbStatus");
+
+        try {
+          await dbPut("settings", {
+            key: "test",
+            value: "PWA_OK",
+            updatedAt: new Date().toISOString(),
+          });
+
+          const result = await dbGet("settings", "test");
+
+          if (result && result.value === "PWA_OK") {
+            element.textContent = "🟢 本地数据库正常";
+          } else {
+            element.textContent = "🔴 本地数据库读取异常";
+          }
+        } catch (error) {
+          console.error("IndexedDB 测试失败:", error);
+
+          element.textContent = "🔴 本地数据库失败：" + error.message;
+        }
+      }
+
+      testLocalDB();
+    </script>
 
     <script>
       function updateNetworkStatus() {
@@ -47,14 +73,14 @@
 
     <script>
       // 初始化本地数据库
-openDB()
-  .then(() => {
-    console.log("IndexedDB 初始化成功");
-  })
-  .catch(error => {
-    console.error("IndexedDB 初始化失败:", error);
-  });
-      
+      openDB()
+        .then(() => {
+          console.log("IndexedDB 初始化成功");
+        })
+        .catch((error) => {
+          console.error("IndexedDB 初始化失败:", error);
+        });
+
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
           navigator.serviceWorker

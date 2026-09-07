@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>PWA API 测试</title>
+
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        padding: 20px;
+        line-height: 1.6;
+      }
+
+      button {
+        width: 100%;
+        min-height: 60px;
+        margin-bottom: 15px;
+        font-size: 20px;
+        border: none;
+        border-radius: 10px;
+        background: #4285f4;
+        color: white;
+      }
+
+      pre {
+        white-space: pre-wrap;
+        word-break: break-all;
+        background: #f5f5f5;
+        padding: 15px;
+        border-radius: 10px;
+      }
+    </style>
+  </head>
+
+  <body>
+    <h1>🏸 PWA API 测试</h1>
+
+    <button onclick="testActivities()">测试获取活动</button>
+
+    <button onclick="testCheckinList()">测试获取签到名单</button>
+
+    <button onclick="testCheckin()">测试签到</button>
+    <pre id="result">等待测试...</pre>
+
+    <script>
+      // =====================================================
+      // ⚠️ 改成你自己的 V1 GAS Web App /exec 地址
+      // =====================================================
+
+      const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
+
+      // =====================================================
+      // 显示结果
+      // =====================================================
+
+      function showResult(data) {
+        document.getElementById("result").textContent = JSON.stringify(
+          data,
+          null,
+          2,
+        );
+      }
+
+      // =====================================================
+      // 测试：获取活动
+      // =====================================================
+
+      async function testActivities() {
+        showResult("正在请求活动列表...");
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+
+            body: JSON.stringify({
+              action: "pwaCheckin",
+
+              type: "getActivities",
+            }),
+          });
+
+          const data = await response.json();
+
+          showResult(data);
+        } catch (error) {
+          showResult({
+            success: false,
+            error: error.message,
+          });
+        }
+      }
+
+      // =====================================================
+      // 测试：获取签到名单
+      // =====================================================
+
+      async function testCheckinList() {
+        const activityID = prompt("请输入 ActivityID");
+
+        if (!activityID) {
+          return;
+        }
+
+        showResult("正在请求签到名单...");
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+
+            body: JSON.stringify({
+              action: "pwaCheckin",
+
+              type: "getCheckinList",
+
+              activityID: activityID,
+            }),
+          });
+
+          const data = await response.json();
+
+          showResult(data);
+        } catch (error) {
+          showResult({
+            success: false,
+            error: error.message,
+          });
+        }
+      }
+      async function testCheckin() {
+        const registrationID = prompt("请输入 RegistrationID");
+
+        if (!registrationID) {
+          return;
+        }
+
+        const paymentMethod = prompt("请输入付款方式：CASH 或 PAYPAY", "CASH");
+
+        if (!paymentMethod) {
+          return;
+        }
+
+        showResult("正在执行签到...");
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+
+            body: JSON.stringify({
+              action: "pwaCheckin",
+
+              type: "checkin",
+
+              registrationID: registrationID,
+
+              paymentMethod: paymentMethod,
+            }),
+          });
+
+          const data = await response.json();
+
+          showResult(data);
+        } catch (error) {
+          showResult({
+            success: false,
+            error: error.message,
+          });
+        }
+      }
+    </script>
+  </body>
+</html>
