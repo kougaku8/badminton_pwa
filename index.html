@@ -12,20 +12,157 @@
     <link rel="icon" type="image/png" href="./heian-bado-yoyaku-icon_512.png" />
 
     <title>羽毛球报名系统</title>
+
+    <style>
+      * {
+        box-sizing: border-box;
+      }
+
+      html,
+      body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        min-height: 100%;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+
+        background: #f5f7fa;
+        color: #333;
+      }
+
+      .container {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+        padding: 20px 16px 40px;
+      }
+
+      h1 {
+        text-align: center;
+        margin: 10px 0 24px;
+        font-size: 28px;
+      }
+
+      .status {
+        background: white;
+        border-radius: 12px;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .section-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin: 24px 0 12px;
+      }
+
+      .activity {
+        background: white;
+        border-radius: 12px;
+        padding: 16px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        cursor: pointer;
+      }
+
+      .activity:active {
+        transform: scale(0.99);
+      }
+
+      .activity-title {
+        font-size: 20px;
+        font-weight: bold;
+        margin-bottom: 8px;
+      }
+
+      .activity-date {
+        color: #666;
+        margin-bottom: 6px;
+      }
+
+      .activity-id {
+        font-size: 13px;
+        color: #999;
+        word-break: break-all;
+      }
+
+      .loading {
+        text-align: center;
+        padding: 30px 10px;
+        color: #666;
+      }
+
+      .error {
+        background: #ffebee;
+        color: #c62828;
+        padding: 14px;
+        border-radius: 10px;
+        margin-top: 12px;
+      }
+
+      .empty {
+        text-align: center;
+        padding: 30px 10px;
+        color: #777;
+        background: white;
+        border-radius: 12px;
+      }
+    </style>
   </head>
 
   <body>
-    <h1>🏸 羽毛球报名系统</h1>
+    <div class="container">
+      <h1>🏸 羽毛球报名系统</h1>
 
+      <div id="networkStatus" class="status">正在检查网络状态……</div>
+
+      <div id="dbStatus" class="status">正在检查本地数据库……</div>
+
+      <div class="section-title">📅 活动列表</div>
+
+      <div id="activities">
+        <div class="loading">正在读取活动……</div>
+      </div>
+    </div>
+
+    <!-- IndexedDB -->
     <script src="./db.js"></script>
 
-    <p>新的 PWA 前端正在建设中。</p>
-
-    <p id="networkStatus">正在检查网络状态……</p>
-
-    <p id="dbStatus">正在检查本地数据库……</p>
-
     <script>
+      // =====================================================
+      // V1 GAS Web App URL
+      // =====================================================
+
+      const GAS_URL = "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
+
+      // =====================================================
+      // 网络状态
+      // =====================================================
+
+      function updateNetworkStatus() {
+        const element = document.getElementById("networkStatus");
+
+        if (navigator.onLine) {
+          element.textContent = "🟢 当前网络正常";
+        } else {
+          element.textContent = "🔴 当前没有网络";
+        }
+      }
+
+      updateNetworkStatus();
+
+      window.addEventListener("online", updateNetworkStatus);
+
+      window.addEventListener("offline", updateNetworkStatus);
+
+      // =====================================================
+      // IndexedDB 测试
+      // =====================================================
+
       async function testLocalDB() {
         const element = document.getElementById("dbStatus");
 
@@ -50,36 +187,141 @@
         }
       }
 
-      testLocalDB();
-    </script>
+      // =====================================================
+      // 调用 GAS API
+      // =====================================================
 
-    <script>
-      function updateNetworkStatus() {
-        const element = document.getElementById("networkStatus");
+      async function callGasApi(data) {
+        const response = await fetch(GAS_URL, {
+          method: "POST",
 
-        if (navigator.onLine) {
-          element.textContent = "🟢 当前网络正常";
-        } else {
-          element.textContent = "🔴 当前没有网络";
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+
+          body: JSON.stringify(data),
+        });
+
+        if (!response.ok) {
+          throw new Error("服务器错误：" + response.status);
+        }
+
+        return response.json();
+      }
+
+      // =====================================================
+      // 获取活动
+      // =====================================================
+
+      async function loadActivities() {
+        const container = document.getElementById("activities");
+
+        container.innerHTML = `
+          <div class="loading">
+            正在读取活动……
+          </div>
+        `;
+
+        try {
+          const result = await callGasApi({
+            action: "pwaCheckin",
+            type: "getActivities",
+          });
+
+          console.log("GAS 活动数据：", result);
+
+          if (!result || result.success === false) {
+            throw new Error(result?.message || "获取活动失败");
+          }
+
+          const activities = Array.isArray(result) ? result : result.data || [];
+
+          if (activities.length === 0) {
+            container.innerHTML = `
+              <div class="empty">
+                今天没有活动
+              </div>
+            `;
+
+            return;
+          }
+
+          container.innerHTML = "";
+
+          activities.forEach((activity) => {
+            const element = document.createElement("div");
+
+            element.className = "activity";
+
+            element.innerHTML = `
+                <div class="activity-title">
+                  ${escapeHtml(activity.Title || "")}
+                </div>
+
+                <div class="activity-date">
+                  📅 ${escapeHtml(activity.Date || "")}
+                </div>
+
+                <div class="activity-id">
+                  ActivityID：
+                  ${escapeHtml(activity.ActivityID || "")}
+                </div>
+              `;
+
+            element.addEventListener("click", () => {
+              selectActivity(activity.ActivityID);
+            });
+
+            container.appendChild(element);
+          });
+        } catch (error) {
+          console.error("获取活动失败：", error);
+
+          container.innerHTML = `
+            <div class="error">
+              🔴 获取活动失败<br><br>
+              ${escapeHtml(error.message)}
+            </div>
+          `;
         }
       }
 
-      updateNetworkStatus();
+      // =====================================================
+      // 选择活动
+      // =====================================================
 
-      window.addEventListener("online", updateNetworkStatus);
+      function selectActivity(activityID) {
+        console.log("选择活动：", activityID);
 
-      window.addEventListener("offline", updateNetworkStatus);
-    </script>
+        alert("选择活动：" + activityID);
+      }
 
-    <script>
-      // 初始化本地数据库
-      openDB()
-        .then(() => {
-          console.log("IndexedDB 初始化成功");
-        })
-        .catch((error) => {
-          console.error("IndexedDB 初始化失败:", error);
-        });
+      // =====================================================
+      // HTML 安全处理
+      // =====================================================
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      // =====================================================
+      // 初始化
+      // =====================================================
+
+      async function initialize() {
+        await testLocalDB();
+
+        await loadActivities();
+      }
+
+      // =====================================================
+      // Service Worker
+      // =====================================================
 
       if ("serviceWorker" in navigator) {
         window.addEventListener("load", () => {
@@ -93,6 +335,9 @@
             });
         });
       }
+
+      // 开始
+      initialize();
     </script>
   </body>
 </html>
