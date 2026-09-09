@@ -1015,41 +1015,11 @@
       function openMyRegistration() {
         console.log("正在打开我的报名...");
 
-        google.script.run
+        const targetUrl = GAS_URL + "?page=myRegistration";
 
-          .withSuccessHandler(function (url) {
-            console.log("获取 Web App URL:", url);
+        console.log("我的报名页面:", targetUrl);
 
-            if (!url) {
-              alert(
-                currentLanguage === "ja"
-                  ? "WebアプリのURLを取得できませんでした"
-                  : "无法获取 Web App URL",
-              );
-
-              return;
-            }
-
-            const targetUrl = url + "?page=myRegistration";
-
-            console.log("我的报名页面:", targetUrl);
-
-            window.top.location.href = targetUrl;
-          })
-
-          .withFailureHandler(function (error) {
-            console.error("打开我的报名失败:", error);
-
-            alert(
-              currentLanguage === "ja"
-                ? "申込み履歴ページを開けませんでした：" +
-                    (error && error.message ? error.message : String(error))
-                : "无法打开我的报名：" +
-                    (error && error.message ? error.message : String(error)),
-            );
-          })
-
-          .getWebAppUrl();
+        window.top.location.href = targetUrl;
       }
 
       /* =====================================================
@@ -1057,28 +1027,13 @@
       ===================================================== */
 
       function openCreateActivity() {
-        google.script.run
+        console.log("正在打开创建活动...");
 
-          .withSuccessHandler(function (url) {
-            if (!url) {
-              alert(t("openCreateFailed"));
+        const targetUrl = GAS_URL + "?page=createActivity";
 
-              return;
-            }
+        console.log("创建活动页面:", targetUrl);
 
-            window.top.location.href = url + "?page=createActivity";
-          })
-
-          .withFailureHandler(function (error) {
-            console.error("获取 Web App URL 失败:", error);
-
-            alert(
-              t("openCreateFailed") +
-                (error && error.message ? error.message : String(error)),
-            );
-          })
-
-          .getWebAppUrl();
+        window.top.location.href = targetUrl;
       }
 
       /* =====================================================
@@ -1086,28 +1041,13 @@
       ===================================================== */
 
       function openAdminDashboard() {
-        google.script.run
+        console.log("正在打开管理后台...");
 
-          .withSuccessHandler(function (url) {
-            if (!url) {
-              alert(t("openDashboardFailed"));
+        const targetUrl = GAS_URL + "?page=dashboard";
 
-              return;
-            }
+        console.log("管理后台页面:", targetUrl);
 
-            window.top.location.href = url + "?page=dashboard";
-          })
-
-          .withFailureHandler(function (error) {
-            console.error("获取 Web App URL 失败:", error);
-
-            alert(
-              t("openDashboardFailed") +
-                (error && error.message ? error.message : String(error)),
-            );
-          })
-
-          .getWebAppUrl();
+        window.top.location.href = targetUrl;
       }
 
       /* =====================================================
@@ -1115,35 +1055,13 @@
       ===================================================== */
 
       function openCopyActivity() {
-        google.script.run
+        console.log("正在打开复制活动页面...");
 
-          .withSuccessHandler(function (url) {
-            if (!url) {
-              alert(
-                currentLanguage === "ja"
-                  ? "WebアプリのURLを取得できませんでした"
-                  : "无法获取 Web App URL",
-              );
+        const targetUrl = GAS_URL + "?page=copyActivity";
 
-              return;
-            }
+        console.log("复制活动页面:", targetUrl);
 
-            window.top.location.href = url + "?page=copyActivity";
-          })
-
-          .withFailureHandler(function (error) {
-            console.error("打开复制活动页面失败:", error);
-
-            alert(
-              currentLanguage === "ja"
-                ? "イベントコピー画面を開けませんでした：" +
-                    (error && error.message ? error.message : String(error))
-                : "无法打开复制活动页面：" +
-                    (error && error.message ? error.message : String(error)),
-            );
-          })
-
-          .getWebAppUrl();
+        window.top.location.href = targetUrl;
       }
 
       /* =====================================================
@@ -1151,35 +1069,13 @@
       ===================================================== */
 
       function openEditActivity() {
-        google.script.run
+        console.log("正在打开修改活动页面...");
 
-          .withSuccessHandler(function (url) {
-            if (!url) {
-              alert(
-                currentLanguage === "ja"
-                  ? "WebアプリのURLを取得できませんでした"
-                  : "无法获取 Web App URL",
-              );
+        const targetUrl = GAS_URL + "?page=editActivity";
 
-              return;
-            }
+        console.log("修改活动页面:", targetUrl);
 
-            window.top.location.href = url + "?page=editActivity";
-          })
-
-          .withFailureHandler(function (error) {
-            console.error("打开修改活动页面失败:", error);
-
-            alert(
-              currentLanguage === "ja"
-                ? "イベント編集画面を開けませんでした：" +
-                    (error && error.message ? error.message : String(error))
-                : "无法打开修改活动页面：" +
-                    (error && error.message ? error.message : String(error)),
-            );
-          })
-
-          .getWebAppUrl();
+        window.top.location.href = targetUrl;
       }
 
       function openNotificationV2() {
