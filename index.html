@@ -1279,6 +1279,8 @@
           const token = await messaging.getToken({
             vapidKey:
               "BEzm7tEPH4F7nr5saymZsJqdnF_h_DlTZWgXsN6cDOjb4VVJIGseCnJLPwW37ko_uulqKjhPtjlg-9kYHjTzSJI",
+            serviceWorkerRegistration:
+              await navigator.serviceWorker.register("./sw.js"),
           });
 
           if (!token) {
