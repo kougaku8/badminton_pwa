@@ -1003,35 +1003,9 @@
 
       function openCheckin() {
         console.log("正在打开签到页面...");
-
-        google.script.run
-
-          .withSuccessHandler(function (url) {
-            console.log("获取 Web App URL:", url);
-
-            if (!url) {
-              alert(t("openCheckinFailed"));
-
-              return;
-            }
-
-            const targetUrl = url + "?page=checkin";
-
-            console.log("签到页面:", targetUrl);
-
-            window.top.location.href = targetUrl;
-          })
-
-          .withFailureHandler(function (error) {
-            console.error("打开签到页面失败:", error);
-
-            alert(
-              t("openCheckinFailed") +
-                (error && error.message ? error.message : String(error)),
-            );
-          })
-
-          .getWebAppUrl();
+        const targetUrl = GAS_URL + "?page=checkin";
+        console.log("签到页面:", targetUrl);
+        window.top.location.href = targetUrl;
       }
 
       /* =====================================================
