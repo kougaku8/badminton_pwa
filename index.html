@@ -1299,17 +1299,23 @@
              3. 发送 Token 到 GAS
           ========================= */
 
-          google.script.run
-
-            .withSuccessHandler(function (result) {
-              console.log("FCM Token 保存成功:", result);
+          fetch(GAS_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify({
+              action: "saveAdminFCMToken",
+              token: token,
+            }),
+          })
+            .then((response) => response.json())
+            .then(function (result) {
+              console.log("FCM Token 保存结果:", result);
             })
-
-            .withFailureHandler(function (error) {
+            .catch(function (error) {
               console.error("FCM Token 保存失败:", error);
-            })
-
-            .saveAdminFCMToken(token);
+            });
         } catch (error) {
           console.error("FCM 初始化失败:", error);
         }
