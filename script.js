@@ -237,13 +237,9 @@ function openActivity(activityID) {
     return;
   }
 
-  const url =
-    "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec?page=activity&id=" +
-    encodeURIComponent(activityID);
+  console.log("打开PWA活动详情:", activityID);
 
-  console.log("打开活动:", url);
-
-  window.open(url, "_blank");
+  window.location.href = "./activity.html?id=" + encodeURIComponent(activityID);
 }
 
 /* =========================
