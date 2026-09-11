@@ -1,0 +1,572 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <title>活动报名 / イベント申込</title>
+
+    <link rel="stylesheet" href="./style.css" />
+
+    <style>
+      .registration-page {
+        width: 100%;
+        max-width: 700px;
+        margin: 0 auto;
+      }
+
+      .registration-header {
+        background: #1976d2;
+        color: white;
+        padding: 18px;
+        border-radius: 15px;
+        margin-bottom: 15px;
+      }
+
+      .registration-header h1 {
+        margin: 0;
+        font-size: 24px;
+      }
+
+      .registration-header p {
+        margin: 6px 0 0;
+        font-size: 14px;
+      }
+
+      .registration-card {
+        background: white;
+        border-radius: 15px;
+        padding: 16px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .registration-card h2 {
+        margin-top: 0;
+        font-size: 19px;
+      }
+
+      .activity-info-row {
+        margin: 8px 0;
+        font-size: 15px;
+      }
+
+      .form-group {
+        margin-bottom: 15px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 6px;
+        font-weight: bold;
+        font-size: 15px;
+      }
+
+      .form-group input,
+      .form-group select,
+      .form-group textarea {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 50px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 8px;
+        font-size: 16px;
+      }
+
+      .form-group textarea {
+        min-height: 90px;
+        resize: vertical;
+      }
+
+      .participant-card {
+        border: 1px solid #ddd;
+        border-radius: 10px;
+        padding: 12px;
+        margin-bottom: 12px;
+        background: #fafafa;
+      }
+
+      .participant-title {
+        font-weight: bold;
+        margin-bottom: 10px;
+        font-size: 16px;
+      }
+
+      .participant-remove {
+        background: #e53935;
+        color: white;
+        border: none;
+        border-radius: 7px;
+        padding: 8px 12px;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      .add-participant-btn {
+        width: 100%;
+        min-height: 50px;
+        border: 1px dashed #1976d2;
+        background: #f5f9ff;
+        color: #1976d2;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .submit-btn {
+        width: 100%;
+        min-height: 56px;
+        border: none;
+        border-radius: 10px;
+        background: #1976d2;
+        color: white;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .back-btn {
+        display: block;
+        width: 100%;
+        box-sizing: border-box;
+        text-align: center;
+        padding: 13px;
+        margin-bottom: 15px;
+        border-radius: 10px;
+        background: #f0f0f0;
+        color: #333;
+        text-decoration: none;
+        font-size: 15px;
+      }
+
+      .status-message {
+        margin-top: 15px;
+        padding: 12px;
+        border-radius: 8px;
+        display: none;
+        font-size: 15px;
+      }
+
+      .status-message.show {
+        display: block;
+      }
+
+      @media (max-width: 600px) {
+        .registration-page {
+          width: 100%;
+        }
+
+        .registration-header {
+          padding: 15px;
+        }
+
+        .registration-header h1 {
+          font-size: 21px;
+        }
+
+        .registration-card {
+          padding: 13px;
+        }
+
+        .registration-card h2 {
+          font-size: 18px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="registration-page">
+        <div class="registration-header">
+          <h1>🏸 活动报名 / イベント申込</h1>
+          <p>请选择参加活动并填写报名信息</p>
+        </div>
+
+        <a id="backButton" class="back-btn" href="./index.html">
+          ← 返回 / 戻る
+        </a>
+
+        <!-- 活动 -->
+        <div class="registration-card">
+          <h2>活动 / イベント</h2>
+
+          <div id="activityInfo">正在读取活动信息...</div>
+        </div>
+
+        <!-- 报名人 -->
+        <div class="registration-card">
+          <h2>报名人 / 申込者</h2>
+
+          <div class="form-group">
+            <label> 报名人姓名 / 申込者名 </label>
+
+            <input
+              id="bookerName"
+              type="text"
+              placeholder="请输入姓名 / 名前を入力"
+            />
+          </div>
+        </div>
+
+        <!-- 参加者 -->
+        <div class="registration-card">
+          <h2>参加者 / 参加者</h2>
+
+          <div id="participants"></div>
+
+          <button
+            type="button"
+            class="add-participant-btn"
+            onclick="addParticipant()"
+          >
+            ＋ 添加参加者 / 参加者を追加
+          </button>
+        </div>
+
+        <!-- 留言 -->
+        <div class="registration-card">
+          <h2>备注 / メッセージ</h2>
+
+          <div class="form-group">
+            <textarea
+              id="message"
+              placeholder="备注（可选） / メッセージ（任意）"
+            ></textarea>
+          </div>
+        </div>
+
+        <!-- 提交 -->
+        <div class="registration-card">
+          <button
+            type="button"
+            class="submit-btn"
+            onclick="submitRegistration()"
+          >
+            报名 / 申込
+          </button>
+
+          <div id="statusMessage" class="status-message"></div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
+
+      const params = new URLSearchParams(window.location.search);
+
+      const activityID = params.get("id") || params.get("activityID") || "";
+
+      let activityData = null;
+
+      let participantCount = 0;
+
+      /************************************************
+       * 页面初始化
+       ************************************************/
+
+      document.addEventListener("DOMContentLoaded", function () {
+        if (!activityID) {
+          document.getElementById("activityInfo").innerHTML =
+            "没有找到活动编号";
+
+          return;
+        }
+
+        document.getElementById("backButton").href =
+          "./activity.html?id=" + encodeURIComponent(activityID);
+
+        loadActivity();
+      });
+
+      /************************************************
+       * 读取活动
+       ************************************************/
+
+      function loadActivity() {
+        document.getElementById("activityInfo").innerHTML =
+          "正在读取活动信息...";
+
+        fetch(GAS_URL, {
+          method: "POST",
+
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8",
+          },
+
+          body: JSON.stringify({
+            action: "pwaCheckin",
+
+            type: "getActivityDetail",
+
+            activityID: activityID,
+          }),
+        })
+          .then(function (response) {
+            if (!response.ok) {
+              throw new Error("HTTP错误: " + response.status);
+            }
+
+            return response.json();
+          })
+
+          .then(function (result) {
+            console.log("报名页面活动资料:", result);
+
+            if (!result || result.success === false) {
+              throw new Error(result?.message || "活动不存在");
+            }
+
+            activityData = result;
+
+            renderActivity();
+
+            addParticipant();
+          })
+
+          .catch(function (error) {
+            console.error("读取活动失败:", error);
+
+            document.getElementById("activityInfo").innerHTML =
+              "读取活动失败<br>" +
+              "<small>" +
+              (error.message || error) +
+              "</small>";
+          });
+      }
+
+      /************************************************
+       * 显示活动
+       ************************************************/
+
+      function renderActivity() {
+        const activity = activityData.Activity || {};
+
+        const venue = activityData.Venue || {};
+
+        const count = activityData.Count || {};
+
+        document.getElementById("activityInfo").innerHTML = `
+
+    <div class="activity-info-row">
+      🏸 ${activity.Title || ""}
+    </div>
+
+    <div class="activity-info-row">
+      📅 ${formatDate(activity.Date)}
+    </div>
+
+    <div class="activity-info-row">
+      ⏰ ${formatTime(activity.StartTime)}
+      ～ ${formatTime(activity.EndTime)}
+    </div>
+
+    <div class="activity-info-row">
+      📍 ${venue.Name || ""}
+    </div>
+
+    <div class="activity-info-row">
+      💰 ${activity.Fee || 0}
+    </div>
+
+    <div class="activity-info-row">
+      👥 ${count.Joined || 0}
+      /
+      ${activity.Capacity || 0}
+    </div>
+
+  `;
+      }
+
+      /************************************************
+       * 添加参加者
+       ************************************************/
+
+      function addParticipant() {
+        participantCount++;
+
+        const number = participantCount;
+
+        const box = document.getElementById("participants");
+
+        const card = document.createElement("div");
+
+        card.className = "participant-card";
+
+        card.dataset.number = number;
+
+        card.innerHTML = `
+
+    <div class="participant-title">
+      参加者 ${number}
+      / 参加者 ${number}
+    </div>
+
+    <div class="form-group">
+
+      <label>
+        姓名 / 名前
+      </label>
+
+      <input
+        type="text"
+        class="participant-name"
+        placeholder="请输入姓名 / 名前を入力"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>
+        检索键 / 検索キー
+      </label>
+
+      <input
+        type="text"
+        class="participant-contact"
+        placeholder="例如：6666"
+      >
+
+    </div>
+
+    <div class="form-group">
+
+      <label>
+        水平 / レベル
+      </label>
+
+      <select class="participant-level">
+
+        <option value="">
+          请选择 / 選択してください
+        </option>
+
+        <option value="L1">
+          L1
+        </option>
+
+        <option value="L2">
+          L2
+        </option>
+
+        <option value="L3">
+          L3
+        </option>
+
+        <option value="L4">
+          L4
+        </option>
+
+        <option value="L5">
+          L5
+        </option>
+
+      </select>
+
+    </div>
+
+    <div class="form-group">
+
+      <label>
+
+        <input
+          type="checkbox"
+          class="participant-parking"
+        >
+
+        停车 / 駐車
+
+      </label>
+
+    </div>
+
+    ${
+      number > 1
+        ? `
+        <button
+          type="button"
+          class="participant-remove"
+          onclick="removeParticipant(this)"
+        >
+          删除 / 削除
+        </button>
+      `
+        : ""
+    }
+
+  `;
+
+        box.appendChild(card);
+      }
+
+      /************************************************
+       * 删除参加者
+       ************************************************/
+
+      function removeParticipant(button) {
+        const card = button.closest(".participant-card");
+
+        if (card) {
+          card.remove();
+        }
+      }
+
+      /************************************************
+       * 提交报名
+       *
+       * 这里只先保留接口。
+       * 下一步再接 V7 registerActivities。
+       ************************************************/
+
+      function submitRegistration() {
+        alert("报名提交功能下一步接入。\n" + "现在先确认页面显示是否正常。");
+      }
+
+      /************************************************
+       * 日期
+       ************************************************/
+
+      function formatDate(value) {
+        if (!value) {
+          return "";
+        }
+
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+          return value;
+        }
+
+        return (
+          date.getFullYear() +
+          "-" +
+          String(date.getMonth() + 1).padStart(2, "0") +
+          "-" +
+          String(date.getDate()).padStart(2, "0")
+        );
+      }
+
+      /************************************************
+       * 时间
+       ************************************************/
+
+      function formatTime(value) {
+        if (!value) {
+          return "";
+        }
+
+        if (typeof value === "string" && value.length >= 5) {
+          return value.substring(0, 5);
+        }
+
+        return value;
+      }
+    </script>
+  </body>
+</html>
