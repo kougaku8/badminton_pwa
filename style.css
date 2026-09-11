@@ -681,109 +681,114 @@ button:active {
 
 /* =========================================================
    手机
+   PWA 首页尺寸调整为接近 GAS V7
 ========================================================= */
 
 @media (max-width: 600px) {
   .container {
     width: 100%;
     max-width: none;
-
     padding: 10px 7px 40px;
   }
 
-  /* 顶部 */
+  /* =========================
+     顶部
+  ========================= */
 
   .header {
-    padding: 28px 22px;
-
+    padding: 20px 18px;
     border-radius: 15px;
   }
 
   .home-header-title {
-    font-size: 58px;
-  }
-
-  .home-header-subtitle {
     font-size: 32px;
   }
 
-  /* 快捷按钮 */
-
-  .quick-button {
-    min-height: 100px;
-
-    font-size: 44px;
+  .home-header-subtitle {
+    font-size: 24px;
   }
 
-  /* =====================================================
+  /* =========================
+     快捷按钮
+  ========================= */
+
+  .quick-button {
+    min-height: 70px;
+    font-size: 24px;
+  }
+
+  /* =========================
      查找活动
-     保持刚才要求的大小
-  ===================================================== */
+  ========================= */
 
   .search-title {
-    font-size: 48px !important;
+    font-size: 30px !important;
   }
 
   .search-label {
-    font-size: 40px !important;
+    font-size: 25px !important;
   }
 
-  /* 输入框 */
+  /* =========================
+     输入框
+  ========================= */
 
   .search-input,
   .search-select {
-    min-height: 82px;
-
-    font-size: 42px;
+    min-height: 60px;
+    font-size: 24px;
   }
 
-  /* 时间按钮 */
+  /* =========================
+     时间按钮
+  ========================= */
 
   .filter-btn {
-    min-height: 76px;
-
-    font-size: 38px;
+    min-height: 56px;
+    font-size: 23px;
   }
 
-  /* 活动列表 */
+  /* =========================
+     活动列表
+  ========================= */
 
   .section-title h2 {
-    font-size: 46px;
+    font-size: 30px;
   }
 
   .activity-card h2 {
-    font-size: 43px;
+    font-size: 27px;
   }
 
   .activity-info {
-    font-size: 36px;
+    font-size: 22px;
   }
 
   .activity-card button {
-    min-height: 82px;
-
-    font-size: 40px;
+    min-height: 60px;
+    font-size: 24px;
   }
 
-  /* 其他 */
+  /* =========================
+     其他
+  ========================= */
 
   .checkin-card h3,
   .my-registration-card h3,
   .admin-title {
-    font-size: 43px;
+    font-size: 28px;
   }
 
   .checkin-card p,
   .my-registration-card p,
   .admin-description {
-    font-size: 34px;
+    font-size: 22px;
   }
 
   .checkin-btn,
   .admin-button {
-    min-height: 82px;
-
-    font-size: 40px;
+    min-height: 60px;
+    font-size: 24px;
   }
 }
 
@@ -797,15 +802,15 @@ button:active {
   }
 
   .header {
-    padding: 24px 18px;
+    padding: 18px 15px;
   }
 
   .home-header-title {
-    font-size: 46px;
+    font-size: 29px;
   }
 
   .home-header-subtitle {
-    font-size: 27px;
+    font-size: 22px;
   }
 
   .quick-actions {
@@ -813,122 +818,103 @@ button:active {
   }
 
   .quick-button {
-    min-height: 82px;
-
-    font-size: 34px;
+    min-height: 64px;
+    font-size: 21px;
   }
 
   /* 查找活动 */
 
   .search-title {
-    font-size: 40px !important;
+    font-size: 27px !important;
   }
 
   .search-label {
-    font-size: 34px !important;
+    font-size: 23px !important;
   }
 
   /* 输入 */
 
   .search-input,
   .search-select {
-    min-height: 70px;
-
-    font-size: 34px;
+    min-height: 54px;
+    font-size: 22px;
   }
 
   /* 时间 */
 
   .filter-btn {
-    min-height: 64px;
-
-    font-size: 30px;
+    min-height: 50px;
+    font-size: 21px;
   }
 
   /* 活动 */
 
   .section-title h2 {
-    font-size: 38px;
+    font-size: 27px;
   }
 
   .activity-card {
-    padding: 20px;
+    padding: 16px;
   }
 
   .activity-card h2 {
-    font-size: 36px;
+    font-size: 25px;
   }
 
   .activity-info {
-    font-size: 30px;
+    font-size: 20px;
   }
 
   .activity-card button {
-    min-height: 72px;
-
-    font-size: 34px;
+    min-height: 56px;
+    font-size: 22px;
   }
 
   /* 管理员登录 */
 
   .admin-login-box {
-    padding: 22px;
+    padding: 20px;
   }
 
   .admin-login-box h3 {
-    font-size: 38px;
+    font-size: 27px;
   }
 
   .admin-login-box p {
-    font-size: 28px;
+    font-size: 21px;
   }
 
   .admin-login-box input {
-    min-height: 70px;
-
-    font-size: 34px;
+    min-height: 56px;
+    font-size: 22px;
   }
 
   .admin-login-buttons button {
-    min-height: 66px;
-
-    font-size: 30px;
+    min-height: 54px;
+    font-size: 21px;
   }
 }
 
 /* =========================================================
    最终强制覆盖
-   防止其他旧 CSS 再次把这三个文字改小/改大
 ========================================================= */
-
-.search-title {
-  font-size: 48px !important;
-}
-
-.search-label {
-  font-size: 40px !important;
-}
-
-/* 手机最终值 */
 
 @media (max-width: 600px) {
   .search-title {
-    font-size: 48px !important;
+    font-size: 30px !important;
   }
 
   .search-label {
-    font-size: 40px !important;
+    font-size: 25px !important;
   }
 }
 
-/* 超小手机最终值 */
-
 @media (max-width: 380px) {
   .search-title {
-    font-size: 40px !important;
+    font-size: 27px !important;
   }
 
   .search-label {
-    font-size: 34px !important;
+    font-size: 23px !important;
   }
 }
