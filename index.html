@@ -1011,15 +1011,14 @@
       /* =====================================================
          我的报名
       ===================================================== */
-
       function openMyRegistration() {
-        console.log("正在打开我的报名...");
+        console.log("正在打开PWA我的报名...");
 
-        const targetUrl = GAS_URL + "?page=myRegistration";
+        const targetUrl = "./myRegistration.html";
 
         console.log("我的报名页面:", targetUrl);
 
-        window.top.location.href = targetUrl;
+        window.location.href = targetUrl;
       }
 
       /* =====================================================

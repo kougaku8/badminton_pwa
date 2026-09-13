@@ -1,0 +1,813 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, viewport-fit=cover"
+    />
+
+    <title>我的报名</title>
+
+    <link rel="manifest" href="./manifest.json" />
+    <link rel="stylesheet" href="./style.css" />
+
+    <style>
+      /* =====================================================
+       我的报名页面专用样式
+       ===================================================== */
+
+      .my-registration-page {
+        width: 100%;
+      }
+
+      .page-header {
+        margin-bottom: 15px;
+      }
+
+      .page-header h1 {
+        margin: 0;
+        font-size: 22px;
+      }
+
+      .page-header p {
+        margin: 6px 0 0;
+        font-size: 14px;
+        color: #666;
+      }
+
+      .search-card {
+        background: #fff;
+        border-radius: 15px;
+        padding: 16px;
+        margin-bottom: 15px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .search-label {
+        display: block;
+        margin-bottom: 7px;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .search-input {
+        width: 100%;
+        box-sizing: border-box;
+        min-height: 52px;
+        padding: 10px 12px;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        font-size: 15px;
+        margin-bottom: 10px;
+      }
+
+      .search-button {
+        width: 100%;
+        min-height: 52px;
+        border: none;
+        border-radius: 10px;
+        background: #1976d2;
+        color: white;
+        font-size: 15px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .search-button:disabled {
+        opacity: 0.6;
+      }
+
+      .result-count {
+        margin: 12px 0;
+        font-size: 15px;
+        font-weight: 600;
+      }
+
+      .registration-card {
+        background: #fff;
+        border-radius: 15px;
+        padding: 15px;
+        margin-bottom: 12px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+      }
+
+      .registration-title {
+        margin: 0 0 12px;
+        font-size: 18px;
+        line-height: 1.4;
+      }
+
+      .registration-row {
+        display: flex;
+        gap: 8px;
+        padding: 5px 0;
+        font-size: 14px;
+        line-height: 1.4;
+      }
+
+      .registration-label {
+        flex: 0 0 82px;
+        color: #666;
+      }
+
+      .registration-value {
+        flex: 1;
+        word-break: break-word;
+        overflow-wrap: anywhere;
+      }
+
+      .status {
+        display: inline-block;
+        padding: 4px 8px;
+        border-radius: 7px;
+        font-size: 13px;
+        font-weight: 600;
+      }
+
+      .status-confirmed {
+        background: #e8f5e9;
+        color: #2e7d32;
+      }
+
+      .status-waitlist {
+        background: #fff3e0;
+        color: #ef6c00;
+      }
+
+      .status-cancelled {
+        background: #ffebee;
+        color: #c62828;
+      }
+
+      .status-normal {
+        background: #f5f5f5;
+        color: #555;
+      }
+
+      .cancel-button {
+        width: 100%;
+        min-height: 48px;
+        margin-top: 12px;
+        border: 1px solid #d32f2f;
+        border-radius: 10px;
+        background: white;
+        color: #d32f2f;
+        font-size: 14px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      .cancel-button:disabled {
+        opacity: 0.5;
+      }
+
+      .empty-message {
+        background: #fff;
+        border-radius: 15px;
+        padding: 25px 15px;
+        text-align: center;
+        color: #777;
+        font-size: 15px;
+      }
+
+      .loading-message {
+        text-align: center;
+        padding: 20px;
+        color: #777;
+        font-size: 14px;
+      }
+
+      .back-button {
+        width: 100%;
+        min-height: 50px;
+        margin-top: 10px;
+        border: none;
+        border-radius: 10px;
+        background: #f1f1f1;
+        color: #333;
+        font-size: 14px;
+        cursor: pointer;
+      }
+
+      @media (max-width: 600px) {
+        .page-header h1 {
+          font-size: 20px;
+        }
+
+        .page-header p {
+          font-size: 13px;
+        }
+
+        .registration-title {
+          font-size: 17px;
+        }
+
+        .registration-row {
+          font-size: 14px;
+        }
+
+        .registration-label {
+          flex-basis: 76px;
+        }
+
+        .status {
+          font-size: 12px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container my-registration-page">
+      <!-- 页面标题 -->
+      <div class="page-header">
+        <h1 id="pageTitle">📋 我的报名</h1>
+        <p id="pageSubtitle">查询您的羽球活动报名记录</p>
+      </div>
+
+      <!-- 查询区域 -->
+      <div class="search-card">
+        <label class="search-label" id="searchLabel" for="contactValue">
+          联系方式
+        </label>
+
+        <input
+          id="contactValue"
+          class="search-input"
+          type="text"
+          placeholder="请输入报名时使用的联系方式"
+          autocomplete="off"
+        />
+
+        <button
+          id="searchButton"
+          class="search-button"
+          type="button"
+          onclick="searchRegistrations()"
+        >
+          查询我的报名
+        </button>
+      </div>
+
+      <!-- 查询结果 -->
+      <div id="result"></div>
+
+      <!-- 返回首页 -->
+      <button
+        id="backButton"
+        class="back-button"
+        type="button"
+        onclick="goHome()"
+      >
+        ← 返回活动列表
+      </button>
+    </div>
+
+    <script>
+      /* =====================================================
+     基本设置
+     ===================================================== */
+
+      const GAS_URL =
+        "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
+
+      let currentLanguage = "zh";
+
+      /* =====================================================
+     i18n
+     ===================================================== */
+
+      const TEXT = {
+        zh: {
+          title: "📋 我的报名",
+          subtitle: "查询您的羽球活动报名记录",
+          searchLabel: "联系方式",
+          placeholder: "请输入报名时使用的联系方式",
+          search: "查询我的报名",
+          searching: "查询中...",
+          resultCount: "共 {count} 条报名记录",
+          noRecords: "没有找到报名记录",
+          error: "查询失败，请稍后再试",
+          back: "← 返回活动列表",
+
+          activity: "活动",
+          date: "日期",
+          time: "时间",
+          venue: "场馆",
+          name: "报名人",
+          booker: "报名者",
+          status: "报名状态",
+          payment: "付款状态",
+          checkin: "签到状态",
+          registrationId: "报名编号",
+
+          confirmed: "✅ 已确认",
+          waitlist: "⏳ 候补",
+          cancelled: "❌ 已取消",
+
+          paid: "✅ 已付款",
+          unpaid: "💰 未付款",
+          paymentNone: "未处理",
+
+          checkedIn: "✅ 已签到",
+          notCheckedIn: "⭕ 未签到",
+
+          cancel: "取消报名",
+          cancelling: "取消中...",
+          confirmCancel: "确定要取消这条报名吗？",
+          cancelSuccess: "报名已取消",
+          cancelFailed: "取消失败，请稍后再试",
+        },
+
+        ja: {
+          title: "📋 参加登録",
+          subtitle: "バドミントン活動の参加登録を確認",
+          searchLabel: "連絡先",
+          placeholder: "登録時に使用した連絡先を入力してください",
+          search: "登録を検索",
+          searching: "検索中...",
+          resultCount: "全 {count} 件の登録",
+          noRecords: "登録記録が見つかりません",
+          error: "検索に失敗しました。しばらくしてから再度お試しください",
+          back: "← 活動一覧へ戻る",
+
+          activity: "活動",
+          date: "日付",
+          time: "時間",
+          venue: "会場",
+          name: "参加者",
+          booker: "申込者",
+          status: "登録状態",
+          payment: "支払い状態",
+          checkin: "チェックイン",
+          registrationId: "登録番号",
+
+          confirmed: "✅ 参加確定",
+          waitlist: "⏳ キャンセル待ち",
+          cancelled: "❌ キャンセル済み",
+
+          paid: "✅ 支払い済み",
+          unpaid: "💰 未払い",
+          paymentNone: "未処理",
+
+          checkedIn: "✅ チェックイン済み",
+          notCheckedIn: "⭕ 未チェックイン",
+
+          cancel: "登録をキャンセル",
+          cancelling: "キャンセル中...",
+          confirmCancel: "この登録をキャンセルしますか？",
+          cancelSuccess: "登録をキャンセルしました",
+          cancelFailed: "キャンセルに失敗しました",
+        },
+      };
+
+      function t(key) {
+        return TEXT[currentLanguage][key] || key;
+      }
+
+      /* =====================================================
+     自动判断语言
+     ===================================================== */
+
+      function detectLanguage() {
+        const saved = localStorage.getItem("language");
+
+        if (saved === "zh" || saved === "ja") {
+          currentLanguage = saved;
+          return;
+        }
+
+        const browserLang = navigator.language || navigator.userLanguage || "";
+
+        currentLanguage = browserLang.toLowerCase().startsWith("ja")
+          ? "ja"
+          : "zh";
+      }
+
+      /* =====================================================
+     更新页面文字
+     ===================================================== */
+
+      function updateLanguage() {
+        document.documentElement.lang =
+          currentLanguage === "ja" ? "ja" : "zh-CN";
+
+        document.title = t("title");
+
+        document.getElementById("pageTitle").textContent = t("title");
+
+        document.getElementById("pageSubtitle").textContent = t("subtitle");
+
+        document.getElementById("searchLabel").textContent = t("searchLabel");
+
+        document.getElementById("contactValue").placeholder = t("placeholder");
+
+        document.getElementById("searchButton").textContent = t("search");
+
+        document.getElementById("backButton").textContent = t("back");
+      }
+
+      /* =====================================================
+     页面初始化
+     ===================================================== */
+
+      document.addEventListener("DOMContentLoaded", function () {
+        detectLanguage();
+        updateLanguage();
+
+        const params = new URLSearchParams(window.location.search);
+
+        const contactValue =
+          params.get("contactValue") || params.get("contact") || "";
+
+        if (contactValue) {
+          document.getElementById("contactValue").value = contactValue;
+
+          searchRegistrations();
+        }
+      });
+
+      /* =====================================================
+     查询我的报名
+     ===================================================== */
+
+      async function searchRegistrations() {
+        const input = document.getElementById("contactValue");
+
+        const contactValue = input.value.trim();
+
+        if (!contactValue) {
+          alert(t("searchLabel"));
+          input.focus();
+          return;
+        }
+
+        const button = document.getElementById("searchButton");
+
+        button.disabled = true;
+        button.textContent = t("searching");
+
+        document.getElementById("result").innerHTML =
+          `<div class="loading-message">${t("searching")}</div>`;
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify({
+              action: "pwaCheckin",
+              type: "getMyRegistrations",
+              contactValue: contactValue,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const data = await response.json();
+
+          console.log("我的报名返回:", data);
+
+          renderRegistrations(data);
+        } catch (error) {
+          console.error("查询我的报名失败:", error);
+
+          document.getElementById("result").innerHTML =
+            `<div class="empty-message">${t("error")}</div>`;
+        } finally {
+          button.disabled = false;
+          button.textContent = t("search");
+        }
+      }
+
+      /* =====================================================
+     显示报名记录
+     ===================================================== */
+
+      function renderRegistrations(result) {
+        const container = document.getElementById("result");
+
+        if (!result || result.success !== true || !Array.isArray(result.data)) {
+          container.innerHTML = `<div class="empty-message">${t("error")}</div>`;
+
+          return;
+        }
+
+        const registrations = result.data;
+
+        if (registrations.length === 0) {
+          container.innerHTML = `<div class="empty-message">${t("noRecords")}</div>`;
+
+          return;
+        }
+
+        let html = "";
+
+        html += `
+      <div class="result-count">
+        ${t("resultCount").replace("{count}", registrations.length)}
+      </div>
+    `;
+
+        registrations.forEach(function (registration) {
+          html += renderRegistrationCard(registration);
+        });
+
+        container.innerHTML = html;
+      }
+
+      /* =====================================================
+     单条报名卡片
+     ===================================================== */
+
+      function renderRegistrationCard(r) {
+        const status = r.Status || "";
+
+        let statusText = status;
+        let statusClass = "status-normal";
+
+        if (status === "CONFIRMED") {
+          statusText = t("confirmed");
+          statusClass = "status-confirmed";
+        } else if (status === "WAITLIST") {
+          statusText = t("waitlist");
+          statusClass = "status-waitlist";
+        } else if (status === "CANCELLED") {
+          statusText = t("cancelled");
+          statusClass = "status-cancelled";
+        }
+
+        let paymentText = t("paymentNone");
+
+        if (r.PaymentStatus === "PAID") {
+          paymentText = t("paid");
+        } else if (r.PaymentStatus === "UNPAID") {
+          paymentText = t("unpaid");
+        }
+
+        let checkinText = t("notCheckedIn");
+
+        if (
+          r.CheckinStatus === "CHECKED_IN" ||
+          r.CheckinStatus === "CHECKEDIN" ||
+          r.CheckinStatus === "CHECKED"
+        ) {
+          checkinText = t("checkedIn");
+        }
+
+        const canCancel = status === "CONFIRMED" || status === "WAITLIST";
+
+        const dateText = formatDate(r.Date);
+
+        const timeText =
+          formatTime(r.StartTime) + " - " + formatTime(r.EndTime);
+
+        let html = `
+      <div class="registration-card">
+
+        <h2 class="registration-title">
+          ${escapeHtml(r.Title || "")}
+        </h2>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("date")}
+          </div>
+          <div class="registration-value">
+            ${escapeHtml(dateText)}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("time")}
+          </div>
+          <div class="registration-value">
+            ${escapeHtml(timeText)}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("venue")}
+          </div>
+          <div class="registration-value">
+            ${escapeHtml(r.VenueName || "")}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("name")}
+          </div>
+          <div class="registration-value">
+            ${escapeHtml(r.Name || "")}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("booker")}
+          </div>
+          <div class="registration-value">
+            ${escapeHtml(r.BookerName || "")}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("status")}
+          </div>
+          <div class="registration-value">
+            <span class="status ${statusClass}">
+              ${statusText}
+            </span>
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("payment")}
+          </div>
+          <div class="registration-value">
+            ${paymentText}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("checkin")}
+          </div>
+          <div class="registration-value">
+            ${checkinText}
+          </div>
+        </div>
+
+        <div class="registration-row">
+          <div class="registration-label">
+            ${t("registrationId")}
+          </div>
+          <div class="registration-value">
+            ${escapeHtml(r.RegistrationID || "")}
+          </div>
+        </div>
+    `;
+
+        if (canCancel) {
+          html += `
+        <button
+          class="cancel-button"
+          data-registration-id="${escapeHtml(r.RegistrationID || "")}"
+          onclick="cancelRegistration(this)"
+        >
+          ${t("cancel")}
+        </button>
+      `;
+        }
+
+        html += `
+      </div>
+    `;
+
+        return html;
+      }
+
+      /* =====================================================
+     取消报名
+     ===================================================== */
+
+      async function cancelRegistration(button) {
+        const registrationID = button.dataset.registrationId;
+
+        if (!registrationID) {
+          return;
+        }
+
+        if (!confirm(t("confirmCancel"))) {
+          return;
+        }
+
+        button.disabled = true;
+        button.textContent = t("cancelling");
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+            body: JSON.stringify({
+              action: "pwaCheckin",
+              type: "cancelRegistration",
+              registrationID: registrationID,
+            }),
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const data = await response.json();
+
+          console.log("取消报名返回:", data);
+
+          if (data && data.success) {
+            alert(t("cancelSuccess"));
+
+            await searchRegistrations();
+          } else {
+            throw new Error(
+              data && data.message ? data.message : "cancel failed",
+            );
+          }
+        } catch (error) {
+          console.error("取消报名失败:", error);
+
+          alert(t("cancelFailed"));
+
+          button.disabled = false;
+          button.textContent = t("cancel");
+        }
+      }
+
+      /* =====================================================
+     日期格式
+     ===================================================== */
+
+      function formatDate(value) {
+        if (!value) {
+          return "";
+        }
+
+        const date = new Date(value);
+
+        if (isNaN(date.getTime())) {
+          return String(value);
+        }
+
+        return date.toLocaleDateString(
+          currentLanguage === "ja" ? "ja-JP" : "zh-CN",
+          {
+            year: "numeric",
+            month: "2-digit",
+            day: "2-digit",
+          },
+        );
+      }
+
+      /* =====================================================
+     时间格式
+     ===================================================== */
+
+      function formatTime(value) {
+        if (!value) {
+          return "";
+        }
+
+        const text = String(value);
+
+        if (/^\d{1,2}:\d{2}/.test(text)) {
+          return text.substring(0, 5);
+        }
+
+        const date = new Date(value);
+
+        if (!isNaN(date.getTime())) {
+          return date.toLocaleTimeString("ja-JP", {
+            hour: "2-digit",
+            minute: "2-digit",
+            hour12: false,
+          });
+        }
+
+        return text;
+      }
+
+      /* =====================================================
+     HTML 安全处理
+     ===================================================== */
+
+      function escapeHtml(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/>/g, "&gt;")
+          .replace(/"/g, "&quot;")
+          .replace(/'/g, "&#039;");
+      }
+
+      /* =====================================================
+     返回活动列表
+     ===================================================== */
+
+      function goHome() {
+        window.location.href = "./index.html";
+      }
+    </script>
+  </body>
+</html>
