@@ -1000,12 +1000,9 @@
          签到页面
          手机 / 电脑统一使用 Web App URL
       ===================================================== */
-
       function openCheckin() {
-        console.log("正在打开签到页面...");
-        const targetUrl = GAS_URL + "?page=checkin";
-        console.log("签到页面:", targetUrl);
-        window.top.location.href = targetUrl;
+        console.log("正在打开PWA签到页面...");
+        window.location.href = "./checkin.html";
       }
 
       /* =====================================================
