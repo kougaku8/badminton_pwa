@@ -1,0 +1,1279 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="UTF-8" />
+
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"
+    />
+
+    <title id="pageTitle">通知设置</title>
+
+    <style>
+      /* =========================================================
+     全局
+  ========================================================= */
+
+      * {
+        box-sizing: border-box;
+        -webkit-tap-highlight-color: transparent;
+      }
+
+      html {
+        width: 100%;
+        min-height: 100%;
+        margin: 0;
+        padding: 0;
+        background: #f5f7fa;
+      }
+
+      body {
+        width: 100%;
+        min-height: 100vh;
+        min-height: 100dvh;
+
+        margin: 0;
+        padding: 0;
+
+        font-family:
+          -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans JP",
+          "Noto Sans", sans-serif;
+
+        background: linear-gradient(
+          180deg,
+          #eef5ff 0%,
+          #f5f7fa 45%,
+          #f5f7fa 100%
+        );
+
+        color: #222;
+
+        font-size: 32px;
+
+        -webkit-font-smoothing: antialiased;
+      }
+
+      /* =========================================================
+     全屏容器
+  ========================================================= */
+
+      .container {
+        width: 100%;
+        max-width: none;
+        min-height: 100vh;
+        min-height: 100dvh;
+
+        margin: 0;
+        padding: max(6px, env(safe-area-inset-top)) 0
+          max(6px, env(safe-area-inset-bottom)) 0;
+      }
+
+      /* =========================================================
+     主卡片
+  ========================================================= */
+
+      .card {
+        width: 100%;
+        max-width: none;
+
+        background: #ffffff;
+        border-radius: 0;
+
+        padding: 18px 0;
+
+        box-shadow: none;
+      }
+
+      /* =========================================================
+     语言切换
+  ========================================================= */
+
+      .language-switch {
+        display: flex;
+
+        justify-content: center;
+
+        align-items: center;
+
+        margin-bottom: 14px;
+      }
+
+      .language-button {
+        width: auto;
+
+        min-width: 110px;
+
+        min-height: 58px;
+
+        margin: 0;
+
+        padding: 10px 18px;
+
+        border: 2px solid #ccc;
+
+        border-radius: 12px;
+
+        background: #fff;
+
+        color: #555;
+
+        font-size: 24px;
+
+        font-weight: 600;
+
+        cursor: pointer;
+      }
+
+      .language-button.active {
+        background: #4285f4;
+
+        border-color: #4285f4;
+
+        color: #fff;
+      }
+
+      .language-separator {
+        margin: 0 10px;
+
+        color: #aaa;
+
+        font-size: 24px;
+
+        line-height: 58px;
+      }
+
+      /* =========================================================
+     标题
+  ========================================================= */
+
+      h1 {
+        margin: 0 0 10px;
+
+        font-size: 40px;
+
+        line-height: 1.25;
+
+        text-align: center;
+
+        color: #1f2937;
+      }
+
+      /* =========================================================
+     描述
+  ========================================================= */
+
+      .description {
+        color: #666;
+
+        line-height: 1.7;
+
+        font-size: 28px;
+
+        text-align: center;
+
+        margin-bottom: 34px;
+      }
+
+      /* =========================================================
+     Label
+  ========================================================= */
+
+      label {
+        display: block;
+
+        margin-bottom: 12px;
+
+        font-size: 30px;
+
+        font-weight: 700;
+
+        color: #333;
+      }
+
+      /* =========================================================
+     输入框
+  ========================================================= */
+
+      input {
+        width: 100%;
+
+        min-height: 70px;
+
+        padding: 16px 18px;
+
+        border: 2px solid #ccc;
+
+        border-radius: 14px;
+
+        font-size: 30px;
+
+        background: #fff;
+
+        color: #222;
+
+        outline: none;
+
+        -webkit-appearance: none;
+      }
+
+      input:focus {
+        border-color: #4285f4;
+
+        box-shadow: 0 0 0 4px rgba(66, 133, 244, 0.12);
+      }
+
+      /* =========================================================
+     所有按钮
+  ========================================================= */
+
+      button {
+        width: 100%;
+
+        min-height: 72px;
+
+        margin-top: 22px;
+
+        padding: 14px 18px;
+
+        border: 0;
+
+        border-radius: 14px;
+
+        background: #4285f4;
+
+        color: white;
+
+        font-size: 30px;
+
+        font-weight: 700;
+
+        cursor: pointer;
+
+        box-shadow: 0 4px 10px rgba(66, 133, 244, 0.22);
+
+        transition:
+          transform 0.1s ease,
+          opacity 0.1s ease;
+      }
+
+      button:active {
+        transform: scale(0.98);
+      }
+
+      button:disabled {
+        background: #aaa;
+
+        box-shadow: none;
+
+        cursor: not-allowed;
+
+        transform: none;
+      }
+
+      /* =========================================================
+     次要按钮
+  ========================================================= */
+
+      .secondary {
+        background: #757575;
+
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.12);
+      }
+
+      /* =========================================================
+     隐藏
+  ========================================================= */
+
+      .hidden {
+        display: none !important;
+      }
+
+      /* =========================================================
+     消息
+  ========================================================= */
+
+      .message {
+        margin-top: 24px;
+
+        padding: 18px;
+
+        border-radius: 14px;
+
+        background: #f1f3f4;
+
+        font-size: 26px;
+
+        line-height: 1.6;
+
+        white-space: pre-line;
+      }
+
+      .success {
+        background: #e6f4ea;
+
+        color: #137333;
+      }
+
+      .error {
+        background: #fce8e6;
+
+        color: #c5221f;
+      }
+
+      .warning {
+        background: #fff8e1;
+
+        color: #795548;
+      }
+
+      /* =========================================================
+     Device ID
+  ========================================================= */
+
+      .device-id {
+        margin-top: 20px;
+
+        padding: 16px;
+
+        background: #f1f3f4;
+
+        border-radius: 12px;
+
+        word-break: break-all;
+
+        font-family: monospace;
+
+        font-size: 22px;
+
+        line-height: 1.5;
+
+        color: #555;
+      }
+
+      /* =========================================================
+     通知状态
+  ========================================================= */
+
+      .status-box {
+        margin-top: 24px;
+
+        padding: 22px 16px;
+
+        border-radius: 14px;
+
+        background: #f1f3f4;
+
+        text-align: center;
+
+        font-size: 28px;
+
+        font-weight: 700;
+
+        line-height: 1.5;
+      }
+
+      .status-on {
+        background: #e6f4ea;
+
+        color: #137333;
+      }
+
+      .status-off {
+        background: #fff8e1;
+
+        color: #795548;
+      }
+
+      /* =========================================================
+     双按钮
+  ========================================================= */
+
+      .button-row {
+        display: flex;
+
+        gap: 12px;
+      }
+
+      .button-row button {
+        flex: 1;
+      }
+
+      /* =========================================================
+     手机小屏幕
+  ========================================================= */
+
+      @media (max-width: 380px) {
+        .container {
+          padding-left: 0;
+          padding-right: 0;
+        }
+
+        .card {
+          width: 100%;
+          padding: 18px 0;
+          border-radius: 8px;
+        }
+
+        h1 {
+          font-size: 38px;
+        }
+
+        .description {
+          font-size: 24px;
+        }
+
+        label {
+          font-size: 26px;
+        }
+
+        input {
+          font-size: 27px;
+        }
+
+        button {
+          font-size: 27px;
+        }
+      }
+
+      /* =========================================================
+     平板 / 电脑
+  ========================================================= */
+
+      @media (min-width: 700px) {
+        .container {
+          max-width: none;
+          width: 100%;
+          padding-top: 40px;
+        }
+
+        .card {
+          width: 100%;
+          padding: 40px;
+        }
+      }
+    </style>
+  </head>
+
+  <body>
+    <div class="container">
+      <div class="card">
+        <!-- =========================
+         Language
+    ========================== -->
+
+        <div class="language-switch">
+          <button
+            id="languageZh"
+            class="language-button"
+            onclick="setLanguage('zh')"
+          >
+            中文
+          </button>
+
+          <span class="language-separator"> | </span>
+
+          <button
+            id="languageJa"
+            class="language-button"
+            onclick="setLanguage('ja')"
+          >
+            日本語
+          </button>
+        </div>
+
+        <!-- =========================
+         Step 1
+    ========================== -->
+
+        <div id="nameStep">
+          <h1 data-i18n="title">通知设置</h1>
+
+          <div class="description" data-i18n="description">
+            管理这台设备的羽毛球通知。
+          </div>
+
+          <label for="userName" data-i18n="nameLabel"> 姓名 </label>
+
+          <input
+            id="userName"
+            type="text"
+            autocomplete="name"
+            data-i18n-placeholder="namePlaceholder"
+            placeholder="请输入您的姓名"
+          />
+
+          <button
+            id="checkButton"
+            onclick="checkName()"
+            data-i18n="continueButton"
+          >
+            继续
+          </button>
+        </div>
+
+        <!-- =========================
+         Step 2
+    ========================== -->
+
+        <div id="confirmStep" class="hidden">
+          <h1 data-i18n="confirmTitle">确认身份</h1>
+
+          <div class="description" data-i18n="confirmDescription">
+            系统发现这个姓名已经注册过。
+            <br />
+            请确认这是您本人。
+          </div>
+
+          <div
+            id="confirmName"
+            style="
+              font-size: 22px;
+              font-weight: bold;
+              text-align: center;
+              margin: 20px 0;
+            "
+          ></div>
+
+          <button onclick="confirmExistingUser()" data-i18n="isMeButton">
+            是我的
+          </button>
+
+          <button
+            class="secondary"
+            onclick="backToNameStep()"
+            data-i18n="notMeButton"
+          >
+            不是
+          </button>
+        </div>
+
+        <!-- =========================
+         Step 3
+    ========================== -->
+
+        <div id="successStep" class="hidden">
+          <h1 data-i18n="successTitle">通知设置</h1>
+
+          <div id="successMessage" class="message success"></div>
+
+          <div class="device-id">
+            <span data-i18n="deviceIdLabel"> Device ID： </span>
+
+            <span id="deviceIdDisplay"></span>
+          </div>
+
+          <div id="notificationStatus" class="status-box"></div>
+
+          <button
+            id="disableButton"
+            class="secondary"
+            onclick="disableCurrentDevice()"
+            data-i18n="disableButton"
+          >
+            关闭通知
+          </button>
+
+          <button
+            id="enableButton"
+            class="hidden"
+            onclick="enableCurrentDevice()"
+            data-i18n="enableButton"
+          >
+            开启通知
+          </button>
+        </div>
+
+        <!-- =========================
+         Not Registered
+    ========================== -->
+
+        <div id="notRegisteredStep" class="hidden">
+          <h1 data-i18n="notRegisteredTitle">设备尚未注册</h1>
+
+          <div class="message warning" data-i18n="notRegisteredMessage">
+            这台设备尚未注册通知。 请先完成设备注册。
+          </div>
+
+          <button onclick="goToRegistration()" data-i18n="goRegisterButton">
+            前往设备注册
+          </button>
+
+          <button
+            class="secondary"
+            onclick="backToNameStep()"
+            data-i18n="backButton"
+          >
+            返回
+          </button>
+        </div>
+
+        <!-- =========================
+         Message
+    ========================== -->
+
+        <div id="message" class="message hidden"></div>
+      </div>
+    </div>
+
+    <script>
+      /*************************************************
+       * Configuration
+       *************************************************/
+
+      /*
+       * Firebase Hosting 注册网站
+       *
+       * Notification.html 不在这里获取 FCM。
+       *
+       * 这里只用于：
+       *
+       * 「未注册」
+       * → 前往注册网站
+       */
+
+      const REGISTRATION_URL = "https://badminton-notification.web.app/";
+
+      /*************************************************
+       * Global
+       *************************************************/
+
+      let deviceId = "";
+
+      let currentUserName = "";
+
+      let currentLanguage = "zh";
+
+      /*************************************************
+       * Translation
+       *************************************************/
+
+      const translations = {
+        zh: {
+          pageTitle: "通知设置",
+
+          title: "通知设置",
+
+          description: "管理已经注册的羽毛球通知设备。",
+
+          nameLabel: "姓名",
+
+          namePlaceholder: "请输入您的姓名",
+
+          continueButton: "继续",
+
+          confirmTitle: "确认身份",
+
+          confirmDescription:
+            "系统发现这个姓名已经注册过。<br>请确认这是您本人。",
+
+          notMeButton: "不是",
+
+          isMeButton: "是我的",
+
+          successTitle: "通知设置",
+
+          deviceIdLabel: "Device ID：",
+
+          checking: "检查中...",
+
+          loading: "读取中...",
+
+          notificationOn: "通知目前已开启。",
+
+          notificationOff: "通知目前已关闭。",
+
+          registerSuccess: "设备已注册，可以管理通知。",
+
+          disableButton: "关闭通知",
+
+          enableButton: "开启通知",
+
+          disabledSuccess: "通知已关闭。",
+
+          enabledSuccess: "通知已开启。",
+
+          notRegisteredTitle: "设备尚未注册",
+
+          notRegisteredMessage: "这台设备尚未注册通知。请先完成设备注册。",
+
+          goRegisterButton: "前往设备注册",
+
+          backButton: "返回",
+
+          emptyName: "请输入姓名。",
+
+          checkError: "检查姓名时发生错误。",
+
+          serverError: "服务器通信失败。",
+
+          deviceNotFound: "设备不存在。",
+        },
+
+        ja: {
+          pageTitle: "通知設定",
+
+          title: "通知設定",
+
+          description: "登録済みのバドミントン通知端末を管理します。",
+
+          nameLabel: "お名前",
+
+          namePlaceholder: "お名前を入力してください",
+
+          continueButton: "次へ",
+
+          confirmTitle: "本人確認",
+
+          confirmDescription:
+            "この名前はすでに登録されています。<br>ご本人かどうか確認してください。",
+
+          notMeButton: "違います",
+
+          isMeButton: "本人です",
+
+          successTitle: "通知設定",
+
+          deviceIdLabel: "Device ID：",
+
+          checking: "確認中...",
+
+          loading: "読み込み中...",
+
+          notificationOn: "通知は現在オンになっています。",
+
+          notificationOff: "通知は現在オフになっています。",
+
+          registerSuccess: "端末は登録済みです。通知を管理できます。",
+
+          disableButton: "通知をオフにする",
+
+          enableButton: "通知をオンにする",
+
+          disabledSuccess: "通知をオフにしました。",
+
+          enabledSuccess: "通知をオンにしました。",
+
+          notRegisteredTitle: "端末未登録",
+
+          notRegisteredMessage:
+            "この端末は通知登録されていません。先に端末登録を行ってください。",
+
+          goRegisterButton: "端末登録へ",
+
+          backButton: "戻る",
+
+          emptyName: "お名前を入力してください。",
+
+          checkError: "名前の確認中にエラーが発生しました。",
+
+          serverError: "サーバーとの通信に失敗しました。",
+
+          deviceNotFound: "端末が見つかりません。",
+        },
+      };
+
+      /*************************************************
+       * Startup
+       *************************************************/
+
+      document.addEventListener("DOMContentLoaded", function () {
+        initializeLanguage();
+      });
+
+      /*************************************************
+       * Language
+       *************************************************/
+
+      function initializeLanguage() {
+        try {
+          const savedLanguage = localStorage.getItem("badminton_v2_language");
+
+          if (savedLanguage === "zh" || savedLanguage === "ja") {
+            currentLanguage = savedLanguage;
+          } else {
+            const browserLanguage = navigator.language || "";
+
+            if (browserLanguage.toLowerCase().startsWith("ja")) {
+              currentLanguage = "ja";
+            }
+          }
+        } catch (error) {
+          currentLanguage = "zh";
+        }
+
+        applyLanguage();
+      }
+
+      /*************************************************
+       * Set Language
+       *************************************************/
+
+      function setLanguage(language) {
+        if (language !== "zh" && language !== "ja") {
+          return;
+        }
+
+        currentLanguage = language;
+
+        try {
+          localStorage.setItem("badminton_v2_language", language);
+        } catch (error) {}
+
+        applyLanguage();
+      }
+
+      /*************************************************
+       * Apply Language
+       *************************************************/
+
+      function applyLanguage() {
+        const texts = translations[currentLanguage];
+
+        document.querySelectorAll("[data-i18n]").forEach(function (element) {
+          const key = element.getAttribute("data-i18n");
+
+          if (texts[key] !== undefined) {
+            element.innerHTML = texts[key];
+          }
+        });
+
+        document
+          .querySelectorAll("[data-i18n-placeholder]")
+          .forEach(function (element) {
+            const key = element.getAttribute("data-i18n-placeholder");
+
+            if (texts[key] !== undefined) {
+              element.placeholder = texts[key];
+            }
+          });
+
+        document.title = texts.pageTitle;
+
+        document
+          .getElementById("languageZh")
+          .classList.toggle("active", currentLanguage === "zh");
+
+        document
+          .getElementById("languageJa")
+          .classList.toggle("active", currentLanguage === "ja");
+      }
+
+      /*************************************************
+       * Check Name
+       *************************************************/
+
+      function checkName() {
+        const input = document.getElementById("userName");
+
+        const name = input.value.trim();
+
+        if (!name) {
+          showMessage(translations[currentLanguage].emptyName, "error");
+
+          input.focus();
+
+          return;
+        }
+
+        currentUserName = name;
+
+        setCheckButtonLoading(true);
+
+        hideMessage();
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxz1vbqjVOIcDD_GenDog-N4eEiD1_rBKHHRl0xovwKT_xfZWwUm0-rjjuNvjYG0Jlj/exec",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              action: "apiCheckUserName",
+              userName: currentUserName,
+            }),
+          },
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (result) {
+            setCheckButtonLoading(false);
+
+            console.log("checkUserName result:", result);
+
+            if (!result || result.success === false) {
+              showMessage(
+                result && result.message
+                  ? result.message
+                  : translations[currentLanguage].checkError,
+                "error",
+              );
+
+              return;
+            }
+
+            /*
+             * 没有这个姓名
+             */
+            if (result.exists !== true) {
+              showNotRegistered();
+              return;
+            }
+
+            /*
+             * 姓名存在，
+             * 但没有可管理的 deviceId
+             */
+            if (!result.deviceFound || !result.deviceId) {
+              showNotRegistered();
+              return;
+            }
+
+            /*
+             * 保存从 GAS 返回的
+             * 已注册 Device ID。
+             */
+            deviceId = result.deviceId;
+
+            console.log("Registered device:", deviceId);
+
+            document.getElementById("nameStep").classList.add("hidden");
+
+            document.getElementById("confirmStep").classList.remove("hidden");
+
+            document.getElementById("confirmName").textContent =
+              currentUserName;
+          })
+          .catch(function (error) {
+            setCheckButtonLoading(false);
+
+            console.error("checkUserName error:", error);
+
+            showMessage(
+              error && error.message
+                ? error.message
+                : translations[currentLanguage].serverError,
+              "error",
+            );
+          });
+      }
+
+      /*************************************************
+       * Confirm Existing User
+       *************************************************/
+
+      function confirmExistingUser() {
+        if (!deviceId) {
+          showNotRegistered();
+
+          return;
+        }
+
+        showSuccess();
+      }
+
+      /*************************************************
+       * Show Success / Status
+       *************************************************/
+
+      function showSuccess() {
+        document.getElementById("nameStep").classList.add("hidden");
+
+        document.getElementById("confirmStep").classList.add("hidden");
+
+        document.getElementById("notRegisteredStep").classList.add("hidden");
+
+        document.getElementById("successStep").classList.remove("hidden");
+
+        document.getElementById("deviceIdDisplay").textContent = deviceId;
+
+        document.getElementById("successMessage").textContent =
+          translations[currentLanguage].registerSuccess;
+
+        loadDeviceNotificationStatus();
+      }
+
+      /*************************************************
+       * Load Device Status
+       *************************************************/
+
+      function loadDeviceNotificationStatus() {
+        if (!deviceId) {
+          showNotRegistered();
+
+          return;
+        }
+
+        console.log("Checking device status:", deviceId);
+
+        document.getElementById("notificationStatus").textContent =
+          translations[currentLanguage].loading;
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxz1vbqjVOIcDD_GenDog-N4eEiD1_rBKHHRl0xovwKT_xfZWwUm0-rjjuNvjYG0Jlj/exec",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              action: "apiGetDeviceStatus",
+              deviceId: deviceId,
+            }),
+          },
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (result) {
+            console.log("Device status result:", result);
+
+            if (!result || result.success === false || !result.exists) {
+              showNotRegistered();
+              return;
+            }
+
+            updateNotificationUI(result.enabled === true);
+          })
+          .catch(function (error) {
+            console.error("Device status error:", error);
+
+            showMessage(
+              error && error.message
+                ? error.message
+                : translations[currentLanguage].serverError,
+              "error",
+            );
+          });
+      }
+
+      /*************************************************
+       * Update Notification UI
+       *************************************************/
+
+      function updateNotificationUI(enabled) {
+        const status = document.getElementById("notificationStatus");
+
+        const disableButton = document.getElementById("disableButton");
+
+        const enableButton = document.getElementById("enableButton");
+
+        if (enabled) {
+          status.textContent = translations[currentLanguage].notificationOn;
+
+          status.className = "status-box status-on";
+
+          disableButton.classList.remove("hidden");
+
+          enableButton.classList.add("hidden");
+        } else {
+          status.textContent = translations[currentLanguage].notificationOff;
+
+          status.className = "status-box status-off";
+
+          disableButton.classList.add("hidden");
+
+          enableButton.classList.remove("hidden");
+        }
+      }
+
+      /*************************************************
+       * Disable Notification
+       *************************************************/
+
+      function disableCurrentDevice() {
+        if (!deviceId) {
+          showNotRegistered();
+
+          return;
+        }
+
+        const button = document.getElementById("disableButton");
+
+        button.disabled = true;
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxz1vbqjVOIcDD_GenDog-N4eEiD1_rBKHHRl0xovwKT_xfZWwUm0-rjjuNvjYG0Jlj/exec",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              action: "apiDisableDevice",
+              deviceId: deviceId,
+            }),
+          },
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (result) {
+            button.disabled = false;
+
+            console.log("disable result:", result);
+
+            if (!result || result.success === false) {
+              showMessage(
+                result && result.message
+                  ? result.message
+                  : translations[currentLanguage].serverError,
+                "error",
+              );
+
+              return;
+            }
+
+            showMessage(
+              translations[currentLanguage].disabledSuccess,
+              "success",
+            );
+
+            updateNotificationUI(false);
+          })
+          .catch(function (error) {
+            button.disabled = false;
+
+            console.error("disable error:", error);
+
+            showMessage(
+              error && error.message
+                ? error.message
+                : translations[currentLanguage].serverError,
+              "error",
+            );
+          });
+      }
+
+      /*************************************************
+       * Enable Notification
+       *************************************************/
+
+      function enableCurrentDevice() {
+        if (!deviceId) {
+          showNotRegistered();
+
+          return;
+        }
+
+        const button = document.getElementById("enableButton");
+
+        button.disabled = true;
+
+        fetch(
+          "https://script.google.com/macros/s/AKfycbxz1vbqjVOIcDD_GenDog-N4eEiD1_rBKHHRl0xovwKT_xfZWwUm0-rjjuNvjYG0Jlj/exec",
+          {
+            method: "POST",
+            body: JSON.stringify({
+              action: "apiEnableDevice",
+              deviceId: deviceId,
+            }),
+          },
+        )
+          .then(function (response) {
+            return response.json();
+          })
+          .then(function (result) {
+            button.disabled = false;
+
+            console.log("enable result:", result);
+
+            if (!result || result.success === false) {
+              showMessage(
+                result && result.message
+                  ? result.message
+                  : translations[currentLanguage].serverError,
+                "error",
+              );
+
+              return;
+            }
+
+            showMessage(
+              translations[currentLanguage].enabledSuccess,
+              "success",
+            );
+
+            updateNotificationUI(true);
+          })
+          .catch(function (error) {
+            button.disabled = false;
+
+            console.error("enable error:", error);
+
+            showMessage(
+              error && error.message
+                ? error.message
+                : translations[currentLanguage].serverError,
+              "error",
+            );
+          });
+      }
+
+      /*************************************************
+       * Not Registered
+       *************************************************/
+
+      function showNotRegistered() {
+        document.getElementById("nameStep").classList.add("hidden");
+
+        document.getElementById("confirmStep").classList.add("hidden");
+
+        document.getElementById("successStep").classList.add("hidden");
+
+        document.getElementById("notRegisteredStep").classList.remove("hidden");
+      }
+
+      /*************************************************
+       * Go Registration
+       *************************************************/
+
+      function goToRegistration() {
+        window.location.href = "./registration.html";
+      }
+
+      /*************************************************
+       * Back
+       *************************************************/
+
+      function backToNameStep() {
+        document.getElementById("confirmStep").classList.add("hidden");
+
+        document.getElementById("successStep").classList.add("hidden");
+
+        document.getElementById("notRegisteredStep").classList.add("hidden");
+
+        document.getElementById("nameStep").classList.remove("hidden");
+
+        hideMessage();
+      }
+
+      /*************************************************
+       * Message
+       *************************************************/
+
+      function showMessage(message, type) {
+        const element = document.getElementById("message");
+
+        element.textContent = message;
+
+        element.className = "message " + (type || "");
+      }
+
+      function hideMessage() {
+        const element = document.getElementById("message");
+
+        element.textContent = "";
+
+        element.className = "message hidden";
+      }
+
+      /*************************************************
+       * Loading
+       *************************************************/
+
+      function setCheckButtonLoading(isLoading) {
+        const button = document.getElementById("checkButton");
+
+        const texts = translations[currentLanguage];
+
+        button.disabled = isLoading;
+
+        button.textContent = isLoading ? texts.checking : texts.continueButton;
+      }
+    </script>
+  </body>
+</html>
