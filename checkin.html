@@ -1152,6 +1152,9 @@
               return String(activity.Date || "").substring(0, 10) === today;
             });
 
+            // ★ 保存今天的活动
+            allTodayActivities = todayActivities;
+
             if (todayActivities.length === 0) {
               box.innerHTML = `
                                   <div class="empty">
