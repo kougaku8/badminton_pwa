@@ -21,6 +21,12 @@ async function loadActivities() {
 
   console.log("上次活动同步时间:", lastSync);
 
+  if (lastSync && lastSync.value) {
+    const syncTime = new Date(lastSync.value);
+
+    document.getElementById("lastSyncTime").textContent =
+      "最后同步：" + syncTime.toLocaleString("zh-CN");
+  }
   // ==========================================
   // 1. 先读取 IndexedDB 本地缓存
   // ==========================================
