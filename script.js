@@ -16,6 +16,22 @@ window.onload = function () {
 
 function loadActivities() {
   console.log("开始读取活动...");
+// 先读取本地缓存
+  try {
+    const cachedActivities = await dbGetAll("activities");
+
+    console.log("本地活动缓存:", cachedActivities);
+
+    if (cachedActivities.length > 0) {
+      allActivities = cachedActivities;
+
+      loadVenueOptions();
+
+      renderActivities(cachedActivities);
+    }
+  } catch (error) {
+    console.error("读取本地活动缓存失败:", error);
+  }
 
   fetch(GAS_URL, {
     method: "POST",
