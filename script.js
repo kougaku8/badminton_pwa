@@ -24,8 +24,18 @@ async function loadActivities() {
   if (lastSync && lastSync.value) {
     const syncTime = new Date(lastSync.value);
 
-    document.getElementById("lastSyncTime").textContent =
-      "最后同步：" + syncTime.toLocaleString("zh-CN");
+    const timeText = syncTime.toLocaleTimeString("zh-CN", {
+      hour: "2-digit",
+      minute: "2-digit",
+    });
+
+    const syncElement = document.getElementById("lastSyncTime");
+
+    if (navigator.onLine) {
+      syncElement.textContent = "🟢 已同步：" + timeText;
+    } else {
+      syncElement.textContent = "🟠 离线模式 · 数据更新于 " + timeText;
+    }
   }
   // ==========================================
   // 1. 先读取 IndexedDB 本地缓存
