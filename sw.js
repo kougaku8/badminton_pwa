@@ -38,9 +38,11 @@ self.addEventListener("fetch", (event) => {
       const networkFetch = fetch(event.request)
         .then((networkResponse) => {
           if (
-            networkResponse &&
-            networkResponse.status === 200 &&
-            networkResponse.type === "basic"
+            if (
+              networkResponse &&
+              networkResponse.status === 200 &&
+              networkResponse.type === "basic" &&
+              event.request.url.startsWith(self.location.origin)
           ) {
             const responseClone = networkResponse.clone();
 
