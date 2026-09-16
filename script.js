@@ -50,7 +50,7 @@ async function loadActivities() {
 
       return response.json();
     })
-    .then(function (result) {
+    .then(async function (result) {
       console.log("活动列表返回:", result);
 
       // GAS 返回的数据可能直接是数组
@@ -61,6 +61,9 @@ async function loadActivities() {
         renderActivities([]);
         return;
       }
+
+      // 保存最新活动到 IndexedDB
+      await dbPutAll("activities", list);
 
       allActivities = list;
 
