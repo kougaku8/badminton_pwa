@@ -16,13 +16,21 @@ window.onload = function () {
 
 async function loadActivities() {
   console.log("开始读取活动...");
-  // 先读取本地缓存
+
+  // ==========================================
+  // 1. 先读取 IndexedDB 本地缓存
+  // ==========================================
+
+  let hasCachedActivities = false;
+
   try {
     const cachedActivities = await dbGetAll("activities");
 
     console.log("本地活动缓存:", cachedActivities);
 
-    if (cachedActivities.length > 0) {
+    if (cachedActivities && cachedActivities.length > 0) {
+      hasCachedActivities = true;
+
       allActivities = cachedActivities;
 
       loadVenueOptions();
@@ -33,63 +41,83 @@ async function loadActivities() {
     console.error("读取本地活动缓存失败:", error);
   }
 
-  fetch(GAS_URL, {
-    method: "POST",
-    headers: {
-      "Content-Type": "text/plain;charset=utf-8",
-    },
-    body: JSON.stringify({
-      action: "pwaCheckin",
-      type: "getActivities",
-    }),
-  })
-    .then(function (response) {
-      if (!response.ok) {
-        throw new Error("HTTP错误: " + response.status);
-      }
+  // ==========================================
+  // 2. 再尝试从 GAS 获取最新活动
+  // ==========================================
 
-      return response.json();
-    })
-    .then(async function (result) {
-      console.log("活动列表返回:", result);
-
-      // GAS 返回的数据可能直接是数组
-      // 也可能包装在 data 里面
-      const list = Array.isArray(result) ? result : result.data || [];
-
-      if (!list.length) {
-        renderActivities([]);
-        return;
-      }
-
-      // 保存最新活动到 IndexedDB
-      await dbPutAll("activities", list);
-
-      allActivities = list;
-
-      loadVenueOptions();
-
-      renderActivities(list);
-    })
-    .catch(function (error) {
-      console.error("读取活动失败:", error);
-
-      // 如果已经有本地缓存，就继续使用缓存
-      if (allActivities && allActivities.length > 0) {
-        console.log("网络不可用，继续使用本地活动缓存");
-        return;
-      }
-
-      // 没有本地缓存时，才显示错误
-      document.getElementById("activityList").innerHTML = `
-    <div class="empty-card">
-      读取活动失败<br>
-      <small>
-        ${error.message || error}
-      </small>
-    </div>
-  `;
+  try {
+    const response = await fetch(GAS_URL, {
+      method: "POST",
+      headers: {
+        "Content-Type": "text/plain;charset=utf-8",
+      },
+      body: JSON.stringify({
+        action: "pwaCheckin",
+        type: "getActivities",
+      }),
     });
+
+    if (!response.ok) {
+      throw new Error("HTTP错误: " + response.status);
+    }
+
+    const result = await response.json();
+
+    console.log("活动列表返回:", result);
+
+    // GAS 返回的数据可能直接是数组
+    // 也可能包装在 data 里面
+    const list = Array.isArray(result) ? result : result.data || [];
+
+    if (!list.length) {
+      if (!hasCachedActivities) {
+        renderActivities([]);
+      }
+
+      return;
+    }
+
+    // ==========================================
+    // 3. 保存最新活动到 IndexedDB
+    // ==========================================
+
+    await dbClear("activities");
+
+    await dbPutAll("activities", list);
+
+    console.log("最新活动已保存到 IndexedDB");
+
+    // ==========================================
+    // 4. 更新页面
+    // ==========================================
+
+    allActivities = list;
+
+    loadVenueOptions();
+
+    renderActivities(list);
+  } catch (error) {
+    console.error("读取最新活动失败:", error);
+
+    // ==========================================
+    // 5. 网络失败
+    // ==========================================
+
+    if (hasCachedActivities) {
+      console.log("网络不可用，继续使用本地活动缓存");
+      return;
+    }
+
+    // 完全没有缓存时才显示错误
+    document.getElementById("activityList").innerHTML = `
+      <div class="empty-card">
+        读取活动失败<br>
+        <small>
+          ${error.message || error}
+        </small>
+      </div>
+    `;
+  }
 }
 
 /* =========================
