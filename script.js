@@ -74,14 +74,21 @@ async function loadActivities() {
     .catch(function (error) {
       console.error("读取活动失败:", error);
 
+      // 如果已经有本地缓存，就继续使用缓存
+      if (allActivities && allActivities.length > 0) {
+        console.log("网络不可用，继续使用本地活动缓存");
+        return;
+      }
+
+      // 没有本地缓存时，才显示错误
       document.getElementById("activityList").innerHTML = `
-        <div class="empty-card">
-          读取活动失败<br>
-          <small>
-            ${error.message || error}
-          </small>
-        </div>
-      `;
+    <div class="empty-card">
+      读取活动失败<br>
+      <small>
+        ${error.message || error}
+      </small>
+    </div>
+  `;
     });
 }
 
