@@ -31,10 +31,14 @@ async function loadActivities() {
 
     const syncElement = document.getElementById("lastSyncTime");
 
-    if (navigator.onLine) {
-      syncElement.textContent = "🟢 已同步：" + timeText;
+    if (!syncElement) {
+      console.log("未找到 lastSyncTime 元素，跳过同步时间显示");
     } else {
-      syncElement.textContent = "🟠 离线模式 · 数据更新于 " + timeText;
+      if (navigator.onLine) {
+        syncElement.textContent = "🟢 已同步：" + timeText;
+      } else {
+        syncElement.textContent = "🟠 离线模式 · 数据更新于 " + timeText;
+      }
     }
   }
   // ==========================================
