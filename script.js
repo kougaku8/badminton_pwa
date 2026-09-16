@@ -14,9 +14,9 @@ window.onload = function () {
   loadActivities();
 };
 
-function loadActivities() {
+async function loadActivities() {
   console.log("开始读取活动...");
-// 先读取本地缓存
+  // 先读取本地缓存
   try {
     const cachedActivities = await dbGetAll("activities");
 
