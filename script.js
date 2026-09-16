@@ -17,6 +17,10 @@ window.onload = function () {
 async function loadActivities() {
   console.log("开始读取活动...");
 
+  const lastSync = await dbGet("settings", "activities_last_sync");
+
+  console.log("上次活动同步时间:", lastSync);
+
   // ==========================================
   // 1. 先读取 IndexedDB 本地缓存
   // ==========================================
