@@ -85,7 +85,13 @@ async function loadActivities() {
 
     await dbPutAll("activities", list);
 
+    await dbPut("settings", {
+      key: "activities_last_sync",
+      value: new Date().toISOString(),
+    });
+
     console.log("最新活动已保存到 IndexedDB");
+    console.log("活动同步时间已保存");
 
     // ==========================================
     // 4. 更新页面
