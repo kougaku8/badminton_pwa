@@ -51,6 +51,14 @@ async function loadActivities() {
     const cachedActivities = await dbGetAll("activities");
 
     console.log("本地活动缓存:", cachedActivities);
+    console.log("本地缓存活动数量:", cachedActivities.length);
+
+    console.log(
+      "本地缓存是否包含9/18 TEST:",
+      cachedActivities.some(function (a) {
+        return String(a.Title || "").includes("9/18 TEST");
+      }),
+    );
 
     if (cachedActivities && cachedActivities.length > 0) {
       hasCachedActivities = true;
