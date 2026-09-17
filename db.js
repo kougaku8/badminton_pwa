@@ -28,6 +28,12 @@ function openDB() {
         store.createIndex("startTime", "StartTime", { unique: false });
       }
 
+      if (!db.objectStoreNames.contains("activityDetails")) {
+        db.createObjectStore("activityDetails", {
+          keyPath: "ActivityID",
+        });
+      }
+
       // 报名
       if (!db.objectStoreNames.contains("registrations")) {
         const store = db.createObjectStore("registrations", {
