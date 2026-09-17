@@ -462,6 +462,21 @@
 
           console.log("活动详情返回:", data);
 
+          // ==========================================
+          // 保存完整活动详情到 IndexedDB
+          // ==========================================
+
+          try {
+            await dbPut("activityDetails", {
+              ActivityID: activityID,
+              Detail: data,
+            });
+
+            console.log("完整活动详情已保存到 IndexedDB:", activityID);
+          } catch (error) {
+            console.error("保存活动详情缓存失败:", error);
+          }
+
           renderActivity(data);
         } catch (error) {
           console.error("读取活动详情失败:", error);
