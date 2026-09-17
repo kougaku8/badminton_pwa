@@ -420,7 +420,16 @@
           console.log("本地活动详情缓存:", cachedActivity);
 
           if (cachedActivity) {
-            renderActivity(cachedActivity);
+            const cachedData = {
+              Activity: cachedActivity,
+              Venue: {
+                Name: cachedActivity.VenueName || "",
+              },
+              Count: {},
+              Participants: [],
+            };
+
+            renderActivity(cachedData);
           }
         } catch (error) {
           console.error("读取本地活动缓存失败:", error);
