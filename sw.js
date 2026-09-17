@@ -37,9 +37,10 @@ self.addEventListener("fetch", (event) => {
   const request = event.request;
 
   // ==========================================
-  // POST / PUT / DELETE 等非 GET 请求
-  // 不由 Service Worker 处理
-  // 直接交给浏览器
+  // 非 GET 请求
+  //
+  // POST / PUT / DELETE 等
+  // 完全交给浏览器
   // ==========================================
   if (request.method !== "GET") {
     return;
@@ -47,23 +48,56 @@ self.addEventListener("fetch", (event) => {
 
   event.respondWith(
     (async () => {
-      // ==========================================
-      // 1. Cache First
-      // ==========================================
       const cachedResponse = await caches.match(request);
 
+      // ==========================================
+      // 后台更新
+      //
+      // 不影响当前请求的返回
+      // ==========================================
+      const updateCache = async () => {
+        try {
+          const networkResponse = await fetch(request);
+
+          if (
+            networkResponse &&
+            networkResponse.status === 200 &&
+            networkResponse.type === "basic" &&
+            request.url.startsWith(self.location.origin)
+          ) {
+            const cache = await caches.open(CACHE_NAME);
+
+            await cache.put(request, networkResponse.clone());
+
+            console.log("[SW] Background cache updated:", request.url);
+          }
+        } catch (error) {
+          console.warn("[SW] Background update failed:", request.url, error);
+        }
+      };
+
+      // ==========================================
+      // 1. Cache Hit
+      //
+      // 立即返回缓存
+      // 同时后台更新
+      // ==========================================
       if (cachedResponse) {
+        event.waitUntil(updateCache());
+
         return cachedResponse;
       }
 
       // ==========================================
-      // 2. Cache Miss → 请求网络
+      // 2. Cache Miss
+      //
+      // 第一次访问必须等待网络
       // ==========================================
       try {
         const networkResponse = await fetch(request);
 
         // ==========================================
-        // 3. 只缓存本站成功的 GET 请求
+        // 3. 缓存本站成功的 GET
         // ==========================================
         if (
           networkResponse &&
@@ -74,6 +108,8 @@ self.addEventListener("fetch", (event) => {
           const cache = await caches.open(CACHE_NAME);
 
           await cache.put(request, networkResponse.clone());
+
+          console.log("[SW] Initial cache saved:", request.url);
         }
 
         return networkResponse;
@@ -82,7 +118,6 @@ self.addEventListener("fetch", (event) => {
 
         // ==========================================
         // 4. 没缓存 + 网络失败
-        // 必须返回合法 Response
         // ==========================================
         return new Response("Network unavailable", {
           status: 503,
