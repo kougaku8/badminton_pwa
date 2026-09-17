@@ -395,50 +395,78 @@
           .replace(/'/g, "&#039;");
       }
 
-      function loadActivity() {
+      async function loadActivity() {
         const result = document.getElementById("result");
 
         if (!activityID) {
           result.innerHTML = `<div class="error">${t("noActivity")}</div>`;
-
           return;
         }
 
-        result.innerHTML = `<div class="loading">${t("loading")}</div>`;
+        // ==========================================
+        // 1. 先读取 IndexedDB 本地活动缓存
+        // ==========================================
 
-        fetch(GAS_URL, {
-          method: "POST",
+        let cachedActivity = null;
 
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8",
-          },
+        try {
+          const activities = await dbGetAll("activities");
 
-          body: JSON.stringify({
-            action: "pwaCheckin",
+          cachedActivity = activities.find(function (activity) {
+            return String(activity.ActivityID) === String(activityID);
+          });
 
-            type: "getActivityDetail",
+          console.log("本地活动详情缓存:", cachedActivity);
 
-            activityID: activityID,
-          }),
-        })
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error("HTTP " + response.status);
-            }
+          if (cachedActivity) {
+            renderActivity(cachedActivity);
+          }
+        } catch (error) {
+          console.error("读取本地活动缓存失败:", error);
+        }
 
-            return response.json();
-          })
+        // ==========================================
+        // 2. 再尝试从 GAS 获取最新活动详情
+        // ==========================================
 
-          .then(function (data) {
-            console.log("活动详情返回:", data);
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
 
-            renderActivity(data);
-          })
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
 
-          .catch(function (error) {
-            console.error("读取活动详情失败:", error);
+            body: JSON.stringify({
+              action: "pwaCheckin",
+              type: "getActivityDetail",
+              activityID: activityID,
+            }),
+          });
 
-            result.innerHTML = `
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const data = await response.json();
+
+          console.log("活动详情返回:", data);
+
+          renderActivity(data);
+        } catch (error) {
+          console.error("读取活动详情失败:", error);
+
+          // ==========================================
+          // 离线时如果有本地缓存，就继续使用缓存
+          // ==========================================
+
+          if (cachedActivity) {
+            console.log("网络不可用，继续使用本地活动详情缓存");
+            return;
+          }
+
+          // 没有缓存才显示错误
+          result.innerHTML = `
       <div class="error">
         ${t("error")}
         <br>
@@ -446,8 +474,8 @@
           ${escapeHtml(error.message)}
         </small>
       </div>
-      `;
-          });
+    `;
+        }
       }
 
       function renderActivity(data) {
