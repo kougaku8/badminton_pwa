@@ -34,30 +34,64 @@ self.addEventListener("activate", (event) => {
 });
 
 self.addEventListener("fetch", (event) => {
+  const request = event.request;
+
+  // ==========================================
+  // POST / PUT / DELETE 等非 GET 请求
+  // 不由 Service Worker 处理
+  // 直接交给浏览器
+  // ==========================================
+  if (request.method !== "GET") {
+    return;
+  }
+
   event.respondWith(
-    caches.match(event.request).then((cachedResponse) => {
-      const networkFetch = fetch(event.request)
-        .then((networkResponse) => {
-          if (
-            networkResponse &&
-            networkResponse.status === 200 &&
-            networkResponse.type === "basic" &&
-            event.request.url.startsWith(self.location.origin)
-          ) {
-            const responseClone = networkResponse.clone();
+    (async () => {
+      // ==========================================
+      // 1. Cache First
+      // ==========================================
+      const cachedResponse = await caches.match(request);
 
-            caches.open(CACHE_NAME).then((cache) => {
-              cache.put(event.request, responseClone);
-            });
-          }
+      if (cachedResponse) {
+        return cachedResponse;
+      }
 
-          return networkResponse;
-        })
-        .catch(() => {
-          return cachedResponse;
+      // ==========================================
+      // 2. Cache Miss → 请求网络
+      // ==========================================
+      try {
+        const networkResponse = await fetch(request);
+
+        // ==========================================
+        // 3. 只缓存本站成功的 GET 请求
+        // ==========================================
+        if (
+          networkResponse &&
+          networkResponse.status === 200 &&
+          networkResponse.type === "basic" &&
+          request.url.startsWith(self.location.origin)
+        ) {
+          const cache = await caches.open(CACHE_NAME);
+
+          await cache.put(request, networkResponse.clone());
+        }
+
+        return networkResponse;
+      } catch (error) {
+        console.warn("[SW] Cache miss + network failed:", request.url, error);
+
+        // ==========================================
+        // 4. 没缓存 + 网络失败
+        // 必须返回合法 Response
+        // ==========================================
+        return new Response("Network unavailable", {
+          status: 503,
+          statusText: "Service Unavailable",
+          headers: {
+            "Content-Type": "text/plain; charset=utf-8",
+          },
         });
-
-      return cachedResponse || networkFetch;
-    }),
+      }
+    })(),
   );
 });

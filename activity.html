@@ -404,51 +404,57 @@
           return;
         }
 
-        // ==========================================
-        // 1. 先读取 IndexedDB 本地活动缓存
-        // ==========================================
+        let hasLocalCache = false;
 
-        let cachedActivity = null;
-        let cachedDetail = null;
+        // ==========================================
+        // 1. IndexedDB：立即读取本地缓存
+        // ==========================================
 
         try {
-          // ==========================================
-          // 先读取完整活动详情缓存
-          // ==========================================
+          // ------------------------------------------
+          // 1.1 优先读取完整活动详情缓存
+          // ------------------------------------------
 
           const detailCache = await dbGet("activityDetails", activityID);
 
           if (detailCache && detailCache.Detail) {
-            cachedDetail = detailCache.Detail;
+            hasLocalCache = true;
 
-            console.log("本地完整活动详情缓存:", cachedDetail);
+            console.log("本地完整活动详情缓存:", detailCache.Detail);
 
-            renderActivity(cachedDetail);
+            // 立即显示缓存
+            renderActivity(detailCache.Detail);
           }
 
-          // ==========================================
-          // 如果没有完整详情，再读取基本活动缓存
-          // ==========================================
+          // ------------------------------------------
+          // 1.2 没有完整详情，再读取基本活动缓存
+          // ------------------------------------------
 
-          if (!cachedDetail) {
+          if (!hasLocalCache) {
             const activities = await dbGetAll("activities");
 
-            cachedActivity = activities.find(function (activity) {
+            const cachedActivity = activities.find(function (activity) {
               return String(activity.ActivityID) === String(activityID);
             });
 
-            console.log("本地基本活动缓存:", cachedActivity);
-
             if (cachedActivity) {
+              hasLocalCache = true;
+
+              console.log("本地基本活动缓存:", cachedActivity);
+
               const cachedData = {
                 Activity: cachedActivity,
+
                 Venue: {
                   Name: cachedActivity.VenueName || "",
                 },
+
                 Count: {},
+
                 Participants: [],
               };
 
+              // 立即显示基本缓存
               renderActivity(cachedData);
             }
           }
@@ -457,10 +463,19 @@
         }
 
         // ==========================================
-        // 2. 再尝试从 GAS 获取最新活动详情
+        // 2. 后台请求 GAS
+        //
+        // 有缓存：页面已经显示
+        // 没缓存：用户看到 loading
         // ==========================================
 
         try {
+          console.log(
+            hasLocalCache
+              ? "已有本地缓存，开始后台更新活动详情..."
+              : "没有本地缓存，开始获取活动详情...",
+          );
+
           const response = await fetch(GAS_URL, {
             method: "POST",
 
@@ -481,10 +496,10 @@
 
           const data = await response.json();
 
-          console.log("活动详情返回:", data);
+          console.log("后台活动详情返回:", data);
 
           // ==========================================
-          // 保存完整活动详情到 IndexedDB
+          // 3. 保存最新完整详情到 IndexedDB
           // ==========================================
 
           try {
@@ -493,25 +508,38 @@
               Detail: data,
             });
 
-            console.log("完整活动详情已保存到 IndexedDB:", activityID);
+            console.log("完整活动详情已更新到 IndexedDB:", activityID);
           } catch (error) {
             console.error("保存活动详情缓存失败:", error);
           }
 
+          // ==========================================
+          // 4. 网络数据成功
+          // 更新当前页面
+          // ==========================================
+
           renderActivity(data);
+
+          console.log("活动详情后台更新完成:", activityID);
         } catch (error) {
-          console.error("读取活动详情失败:", error);
-
           // ==========================================
-          // 离线时如果有本地缓存，就继续使用缓存
+          // 5. 后台更新失败
+          //
+          // 已经有缓存：
+          //     保留当前页面，不显示错误
+          //
+          // 没有缓存：
+          //     显示错误
           // ==========================================
 
-          if (cachedActivity) {
-            console.log("网络不可用，继续使用本地活动详情缓存");
+          console.warn("后台更新活动详情失败:", error);
+
+          if (hasLocalCache) {
+            console.log("网络不可用，继续使用本地活动缓存");
+
             return;
           }
 
-          // 没有缓存才显示错误
           result.innerHTML = `
       <div class="error">
         ${t("error")}
