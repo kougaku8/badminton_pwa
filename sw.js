@@ -3,6 +3,7 @@ const CACHE_NAME = "badminton-pwa-v4";
 const FILES_TO_CACHE = [
   "./",
   "./index.html",
+  "./activity.html",
   "./db.js",
   "./manifest.json",
   "./heian-bado-yoyaku-icon_512.png",
