@@ -1,4 +1,4 @@
-const CACHE_NAME = "badminton-pwa-v3";
+const CACHE_NAME = "badminton-pwa-v4";
 
 const FILES_TO_CACHE = [
   "./",
