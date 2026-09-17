@@ -409,27 +409,48 @@
         // ==========================================
 
         let cachedActivity = null;
+        let cachedDetail = null;
 
         try {
-          const activities = await dbGetAll("activities");
+          // ==========================================
+          // 先读取完整活动详情缓存
+          // ==========================================
 
-          cachedActivity = activities.find(function (activity) {
-            return String(activity.ActivityID) === String(activityID);
-          });
+          const detailCache = await dbGet("activityDetails", activityID);
 
-          console.log("本地活动详情缓存:", cachedActivity);
+          if (detailCache && detailCache.Detail) {
+            cachedDetail = detailCache.Detail;
 
-          if (cachedActivity) {
-            const cachedData = {
-              Activity: cachedActivity,
-              Venue: {
-                Name: cachedActivity.VenueName || "",
-              },
-              Count: {},
-              Participants: [],
-            };
+            console.log("本地完整活动详情缓存:", cachedDetail);
 
-            renderActivity(cachedData);
+            renderActivity(cachedDetail);
+          }
+
+          // ==========================================
+          // 如果没有完整详情，再读取基本活动缓存
+          // ==========================================
+
+          if (!cachedDetail) {
+            const activities = await dbGetAll("activities");
+
+            cachedActivity = activities.find(function (activity) {
+              return String(activity.ActivityID) === String(activityID);
+            });
+
+            console.log("本地基本活动缓存:", cachedActivity);
+
+            if (cachedActivity) {
+              const cachedData = {
+                Activity: cachedActivity,
+                Venue: {
+                  Name: cachedActivity.VenueName || "",
+                },
+                Count: {},
+                Participants: [],
+              };
+
+              renderActivity(cachedData);
+            }
           }
         } catch (error) {
           console.error("读取本地活动缓存失败:", error);
