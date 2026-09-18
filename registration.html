@@ -2408,14 +2408,13 @@
              PWA → GAS
           ===================================================== */
 
-      function submitRegistration() {
+      async function submitRegistration() {
         clearMessage();
 
         const activityIDs = getSelectedActivityIDs();
 
         if (activityIDs.length === 0) {
           showMessage(t("atLeastActivity"), "error");
-
           return;
         }
 
@@ -2425,7 +2424,6 @@
 
         if (participants.length === 0) {
           showMessage(t("atLeastParticipant"), "error");
-
           return;
         }
 
@@ -2454,7 +2452,6 @@
               .replace("{name}", duplicateCheck.name)
               .replace("{a}", duplicateCheck.firstIndex + 1)
               .replace("{b}", duplicateCheck.secondIndex + 1),
-
             "error",
           );
 
@@ -2463,64 +2460,139 @@
 
         const message = normalize(document.getElementById("message").value);
 
+        const clientRequestID =
+          "REQ-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substring(2, 10);
+
         const data = {
           activityIDs: activityIDs,
-
           bookerName: bookerName,
-
           participants: participants,
-
           message: message,
+
+          // 离线同步用的客户端唯一请求 ID
+          clientRequestID: clientRequestID,
         };
 
         console.log("registerActivities data:", data);
 
+        /*
+         * =====================================================
+         * 准备发送给 GAS 的完整请求
+         * =====================================================
+         */
+
+        const requestData = {
+          action: "pwaCheckin",
+          type: "registerActivities",
+          data: data,
+        };
+
         setSubmitting(true);
 
         /*
-         * PWA → GAS
+         * =====================================================
+         * 离线模式
+         * =====================================================
          */
 
-        fetch(GAS_URL, {
-          method: "POST",
+        if (!navigator.onLine) {
+          try {
+            await addSyncTask({
+              action: "registerActivities",
+              data: requestData,
+            });
 
-          headers: {
-            "Content-Type": "text/plain;charset=utf-8",
-          },
-
-          body: JSON.stringify({
-            action: "pwaCheckin",
-
-            type: "registerActivities",
-
-            data: data,
-          }),
-        })
-          .then(function (response) {
-            if (!response.ok) {
-              throw new Error("HTTP错误: " + response.status);
-            }
-
-            return response.json();
-          })
-          .then(function (result) {
-            console.log("报名结果:", result);
+            console.log("[SYNC] 报名已保存到离线同步队列:", requestData);
 
             setSubmitting(false);
 
-            handleRegistrationResult(result);
-          })
-          .catch(function (error) {
-            console.error("报名失败:", error);
+            showMessage(
+              "当前没有网络，报名已保存，网络恢复后会自动发送。",
+              "success",
+            );
+
+            return;
+          } catch (error) {
+            console.error("[SYNC] 保存离线报名失败:", error);
+
+            setSubmitting(false);
+
+            showMessage(
+              "无法保存离线报名：" + (error.message || error),
+              "error",
+            );
+
+            return;
+          }
+        }
+
+        /*
+         * =====================================================
+         * 在线模式
+         * =====================================================
+         */
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+
+            body: JSON.stringify(requestData),
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP错误: " + response.status);
+          }
+
+          const result = await response.json();
+
+          console.log("报名结果:", result);
+
+          setSubmitting(false);
+
+          handleRegistrationResult(result);
+        } catch (error) {
+          console.error("报名失败:", error);
+
+          /*
+           * 网络发送失败时，也进入离线队列
+           *
+           * 注意：
+           * 这里暂时把所有 fetch 失败都视为
+           * 可以稍后重试。
+           */
+
+          try {
+            await addSyncTask({
+              action: "registerActivities",
+              data: requestData,
+            });
+
+            console.log("[SYNC] 网络发送失败，报名已保存到同步队列");
+
+            setSubmitting(false);
+
+            showMessage(
+              "当前网络不可用，报名已保存，网络恢复后会自动发送。",
+              "success",
+            );
+          } catch (queueError) {
+            console.error("[SYNC] 保存同步队列失败:", queueError);
 
             setSubmitting(false);
 
             showMessage(
               t("registrationFailed") + (error.message || error),
-
               "error",
             );
-          });
+          }
+        }
       }
 
       /* =====================================================
