@@ -2662,7 +2662,27 @@
         } else if (results.length > 1) {
           console.log("[REGISTER] 多个活动报名结果:", results);
 
-          showMessage("报名请求已发送，请确认各活动报名结果。", "success");
+          const successCount = results.filter(function (result) {
+            return result && result.success === true;
+          }).length;
+
+          const failedCount = results.length - successCount;
+
+          if (failedCount === 0) {
+            showMessage(
+              "报名成功！共 " + successCount + " 个活动全部报名成功。",
+              "success",
+            );
+          } else {
+            showMessage(
+              "报名完成：成功 " +
+                successCount +
+                " 个，失败 " +
+                failedCount +
+                " 个。",
+              failedCount > 0 ? "error" : "success",
+            );
+          }
         } else {
           showMessage("网络暂时不可用，报名已保存到同步队列。", "success");
         }
