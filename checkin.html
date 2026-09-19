@@ -1558,7 +1558,12 @@
         button.className = "checkin-button";
         button.textContent = t("checkin");
 
-        button.onclick = () => checkin(registrationID);
+        /*button.onclick = () => checkin(registrationID);*/
+
+        button.onclick = () => {
+          console.log("[CHECKIN] 点击签到按钮:", registrationID);
+          checkin(registrationID);
+        };
 
         div.appendChild(select);
         div.appendChild(button);
