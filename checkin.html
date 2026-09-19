@@ -1323,6 +1323,7 @@
 
       function loadList() {
         const id = $("activityID").value.trim();
+        const cacheKey = "checkin_" + id;
 
         if (!id) {
           showMessage(t("activityNotFound"), true);

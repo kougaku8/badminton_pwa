@@ -187,6 +187,20 @@ async function dbGetAll(storeName) {
   });
 }
 
+async function dbGetByIndex(storeName, indexName, value) {
+  const db = await openDB();
+
+  return new Promise((resolve, reject) => {
+    const transaction = db.transaction(storeName, "readonly");
+    const store = transaction.objectStore(storeName);
+    const index = store.index(indexName);
+    const request = index.getAll(value);
+
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error);
+  });
+}
+
 // =====================================================
 // 删除数据
 // =====================================================
