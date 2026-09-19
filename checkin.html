@@ -1318,10 +1318,20 @@
       }
 
       /* =====================================================
-                                       加载签到名单
-                                    ===================================================== */
+          加载签到名单
+        ===================================================== */
 
       function loadList() {
+        const id = $("activityID").value.trim();
+        const cacheKey = "checkin_" + id;
+
+        if (!id) {
+          showMessage(t("activityNotFound"), true);
+          return;
+        }
+
+        currentActivityID = id;
+
         // ========================================
         // 离线：先读取本地签到名单缓存
         // ========================================
@@ -1343,16 +1353,6 @@
           .catch(function (error) {
             console.error("[CHECKIN] 读取本地签到名单失败:", error);
           });
-
-        const id = $("activityID").value.trim();
-        const cacheKey = "checkin_" + id;
-
-        if (!id) {
-          showMessage(t("activityNotFound"), true);
-          return;
-        }
-
-        currentActivityID = id;
 
         $("displayCheckinID").textContent = id;
 
