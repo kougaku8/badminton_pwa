@@ -2429,27 +2429,29 @@
 
             const response = await fetch(GAS_URL, {
               method: "POST",
-              mode: "no-cors",
+              mode: "cors",
               headers: {
                 "Content-Type": "text/plain;charset=utf-8",
               },
               body: JSON.stringify(task.data),
             });
 
-            if (response.type === "opaque") {
-              console.log("[SYNC] 请求已发送，收到 opaque response");
-            } else {
-              if (!response.ok) {
-                throw new Error("HTTP错误: " + response.status);
-              }
+            console.log("[SYNC] response.type =", response.type);
+            console.log("[SYNC] response.status =", response.status);
+            console.log("[SYNC] response.ok =", response.ok);
 
-              const result = await response.json();
+            if (!response.ok) {
+              throw new Error("HTTP错误: " + response.status);
+            }
 
-              console.log("[SYNC] 服务器返回:", result);
+            const result = await response.json();
 
-              if (result && result.success === false) {
-                throw new Error(result.message || "服务器处理失败");
-              }
+            console.log("[SYNC] GAS 返回:", result);
+
+            if (!result || result.success !== true) {
+              throw new Error(
+                result?.message || result?.error || "服务器处理失败",
+              );
             }
 
             await removeSyncTask(task.id);
