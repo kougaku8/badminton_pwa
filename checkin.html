@@ -1352,7 +1352,7 @@
           },
         )
           .then((response) => response.json())
-          .then((res) => {
+          .then(async (res) => {
             if (!res?.success) {
               members = [];
               updateSummary();
@@ -1368,6 +1368,14 @@
             }
 
             members = Array.isArray(res.data) ? res.data : [];
+
+            await dbPut("settings", {
+              key: "checkinList_" + id,
+              value: members,
+              updatedAt: new Date().toISOString(),
+            });
+
+            console.log("[CHECKIN] 签到名单已保存到本地缓存:", id, members);
 
             updateSummary();
             render(filterMembers());
