@@ -1322,6 +1322,28 @@
                                     ===================================================== */
 
       function loadList() {
+        // ========================================
+        // 离线：先读取本地签到名单缓存
+        // ========================================
+        dbGet("settings", "checkinList_" + id)
+          .then(function (cached) {
+            if (!cached || !Array.isArray(cached.value)) {
+              console.log("[CHECKIN] 没有本地签到名单缓存:", id);
+              return;
+            }
+
+            members = cached.value;
+
+            console.log("[CHECKIN] 使用本地签到名单缓存:", id, members);
+
+            updateSummary();
+            render(filterMembers());
+            updateActivityHeader();
+          })
+          .catch(function (error) {
+            console.error("[CHECKIN] 读取本地签到名单失败:", error);
+          });
+
         const id = $("activityID").value.trim();
         const cacheKey = "checkin_" + id;
 
@@ -1339,6 +1361,14 @@
                                           ${escapeHtml(t("loadingList"))}
                                         </div>
                                       `;
+
+        // ========================================
+        // 离线时不请求 GAS
+        // ========================================
+        if (!navigator.onLine) {
+          console.log("[CHECKIN] 当前离线，停止请求 GAS");
+          return;
+        }
 
         fetch(
           "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
