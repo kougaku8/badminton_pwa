@@ -957,8 +957,8 @@
 
     <script>
       /* =====================================================
-                                 基础设置
-                              ===================================================== */
+                                       基础设置
+                                    ===================================================== */
       const I18N = {
         zh: {
           home: "🏠 返回首页",
@@ -1040,14 +1040,14 @@
       let currentActivityID = "";
 
       /* =====================================================
-                                 DOM
-                              ===================================================== */
+                                       DOM
+                                    ===================================================== */
 
       const $ = (id) => document.getElementById(id);
 
       /* =====================================================
-                                 翻译
-                              ===================================================== */
+                                       翻译
+                                    ===================================================== */
 
       function t(key) {
         return I18N[currentLanguage]?.[key] ?? I18N.zh[key] ?? key;
@@ -1089,15 +1089,15 @@
       }
 
       /* =====================================================
-                                 首页
-                              ===================================================== */
+                                       首页
+                                    ===================================================== */
       function goHome() {
         window.location.href = "./index.html";
       }
 
       /* =====================================================
-                                 页面初始化
-                              ===================================================== */
+                                       页面初始化
+                                    ===================================================== */
 
       window.addEventListener("DOMContentLoaded", () => {
         applyLanguage();
@@ -1111,92 +1111,211 @@
       }
 
       /* =====================================================
-                                 今日活动
-                              ===================================================== */
+                                       今日活动
+                                    ===================================================== */
 
       function loadTodayActivities(preferredActivityID = "") {
         const box = $("todayActivityList");
 
         box.innerHTML = `
-                            <div class="empty">
-                              ${escapeHtml(t("loading"))}
-                            </div>
-                          `;
+          <div class="empty">
+            ${escapeHtml(t("loading"))}
+          </div>
+        `;
 
-        fetch(
-          "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              action: "pwaCheckin",
-              type: "getActivities",
-            }),
-          },
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (activities) {
-            if (!activities || !Array.isArray(activities)) {
-              box.innerHTML = `
-                                  <div class="empty">
-                                    ${escapeHtml(t("noActivities"))}
-                                  </div>
-                                `;
-              return;
-            }
+        const today = getTodayString();
 
-            const today = getTodayString();
+        // ========================================
+        // 处理活动列表
+        // ========================================
+        function handleActivities(activities, source) {
+          if (!activities || !Array.isArray(activities)) {
+            box.innerHTML = `
+              <div class="empty">
+                ${escapeHtml(t("noActivities"))}
+              </div>
+            `;
+            return;
+          }
 
-            const todayActivities = activities.filter(function (activity) {
-              return String(activity.Date || "").substring(0, 10) === today;
+          const todayActivities = activities.filter(function (activity) {
+            return String(activity.Date || "").substring(0, 10) === today;
+          });
+
+          allTodayActivities = todayActivities;
+
+          console.log("[CHECKIN] 今日活动来源:", source, todayActivities);
+
+          if (todayActivities.length === 0) {
+            box.innerHTML = `
+              <div class="empty">
+                ${escapeHtml(t("noActivities"))}
+              </div>
+            `;
+            return;
+          }
+
+          renderTodayActivities(todayActivities);
+
+          if (preferredActivityID) {
+            const preferred = todayActivities.find(function (activity) {
+              return (
+                String(activity.ActivityID) === String(preferredActivityID)
+              );
             });
 
-            // ★ 保存今天的活动
-            allTodayActivities = todayActivities;
+            if (preferred) {
+              selectActivity(preferred.ActivityID);
+              return;
+            }
+          }
 
-            if (todayActivities.length === 0) {
-              box.innerHTML = `
-                                  <div class="empty">
-                                    ${escapeHtml(t("noActivities"))}
-                                  </div>
-                                `;
+          if (todayActivities.length === 1) {
+            selectActivity(todayActivities[0].ActivityID);
+          }
+        }
+
+        // ========================================
+        // 第一步：先读取本地缓存
+        // ========================================
+        dbGetAll("activities")
+          .then(function (cachedActivities) {
+            if (cachedActivities && cachedActivities.length > 0) {
+              console.log("[CHECKIN] 使用本地活动缓存:", cachedActivities);
+
+              handleActivities(cachedActivities, "IndexedDB");
+            } else {
+              console.log("[CHECKIN] 没有本地活动缓存");
+            }
+
+            // ========================================
+            // 第二步：联网后更新服务器数据
+            // ========================================
+            if (!navigator.onLine) {
+              console.log("[CHECKIN] 当前离线，不请求 GAS");
               return;
             }
 
-            renderTodayActivities(todayActivities);
+            return fetch(
+              "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
+              {
+                method: "POST",
+                body: JSON.stringify({
+                  action: "pwaCheckin",
+                  type: "getActivities",
+                }),
+              },
+            )
+              .then(function (response) {
+                return response.json();
+              })
+              .then(function (activities) {
+                if (activities && Array.isArray(activities)) {
+                  // 保存最新活动到 IndexedDB
+                  return dbPutAll("activities", activities).then(function () {
+                    console.log("[CHECKIN] 活动列表已更新到本地缓存");
 
-            if (preferredActivityID) {
-              const preferred = todayActivities.find(function (activity) {
-                return (
-                  String(activity.ActivityID) === String(preferredActivityID)
-                );
+                    handleActivities(activities, "GAS");
+                  });
+                }
               });
-
-              if (preferred) {
-                selectActivity(preferred.ActivityID);
-                return;
-              }
-            }
-
-            if (todayActivities.length === 1) {
-              selectActivity(todayActivities[0].ActivityID);
-            }
           })
           .catch(function (error) {
-            console.error("loadTodayActivities error:", error);
+            console.error("[CHECKIN] loadTodayActivities error:", error);
 
-            box.innerHTML = `
-                                <div class="empty">
-                                  ⚠️ ${escapeHtml(
-                                    error && error.message
-                                      ? error.message
-                                      : String(error),
-                                  )}
-                                </div>
-                              `;
+            // 如果已经有缓存，不覆盖缓存页面
+            if (!allTodayActivities || allTodayActivities.length === 0) {
+              box.innerHTML = `
+                <div class="empty">
+                  ⚠️ ${escapeHtml(
+                    error && error.message ? error.message : String(error),
+                  )}
+                </div>
+              `;
+            }
           });
       }
+      const box = $("todayActivityList");
+
+      box.innerHTML = `
+                                  <div class="empty">
+                                    ${escapeHtml(t("loading"))}
+                                  </div>
+                                `;
+
+      fetch(
+        "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
+        {
+          method: "POST",
+          body: JSON.stringify({
+            action: "pwaCheckin",
+            type: "getActivities",
+          }),
+        },
+      )
+        .then(function (response) {
+          return response.json();
+        })
+        .then(function (activities) {
+          if (!activities || !Array.isArray(activities)) {
+            box.innerHTML = `
+                                        <div class="empty">
+                                          ${escapeHtml(t("noActivities"))}
+                                        </div>
+                                      `;
+            return;
+          }
+
+          const today = getTodayString();
+
+          const todayActivities = activities.filter(function (activity) {
+            return String(activity.Date || "").substring(0, 10) === today;
+          });
+
+          // ★ 保存今天的活动
+          allTodayActivities = todayActivities;
+
+          if (todayActivities.length === 0) {
+            box.innerHTML = `
+                                        <div class="empty">
+                                          ${escapeHtml(t("noActivities"))}
+                                        </div>
+                                      `;
+            return;
+          }
+
+          renderTodayActivities(todayActivities);
+
+          if (preferredActivityID) {
+            const preferred = todayActivities.find(function (activity) {
+              return (
+                String(activity.ActivityID) === String(preferredActivityID)
+              );
+            });
+
+            if (preferred) {
+              selectActivity(preferred.ActivityID);
+              return;
+            }
+          }
+
+          if (todayActivities.length === 1) {
+            selectActivity(todayActivities[0].ActivityID);
+          }
+        })
+        .catch(function (error) {
+          console.error("loadTodayActivities error:", error);
+
+          box.innerHTML = `
+                                      <div class="empty">
+                                        ⚠️ ${escapeHtml(
+                                          error && error.message
+                                            ? error.message
+                                            : String(error),
+                                        )}
+                                      </div>
+                                    `;
+        });
 
       function renderTodayActivities(list) {
         const box = $("todayActivityList");
@@ -1205,10 +1324,10 @@
 
         if (!list?.length) {
           box.innerHTML = `
-                                    <div class="empty">
-                                      📅 ${escapeHtml(t("noTodayActivity"))}
-                                    </div>
-                                  `;
+                                          <div class="empty">
+                                            📅 ${escapeHtml(t("noTodayActivity"))}
+                                          </div>
+                                        `;
           return;
         }
 
@@ -1234,17 +1353,17 @@
             : "";
 
           button.innerHTML = `
-                                    <div class="activity-option-title">
-                                      🏸 ${escapeHtml(title)}
-                                    </div>
+                                          <div class="activity-option-title">
+                                            🏸 ${escapeHtml(title)}
+                                          </div>
 
-                                    <div class="activity-option-info">
-                                      📅 ${escapeHtml(date)}
-                                      ${time}${end}
-                                      <br>
-                                      🆔 ${escapeHtml(activity.ActivityID || "")}
-                                    </div>
-                                  `;
+                                          <div class="activity-option-info">
+                                            📅 ${escapeHtml(date)}
+                                            ${time}${end}
+                                            <br>
+                                            🆔 ${escapeHtml(activity.ActivityID || "")}
+                                          </div>
+                                        `;
 
           button.onclick = () => selectActivity(activity.ActivityID);
 
@@ -1280,8 +1399,8 @@
       }
 
       /* =====================================================
-                                 加载签到名单
-                              ===================================================== */
+                                       加载签到名单
+                                    ===================================================== */
 
       function loadList() {
         const id = $("activityID").value.trim();
@@ -1296,10 +1415,10 @@
         $("displayCheckinID").textContent = id;
 
         $("list").innerHTML = `
-                                  <div class="empty">
-                                    ${escapeHtml(t("loadingList"))}
-                                  </div>
-                                `;
+                                        <div class="empty">
+                                          ${escapeHtml(t("loadingList"))}
+                                        </div>
+                                      `;
 
         fetch(
           "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
@@ -1319,11 +1438,11 @@
               updateSummary();
 
               $("list").innerHTML = `
-                          <div class="error">
-                            ❌
-                            ${escapeHtml(res?.message || t("activityNotFound"))}
-                          </div>
-                        `;
+                                <div class="error">
+                                  ❌
+                                  ${escapeHtml(res?.message || t("activityNotFound"))}
+                                </div>
+                              `;
 
               return;
             }
@@ -1336,12 +1455,12 @@
           })
           .catch((error) => {
             $("list").innerHTML = `
-                        <div class="error">
-                          ❌
-                          ${escapeHtml(t("loadFailed"))}
-                          ${escapeHtml(error.message || error)}
-                        </div>
-                      `;
+                              <div class="error">
+                                ❌
+                                ${escapeHtml(t("loadFailed"))}
+                                ${escapeHtml(error.message || error)}
+                              </div>
+                            `;
           });
       }
 
@@ -1357,8 +1476,8 @@
       }
 
       /* =====================================================
-                                 搜索
-                              ===================================================== */
+                                       搜索
+                                    ===================================================== */
 
       function search() {
         render(filterMembers());
@@ -1381,8 +1500,8 @@
       }
 
       /* =====================================================
-                                 显示名单
-                              ===================================================== */
+                                       显示名单
+                                    ===================================================== */
 
       function render(data) {
         const box = $("list");
@@ -1391,10 +1510,10 @@
 
         if (!data?.length) {
           box.innerHTML = `
-                                    <div class="empty">
-                                      👤 ${escapeHtml(t("noMembers"))}
-                                    </div>
-                                  `;
+                                          <div class="empty">
+                                            👤 ${escapeHtml(t("noMembers"))}
+                                          </div>
+                                        `;
           return;
         }
 
@@ -1410,37 +1529,41 @@
         div.className = "member-card" + (checked ? " checked" : "");
 
         div.innerHTML = `
-                                  <div class="member-name">
-                                    ${escapeHtml(member.Name || "")}
-                                  </div>
+                                        <div class="member-name">
+                                          ${escapeHtml(member.Name || "")}
+                                        </div>
 
-                                  <div class="member-info">
-                                    ${escapeHtml(t("level"))}：
-                                    ${escapeHtml(member.Level || "-")}
-                                  </div>
+                                        <div class="member-info">
+                                          ${escapeHtml(t("level"))}：
+                                          ${escapeHtml(member.Level || "-")}
+                                        </div>
 
-                                  <div class="member-status ${
-                                    checked ? "status-checked" : "status-not"
-                                  }">
-                                    ${escapeHtml(
-                                      checked
-                                        ? t("checkedStatus")
-                                        : t("notChecked"),
-                                    )}
-                                  </div>
-                                `;
+                                        <div class="member-status ${
+                                          checked
+                                            ? "status-checked"
+                                            : "status-not"
+                                        }">
+                                          ${escapeHtml(
+                                            checked
+                                              ? t("checkedStatus")
+                                              : t("notChecked"),
+                                          )}
+                                        </div>
+                                      `;
 
         if (checked) {
           div.insertAdjacentHTML(
             "beforeend",
             `
-                                      <div class="member-info">
-                                        ${escapeHtml(t("payment"))}：
-                                        ${escapeHtml(
-                                          paymentText(member.PaymentMethod),
-                                        )}
-                                      </div>
-                                    `,
+                                            <div class="member-info">
+                                              ${escapeHtml(t("payment"))}：
+                                              ${escapeHtml(
+                                                paymentText(
+                                                  member.PaymentMethod,
+                                                ),
+                                              )}
+                                            </div>
+                                          `,
           );
 
           return div;
@@ -1454,22 +1577,22 @@
         select.className = "payment-select";
 
         select.innerHTML = `
-                                  <option value="CASH">
-                                    ${escapeHtml(t("cash"))}
-                                  </option>
+                                        <option value="CASH">
+                                          ${escapeHtml(t("cash"))}
+                                        </option>
 
-                                  <option value="PAYPAY">
-                                    ${escapeHtml(t("paypay"))}
-                                  </option>
+                                        <option value="PAYPAY">
+                                          ${escapeHtml(t("paypay"))}
+                                        </option>
 
-                                  <option value="UNPAID">
-                                    ${escapeHtml(t("unpaid"))}
-                                  </option>
+                                        <option value="UNPAID">
+                                          ${escapeHtml(t("unpaid"))}
+                                        </option>
 
-                                  <option value="FREE">
-                                    ${escapeHtml(t("free"))}
-                                  </option>
-                                `;
+                                        <option value="FREE">
+                                          ${escapeHtml(t("free"))}
+                                        </option>
+                                      `;
 
         const button = document.createElement("button");
 
@@ -1486,8 +1609,8 @@
       }
 
       /* =====================================================
-                                 付款方式
-                              ===================================================== */
+                                       付款方式
+                                    ===================================================== */
 
       function paymentText(payment) {
         const value = String(payment || "").toUpperCase();
@@ -1503,8 +1626,8 @@
       }
 
       /* =====================================================
-                                 签到
-                              ===================================================== */
+                                       签到
+                                    ===================================================== */
 
       function checkin(registrationID) {
         const select = $(`pay_${registrationID}`);
@@ -1576,8 +1699,8 @@
       }
 
       /* =====================================================
-                                 统计
-                              ===================================================== */
+                                       统计
+                                    ===================================================== */
 
       function updateSummary() {
         const checked = members.filter((member) =>
@@ -1589,19 +1712,19 @@
       }
 
       /* =====================================================
-                                 消息
-                              ===================================================== */
+                                       消息
+                                    ===================================================== */
 
       function showMessage(message, isError) {
         const box = $("messageArea");
 
         box.innerHTML = `
-                                  <div class="${
-                                    isError ? "error" : "success-message"
-                                  }">
-                                    ${escapeHtml(message)}
-                                  </div>
-                                `;
+                                        <div class="${
+                                          isError ? "error" : "success-message"
+                                        }">
+                                          ${escapeHtml(message)}
+                                        </div>
+                                      `;
 
         setTimeout(() => {
           box.innerHTML = "";
@@ -1609,8 +1732,8 @@
       }
 
       /* =====================================================
-                                 日期
-                              ===================================================== */
+                                       日期
+                                    ===================================================== */
 
       function getTodayString() {
         const date = new Date();
@@ -1639,8 +1762,8 @@
       }
 
       /* =====================================================
-                                 安全处理
-                              ===================================================== */
+                                       安全处理
+                                    ===================================================== */
 
       function escapeHtml(value) {
         if (value === null || value === undefined) {
