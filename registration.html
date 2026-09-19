@@ -2440,19 +2440,64 @@
             console.log("[SYNC] response.status =", response.status);
             console.log("[SYNC] response.ok =", response.ok);
 
+            // ==========================================
+            // opaque response
+            // ==========================================
+
+            if (response.type === "opaque") {
+              console.warn(
+                "[SYNC] opaque response，无法确认服务器是否处理成功，保留任务:",
+                task.id,
+              );
+
+              continue;
+            }
+
+            // ==========================================
+            // HTTP 错误
+            // ==========================================
+
             if (!response.ok) {
               throw new Error("HTTP错误: " + response.status);
             }
 
-            const result = await response.json();
+            // ==========================================
+            // 读取 GAS JSON
+            // ==========================================
+
+            let result;
+
+            try {
+              result = await response.json();
+            } catch (jsonError) {
+              console.error(
+                "[SYNC] 无法解析服务器 JSON，保留任务:",
+                task.id,
+                jsonError,
+              );
+
+              continue;
+            }
 
             console.log("[SYNC] GAS 返回:", result);
 
+            // ==========================================
+            // GAS 明确返回失败
+            // ==========================================
+
             if (!result || result.success !== true) {
-              throw new Error(
-                result?.message || result?.error || "服务器处理失败",
+              console.warn(
+                "[SYNC] GAS 没有确认成功，保留任务:",
+                task.id,
+                result,
               );
+
+              continue;
             }
+
+            // ==========================================
+            // 只有明确 success:true 才删除
+            // ==========================================
 
             await removeSyncTask(task.id);
 
