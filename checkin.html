@@ -1796,6 +1796,91 @@
       }
 
       /* =====================================================
+         离线同步队列
+         ===================================================== */
+
+      async function processSyncQueue() {
+        if (!navigator.onLine) {
+          console.log("[SYNC] 当前离线，不进行同步");
+          return;
+        }
+
+        const queue = await getSyncQueue();
+
+        console.log("[SYNC] 待同步任务数量:", queue.length);
+
+        if (!queue || queue.length === 0) {
+          console.log("[SYNC] 没有需要同步的任务");
+          return;
+        }
+
+        console.log("[SYNC] ===== 开始自动同步 =====");
+
+        for (const task of queue) {
+          try {
+            console.log("[SYNC] 正在同步任务:", task.id);
+
+            const response = await fetch(GAS_URL, {
+              method: "POST",
+              mode: "no-cors",
+              headers: {
+                "Content-Type": "text/plain;charset=utf-8",
+              },
+              body: JSON.stringify(task.data),
+            });
+
+            console.log(
+              "[SYNC] 请求已发送:",
+              task.id,
+              "response.type =",
+              response.type,
+            );
+
+            if (response.type === "opaque") {
+              console.log("[SYNC] opaque response，认为请求已经发送:", task.id);
+
+              await removeSyncTask(task.id);
+
+              console.log("[SYNC] 同步成功，已删除任务:", task.id);
+
+              continue;
+            }
+
+            if (!response.ok) {
+              throw new Error("HTTP错误: " + response.status);
+            }
+
+            const result = await response.json();
+
+            console.log("[SYNC] GAS 返回:", task.id, result);
+
+            if (
+              result &&
+              result.success === false &&
+              result.message === "已经签到"
+            ) {
+              console.log("[SYNC] 已经签到，删除同步任务:", task.id);
+
+              await removeSyncTask(task.id);
+              continue;
+            }
+
+            if (result && result.success === false) {
+              throw new Error(result.message || "服务器处理失败");
+            }
+
+            await removeSyncTask(task.id);
+
+            console.log("[SYNC] 同步成功，已删除任务:", task.id);
+          } catch (error) {
+            console.error("[SYNC] 同步失败，保留任务:", task.id, error);
+          }
+        }
+
+        console.log("[SYNC] ===== 自动同步结束 =====");
+      }
+
+      /* =====================================================
           统计
          ===================================================== */
 
