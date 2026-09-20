@@ -1560,14 +1560,23 @@
 
         /*button.onclick = () => checkin(registrationID);*/
 
-        button.addEventListener("click", function () {
+        button.addEventListener("click", async function () {
           console.log("[CHECKIN] 点击签到按钮:", registrationID);
 
+          // 防止连续点击
+          if (button.disabled) {
+            return;
+          }
+
+          button.disabled = true;
+          button.textContent = "⏳";
+
           try {
-            checkin(registrationID);
-            console.log("[CHECKIN] checkin() 已调用");
-          } catch (error) {
-            console.error("[CHECKIN] checkin() 调用异常:", error);
+            await checkin(registrationID);
+          } finally {
+            // checkin 完成以后恢复按钮
+            button.disabled = false;
+            button.textContent = t("checkin");
           }
         });
 
@@ -1598,80 +1607,205 @@
           签到
          =================================================== */
 
-      function checkin(registrationID) {
+      async function checkin(registrationID) {
         console.log("[CHECKIN] ===== 进入 checkin() =====", registrationID);
 
-        const select = $(`pay_${registrationID}`);
+        try {
+          // -------------------------------------------------
+          // 1. 检查 RegistrationID
+          // -------------------------------------------------
+          if (!registrationID) {
+            console.error("[CHECKIN] RegistrationID 为空");
 
-        const payment = select?.value || "UNPAID";
+            showMessage("签到失败：缺少报名 ID", true);
+            return;
+          }
 
-        const clientRequestID =
-          "CHECKIN-" +
-          Date.now() +
-          "-" +
-          Math.random().toString(36).substring(2, 10);
+          // -------------------------------------------------
+          // 2. 获取付款方式
+          // -------------------------------------------------
+          const select = $(`pay_${registrationID}`);
 
-        // ========================================
-        // 离线签到：保存到同步队列
-        // ========================================
-        if (!navigator.onLine) {
-          addSyncTask({
-            action: "checkin",
-            data: {
-              action: "pwaCheckin",
-              type: "checkin",
-              registrationID: registrationID,
-              paymentMethod: payment,
-              clientRequestID: clientRequestID,
-            },
-          })
-            .then(() => {
-              showMessage("📴 签到已保存，网络恢复后会自动同步。", false);
-            })
-            .catch((error) => {
-              console.error("[CHECKIN] 保存离线签到失败:", error);
+          if (!select) {
+            console.error(
+              "[CHECKIN] 找不到付款方式 select:",
+              `pay_${registrationID}`,
+            );
 
-              showMessage("签到保存失败：" + (error.message || error), true);
+            showMessage("签到失败：找不到付款方式", true);
+            return;
+          }
+
+          const payment = select.value || "UNPAID";
+
+          console.log("[CHECKIN] 付款方式:", payment);
+
+          // -------------------------------------------------
+          // 3. 生成幂等请求 ID
+          // -------------------------------------------------
+          const clientRequestID =
+            "CHECKIN-" +
+            Date.now() +
+            "-" +
+            Math.random().toString(36).substring(2, 10);
+
+          console.log("[CHECKIN] clientRequestID:", clientRequestID);
+
+          // -------------------------------------------------
+          // 4. 离线签到
+          // -------------------------------------------------
+          if (!navigator.onLine) {
+            console.log("[CHECKIN] 当前离线，保存到 syncQueue");
+
+            await addSyncTask({
+              action: "checkin",
+              data: {
+                action: "pwaCheckin",
+                type: "checkin",
+                registrationID: registrationID,
+                paymentMethod: payment,
+                clientRequestID: clientRequestID,
+              },
             });
 
-          return;
-        }
+            console.log("[CHECKIN] 离线签到已保存");
 
-        fetch(
-          "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              action: "pwaCheckin",
-              type: "checkin",
-              registrationID: registrationID,
-              paymentMethod: payment,
-              clientRequestID: clientRequestID,
-            }),
-          },
-        )
-          .then((response) => response.json())
-          .then((res) => {
-            if (res?.success === false) {
-              showMessage(res.message || t("checkinFailed"), true);
-              return;
+            // 本地立即更新状态
+            const member = members.find(
+              (item) => String(item.RegistrationID) === String(registrationID),
+            );
+
+            if (member) {
+              member.CheckedIn = true;
+              member.PaymentMethod = payment;
+              member.ClientRequestID = clientRequestID;
+              member.CheckinStatus = "PENDING";
+              member.CheckedInAt = new Date().toISOString();
+
+              await dbPut("settings", {
+                key: "checkinList_" + currentActivityID,
+                value: members,
+                updatedAt: new Date().toISOString(),
+              });
+
+              updateSummary();
+              render(filterMembers());
             }
 
-            showMessage("✅ " + (res?.message || t("checkinSuccess")), false);
+            showMessage("📴 签到已保存，网络恢复后会自动同步。", false);
 
-            loadList();
-          })
-          .catch((error) => {
-            showMessage(
-              t("checkinFailed") + " " + (error.message || error),
-              true,
-            );
-          });
+            return;
+          }
+
+          // -------------------------------------------------
+          // 5. 在线签到
+          // -------------------------------------------------
+          console.log("[CHECKIN] 当前在线");
+          console.log("[CHECKIN] 准备请求 GAS");
+
+          const url =
+            "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
+
+          const payload = {
+            action: "pwaCheckin",
+            type: "checkin",
+            registrationID: registrationID,
+            paymentMethod: payment,
+            clientRequestID: clientRequestID,
+          };
+
+          console.log("[CHECKIN] 请求数据:", payload);
+
+          // -------------------------------------------------
+          // 6. fetch + 超时
+          // -------------------------------------------------
+          const controller = new AbortController();
+
+          const timeoutID = setTimeout(() => {
+            console.error("[CHECKIN] GAS 请求超过 15 秒");
+
+            controller.abort();
+          }, 15000);
+
+          let response;
+
+          try {
+            response = await fetch(url, {
+              method: "POST",
+              body: JSON.stringify(payload),
+              signal: controller.signal,
+            });
+          } finally {
+            clearTimeout(timeoutID);
+          }
+
+          console.log("[CHECKIN] GAS response:", response);
+          console.log("[CHECKIN] HTTP status:", response.status);
+          console.log("[CHECKIN] response.ok:", response.ok);
+
+          // -------------------------------------------------
+          // 7. 读取返回内容
+          // -------------------------------------------------
+          const text = await response.text();
+
+          console.log("[CHECKIN] GAS 原始返回:", text);
+
+          let res;
+
+          try {
+            res = JSON.parse(text);
+          } catch (jsonError) {
+            console.error("[CHECKIN] GAS 返回不是 JSON:", jsonError);
+
+            showMessage("签到失败：服务器返回格式错误", true);
+
+            return;
+          }
+
+          console.log("[CHECKIN] GAS JSON:", res);
+
+          // -------------------------------------------------
+          // 8. GAS 明确返回失败
+          // -------------------------------------------------
+          if (res?.success === false) {
+            console.error("[CHECKIN] GAS 返回签到失败:", res);
+
+            showMessage(res.message || t("checkinFailed"), true);
+
+            return;
+          }
+
+          // -------------------------------------------------
+          // 9. 成功
+          // -------------------------------------------------
+          console.log("[CHECKIN] ===== 签到成功 =====");
+
+          showMessage("✅ " + (res?.message || t("checkinSuccess")), false);
+
+          // -------------------------------------------------
+          // 10. 重新加载签到名单
+          // -------------------------------------------------
+          console.log("[CHECKIN] 重新加载签到名单");
+
+          await loadList();
+        } catch (error) {
+          console.error("[CHECKIN] checkin() 异常:", error);
+
+          if (error?.name === "AbortError") {
+            showMessage("签到失败：服务器请求超时，请检查网络或稍后重试", true);
+            return;
+          }
+
+          showMessage(
+            t("checkinFailed") + " " + (error?.message || String(error)),
+            true,
+          );
+        }
       }
 
       /* =====================================================
-                                       统计
-                                    ===================================================== */
+          统计
+         ===================================================== */
 
       function updateSummary() {
         const checked = members.filter((member) =>
@@ -1683,19 +1817,17 @@
       }
 
       /* =====================================================
-                                       消息
-                                    ===================================================== */
+          消息
+        ===================================================== */
 
       function showMessage(message, isError) {
         const box = $("messageArea");
 
         box.innerHTML = `
-                                        <div class="${
-                                          isError ? "error" : "success-message"
-                                        }">
-                                          ${escapeHtml(message)}
-                                        </div>
-                                      `;
+        <div class="${isError ? "error" : "success-message"}">
+           ${escapeHtml(message)}
+        </div>
+        `;
 
         setTimeout(() => {
           box.innerHTML = "";
@@ -1703,8 +1835,8 @@
       }
 
       /* =====================================================
-                                       日期
-                                    ===================================================== */
+         日期
+      ===================================================== */
 
       function getTodayString() {
         const date = new Date();
@@ -1733,8 +1865,8 @@
       }
 
       /* =====================================================
-                                       安全处理
-                                    ===================================================== */
+          安全处理
+       ===================================================== */
 
       function escapeHtml(value) {
         if (value === null || value === undefined) {
