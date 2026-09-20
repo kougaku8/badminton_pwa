@@ -2093,6 +2093,7 @@
       });
       window.addEventListener("online", () => {
         console.log("[SYNC] ===== 检测到网络恢复 =====");
+        await processSyncQueue();
       });
     </script>
   </body>
