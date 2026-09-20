@@ -1560,10 +1560,11 @@
 
         /*button.onclick = () => checkin(registrationID);*/
 
-        button.onclick = () => {
+        button.addEventListener("click", function () {
           console.log("[CHECKIN] 点击签到按钮:", registrationID);
+          alert("CLICK OK");
           checkin(registrationID);
-        };
+        });
 
         div.appendChild(select);
         div.appendChild(button);
