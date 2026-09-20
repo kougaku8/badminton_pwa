@@ -2091,7 +2091,7 @@
       window.addEventListener("DOMContentLoaded", () => {
         testSyncQueue();
       });
-      window.addEventListener("online", () => {
+      window.addEventListener("online", async () => {
         console.log("[SYNC] ===== 检测到网络恢复 =====");
         await processSyncQueue();
       });
