@@ -1874,5 +1874,23 @@
       }
     </script>
     <script src="./db.js"></script>
+    <script>
+      async function testSyncQueue() {
+        console.log("[SYNC] ===== 检查同步队列 =====");
+
+        try {
+          const queue = await getSyncQueue();
+
+          console.log("[SYNC] 当前队列:", queue);
+          console.log("[SYNC] 待同步数量:", queue.length);
+        } catch (error) {
+          console.error("[SYNC] 读取队列失败:", error);
+        }
+      }
+
+      window.addEventListener("DOMContentLoaded", () => {
+        testSyncQueue();
+      });
+    </script>
   </body>
 </html>
