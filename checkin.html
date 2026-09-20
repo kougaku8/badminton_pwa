@@ -1563,20 +1563,14 @@
         button.addEventListener("click", async function () {
           console.log("[CHECKIN] 点击签到按钮:", registrationID);
 
-          // 防止连续点击
-          if (button.disabled) {
-            return;
-          }
-
-          button.disabled = true;
-          button.textContent = "⏳";
-
           try {
             await checkin(registrationID);
-          } finally {
-            // checkin 完成以后恢复按钮
-            button.disabled = false;
-            button.textContent = t("checkin");
+
+            console.log("[CHECKIN] checkin() 已完成");
+          } catch (error) {
+            console.error("[CHECKIN] checkin() 调用异常:", error);
+
+            showMessage("签到失败：" + (error?.message || error), true);
           }
         });
 
