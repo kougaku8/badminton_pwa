@@ -1971,6 +1971,16 @@
             console.log("[SYNC] GAS 返回:", task.id, result);
 
             if (result?.success === false) {
+              // 「已经签到」表示服务器已经完成这个任务
+              // 所以同步队列可以安全删除
+              if (result.message === "已经签到") {
+                await removeSyncTask(task.id);
+
+                console.log("[SYNC] 已经签到，删除同步任务:", task.id);
+
+                continue;
+              }
+
               console.warn(
                 "[SYNC] GAS 返回失败，不删除任务:",
                 task.id,
