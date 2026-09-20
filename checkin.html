@@ -1888,6 +1888,41 @@
         }
       }
 
+      async function testSendOneSyncTask() {
+        console.log("[SYNC] ===== 测试发送第一条任务 =====");
+
+        try {
+          const queue = await getSyncQueue();
+
+          if (!queue || queue.length === 0) {
+            console.log("[SYNC] 没有待同步任务");
+            return;
+          }
+
+          const task = queue[0];
+
+          console.log("[SYNC] 准备发送任务:", task.id, task.data);
+
+          const response = await fetch(
+            "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
+            {
+              method: "POST",
+              body: JSON.stringify(task.data),
+            },
+          );
+
+          console.log("[SYNC] HTTP 状态:", response.status);
+
+          const result = await response.json();
+
+          console.log("[SYNC] GAS 返回:", result);
+
+          console.log("[SYNC] 测试完成，暂时不删除任务:", task.id);
+        } catch (error) {
+          console.error("[SYNC] 测试发送失败:", error);
+        }
+      }
+
       window.addEventListener("DOMContentLoaded", () => {
         testSyncQueue();
       });
