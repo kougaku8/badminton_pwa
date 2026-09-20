@@ -1562,8 +1562,13 @@
 
         button.addEventListener("click", function () {
           console.log("[CHECKIN] 点击签到按钮:", registrationID);
-          alert("CLICK OK");
-          checkin(registrationID);
+
+          try {
+            checkin(registrationID);
+            console.log("[CHECKIN] checkin() 已调用");
+          } catch (error) {
+            console.error("[CHECKIN] checkin() 调用异常:", error);
+          }
         });
 
         div.appendChild(select);
@@ -1590,10 +1595,12 @@
       }
 
       /* =====================================================
-                                       签到
-                                    ===================================================== */
+          签到
+         =================================================== */
 
       function checkin(registrationID) {
+        console.log("[CHECKIN] ===== 进入 checkin() =====", registrationID);
+
         const select = $(`pay_${registrationID}`);
 
         const payment = select?.value || "UNPAID";
