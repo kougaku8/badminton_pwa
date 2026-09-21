@@ -1413,6 +1413,45 @@
           return;
         }
 
+        // ========================================
+        // 离线模式：从本地缓存读取我的报名
+        // ========================================
+        if (!navigator.onLine) {
+          console.log("[MYREG] 当前离线，读取本地报名:", contactValue);
+
+          dbGetByIndex("registrations", "contactValue", contactValue)
+            .then(function (cachedRegistrations) {
+              button.disabled = false;
+              button.textContent = t("searchButton");
+
+              if (!cachedRegistrations || !cachedRegistrations.length) {
+                console.log("[MYREG] 没有本地报名缓存:", contactValue);
+
+                showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
+
+                return;
+              }
+
+              console.log("[MYREG] 使用本地报名缓存:", cachedRegistrations);
+
+              renderRegistrations(cachedRegistrations);
+            })
+            .catch(function (error) {
+              button.disabled = false;
+              button.textContent = t("searchButton");
+
+              console.error("[MYREG] 读取本地报名缓存失败:", error);
+
+              showMessage(
+                "⚠️",
+                t("error"),
+                error && error.message ? error.message : String(error),
+              );
+            });
+
+          return;
+        }
+
         button.disabled = true;
         button.textContent = t("searching");
 
