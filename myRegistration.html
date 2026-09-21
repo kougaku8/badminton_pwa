@@ -1478,6 +1478,12 @@
          4. 服务器返回后更新缓存并刷新显示
         ===================================================== */
 
+      window.addEventListener("online", async function () {
+        console.log("[MYREG-SYNC] ===== 检测到网络恢复 =====");
+
+        await processCancelRegistrationQueue();
+      });
+
       async function searchRegistrations() {
         const input = document.getElementById("contactValue");
         const button = document.getElementById("searchButton");
