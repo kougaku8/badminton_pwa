@@ -1379,21 +1379,17 @@
       window.addEventListener("DOMContentLoaded", function () {
         applyLanguage();
 
-        google.script.url.getLocation(function (location) {
-          if (
-            location &&
-            location.parameter &&
-            location.parameter.contactValue
-          ) {
-            const value = String(location.parameter.contactValue);
+        const params = new URLSearchParams(window.location.search);
 
-            const input = document.getElementById("contactValue");
+        if (params.get("contactValue")) {
+          const value = String(params.get("contactValue"));
 
-            input.value = value;
+          const input = document.getElementById("contactValue");
 
-            searchRegistrations();
-          }
-        });
+          input.value = value;
+
+          searchRegistrations();
+        }
       });
 
       // ========================================
