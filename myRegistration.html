@@ -1432,6 +1432,7 @@
             return response.json();
           })
           .then(function (res) {
+            console.log("[MYREG] GAS 返回数据:", res);
             button.disabled = false;
 
             button.textContent = t("searchButton");
