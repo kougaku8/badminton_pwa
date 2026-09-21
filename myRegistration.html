@@ -2082,9 +2082,29 @@
 
             showMessage("✅", t("cancelSuccess"), "");
 
-            setTimeout(function () {
-              searchRegistrations();
-            }, 600);
+            console.log(
+              "[MYREG] 取消报名成功，开始更新本地缓存:",
+              registrationID,
+            );
+
+            dbDelete("registrations", registrationID)
+              .then(function () {
+                console.log(
+                  "[MYREG] 已从本地缓存删除取消的报名:",
+                  registrationID,
+                );
+
+                setTimeout(function () {
+                  searchRegistrations();
+                }, 600);
+              })
+              .catch(function (error) {
+                console.error("[MYREG] 删除本地报名缓存失败:", error);
+
+                setTimeout(function () {
+                  searchRegistrations();
+                }, 600);
+              });
           })
           .catch(function (error) {
             buttons.forEach(function (button) {
