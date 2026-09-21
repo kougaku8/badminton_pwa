@@ -2043,6 +2043,55 @@
           return;
         }
 
+        // ========================================
+        // 离线取消报名：先加入同步队列
+        // ========================================
+        if (!navigator.onLine) {
+          console.log("[MYREG] 当前离线，准备取消报名:", registrationID);
+
+          addSyncTask({
+            action: "cancelRegistration",
+            data: {
+              action: "pwaCheckin",
+              type: "cancelRegistration",
+              registrationID: registrationID,
+            },
+          })
+            .then(function () {
+              console.log(
+                "[MYREG] 离线取消报名已加入同步队列:",
+                registrationID,
+              );
+
+              // 先从本地报名缓存删除
+              return dbDelete("registrations", registrationID);
+            })
+            .then(function () {
+              console.log(
+                "[MYREG] 离线取消报名已从本地缓存删除:",
+                registrationID,
+              );
+
+              showMessage("✅", t("cancelSuccess"), "");
+
+              // 重新显示当前本地报名
+              setTimeout(function () {
+                searchRegistrations();
+              }, 600);
+            })
+            .catch(function (error) {
+              console.error("[MYREG] 离线取消报名失败:", error);
+
+              showMessage(
+                "⚠️",
+                t("cancelFailed"),
+                error && error.message ? error.message : String(error),
+              );
+            });
+
+          return;
+        }
+
         const buttons = document.querySelectorAll(".cancel-button");
 
         buttons.forEach(function (button) {
