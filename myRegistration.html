@@ -1396,6 +1396,47 @@
         });
       });
 
+      // ========================================
+      // 同步“我的报名”到本地缓存
+      // 服务器数据作为最新版本
+      // ========================================
+      async function syncMyRegistrationsToCache(
+        contactValue,
+        serverRegistrations,
+      ) {
+        console.log("[MYREG] 开始更新本地报名缓存:", contactValue);
+
+        // 读取这个用户目前的本地报名
+        const localRegistrations = await dbGetByIndex(
+          "registrations",
+          "contactValue",
+          contactValue,
+        );
+
+        console.log("[MYREG] 当前本地报名缓存:", localRegistrations);
+
+        // 服务器返回的 RegistrationID
+        const serverIds = new Set(
+          serverRegistrations.map(function (item) {
+            return item.RegistrationID;
+          }),
+        );
+
+        // 删除服务器已经不存在的旧缓存
+        for (const localItem of localRegistrations) {
+          if (!serverIds.has(localItem.RegistrationID)) {
+            console.log("[MYREG] 删除旧报名缓存:", localItem.RegistrationID);
+
+            await dbDelete("registrations", localItem.RegistrationID);
+          }
+        }
+
+        // 保存服务器最新数据
+        await dbPutAll("registrations", serverRegistrations);
+
+        console.log("[MYREG] 我的报名缓存更新完成:", serverRegistrations);
+      }
+
       /* =====================================================
          查询报名
       ===================================================== */
@@ -1482,13 +1523,11 @@
               return;
             }
 
-            dbPutAll("registrations", res.data)
-              .then(function () {
-                console.log("[MYREG] 我的报名已保存到本地缓存:", res.data);
-              })
-              .catch(function (error) {
-                console.error("[MYREG] 保存报名缓存失败:", error);
-              });
+            syncMyRegistrationsToCache(contactValue, res.data).catch(
+              function (error) {
+                console.error("[MYREG] 更新报名缓存失败:", error);
+              },
+            );
 
             renderRegistrations(res.data);
           })
