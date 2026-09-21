@@ -1442,6 +1442,14 @@
               return;
             }
 
+            dbPutAll("registrations", res.data)
+              .then(function () {
+                console.log("[MYREG] 我的报名已保存到本地缓存:", res.data);
+              })
+              .catch(function (error) {
+                console.error("[MYREG] 保存报名缓存失败:", error);
+              });
+
             renderRegistrations(res.data);
           })
           .catch(function (error) {
