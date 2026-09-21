@@ -2030,6 +2030,82 @@
         return s || e || "-";
       }
 
+      async function processCancelRegistrationQueue() {
+        if (!navigator.onLine) {
+          console.log("[MYREG-SYNC] 当前离线，不进行取消报名同步");
+          return;
+        }
+
+        const queue = await getSyncQueue();
+
+        const cancelTasks = queue.filter(function (task) {
+          return task.action === "cancelRegistration";
+        });
+
+        console.log("[MYREG-SYNC] 待同步取消报名任务:", cancelTasks);
+
+        if (!cancelTasks.length) {
+          console.log("[MYREG-SYNC] 没有需要同步的取消报名任务");
+          return;
+        }
+
+        for (const task of cancelTasks) {
+          try {
+            console.log(
+              "[MYREG-SYNC] 正在同步取消报名:",
+              task.id,
+              task.data.registrationID,
+            );
+
+            const response = await fetch(
+              "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
+              {
+                method: "POST",
+                mode: "cors",
+                headers: {
+                  "Content-Type": "text/plain;charset=utf-8",
+                },
+                body: JSON.stringify(task.data),
+              },
+            );
+
+            console.log("[MYREG-SYNC] response.type =", response.type);
+
+            console.log("[MYREG-SYNC] response.status =", response.status);
+
+            if (response.type === "opaque") {
+              console.warn("[MYREG-SYNC] opaque response，保留任务:", task.id);
+
+              continue;
+            }
+
+            if (!response.ok) {
+              throw new Error("HTTP错误: " + response.status);
+            }
+
+            const result = await response.json();
+
+            console.log("[MYREG-SYNC] GAS 返回:", result);
+
+            if (!result || result.success !== true) {
+              console.warn("[MYREG-SYNC] GAS 没有确认成功，保留任务:", task.id);
+
+              continue;
+            }
+
+            await removeSyncTask(task.id);
+
+            console.log("[MYREG-SYNC] 取消报名同步成功，已删除任务:", task.id);
+          } catch (error) {
+            console.error(
+              "[MYREG-SYNC] 取消报名同步失败，保留任务:",
+              task.id,
+              error,
+            );
+          }
+        }
+      }
+
       /* =====================================================
          取消报名
       ===================================================== */
