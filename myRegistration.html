@@ -1437,66 +1437,143 @@
         console.log("[MYREG] 我的报名缓存更新完成:", serverRegistrations);
       }
 
+      // ========================================
+      // 优先从本地缓存读取“我的报名”
+      // 用于快速显示
+      // ========================================
+      async function loadMyRegistrationsFromCache(contactValue) {
+        console.log("[MYREG] 尝试读取本地报名缓存:", contactValue);
+
+        try {
+          const cachedRegistrations = await dbGetByIndex(
+            "registrations",
+            "contactValue",
+            contactValue,
+          );
+
+          if (cachedRegistrations && cachedRegistrations.length) {
+            console.log("[MYREG] 找到本地报名缓存:", cachedRegistrations);
+
+            renderRegistrations(cachedRegistrations);
+
+            return cachedRegistrations;
+          }
+
+          console.log("[MYREG] 没有本地报名缓存:", contactValue);
+
+          return [];
+        } catch (error) {
+          console.error("[MYREG] 读取本地报名缓存失败:", error);
+
+          return [];
+        }
+      }
+
       /* =====================================================
          查询报名
-      ===================================================== */
+         离线优先：
+         1. 先读取 IndexedDB
+         2. 有缓存立即显示
+         3. 在线时再请求服务器
+         4. 服务器返回后更新缓存并刷新显示
+        ===================================================== */
 
-      function searchRegistrations() {
+      async function searchRegistrations() {
         const input = document.getElementById("contactValue");
-
         const button = document.getElementById("searchButton");
+        const result = document.getElementById("result");
 
         const contactValue = input.value.trim();
 
         if (!contactValue) {
           showMessage("⚠️", t("empty"), "");
-
           return;
         }
 
-        // ========================================
-        // 离线模式：从本地缓存读取我的报名
-        // ========================================
-        if (!navigator.onLine) {
-          console.log("[MYREG] 当前离线，读取本地报名:", contactValue);
+        console.log(
+          "[MYREG] 开始查询:",
+          contactValue,
+          "online:",
+          navigator.onLine,
+        );
 
-          dbGetByIndex("registrations", "contactValue", contactValue)
-            .then(function (cachedRegistrations) {
-              button.disabled = false;
-              button.textContent = t("searchButton");
-
-              if (!cachedRegistrations || !cachedRegistrations.length) {
-                console.log("[MYREG] 没有本地报名缓存:", contactValue);
-
-                showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
-
-                return;
-              }
-
-              console.log("[MYREG] 使用本地报名缓存:", cachedRegistrations);
-
-              renderRegistrations(cachedRegistrations);
-            })
-            .catch(function (error) {
-              button.disabled = false;
-              button.textContent = t("searchButton");
-
-              console.error("[MYREG] 读取本地报名缓存失败:", error);
-
-              showMessage(
-                "⚠️",
-                t("error"),
-                error && error.message ? error.message : String(error),
-              );
-            });
-
-          return;
-        }
+        // =====================================================
+        // 1. 先读取本地缓存
+        // =====================================================
 
         button.disabled = true;
         button.textContent = t("searching");
 
-        document.getElementById("result").innerHTML = "";
+        try {
+          const cachedRegistrations = await dbGetByIndex(
+            "registrations",
+            "contactValue",
+            contactValue,
+          );
+
+          console.log("[MYREG] 本地报名缓存:", cachedRegistrations);
+
+          // ===================================================
+          // 2. 有缓存 → 立即显示
+          // ===================================================
+
+          if (cachedRegistrations && cachedRegistrations.length) {
+            console.log("[MYREG] 立即显示本地报名缓存:", cachedRegistrations);
+
+            renderRegistrations(cachedRegistrations);
+          } else {
+            console.log("[MYREG] 没有本地报名缓存:", contactValue);
+
+            // 离线且没有缓存
+            if (!navigator.onLine) {
+              showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
+
+              button.disabled = false;
+              button.textContent = t("searchButton");
+
+              return;
+            }
+          }
+        } catch (error) {
+          console.error("[MYREG] 读取本地报名缓存失败:", error);
+
+          // 本地读取失败时，如果也是离线状态，
+          // 就没有办法继续查询服务器
+          if (!navigator.onLine) {
+            showMessage(
+              "⚠️",
+              t("error"),
+              error && error.message ? error.message : String(error),
+            );
+
+            button.disabled = false;
+            button.textContent = t("searchButton");
+
+            return;
+          }
+        }
+
+        // =====================================================
+        // 3. 离线 → 到这里直接结束
+        //
+        // 如果前面已经显示缓存，
+        // 就保持缓存画面
+        // =====================================================
+
+        if (!navigator.onLine) {
+          console.log("[MYREG] 当前离线，使用本地缓存结束查询");
+
+          button.disabled = false;
+          button.textContent = t("searchButton");
+
+          return;
+        }
+
+        // =====================================================
+        // 4. 在线 → 请求服务器最新数据
+        // =====================================================
+
+        console.log("[MYREG] 当前在线，开始请求 GAS 最新报名");
 
         fetch(
           "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
@@ -1514,33 +1591,87 @@
           })
           .then(function (res) {
             console.log("[MYREG] GAS 返回数据:", res);
-            button.disabled = false;
 
-            button.textContent = t("searchButton");
+            if (!res || !res.success) {
+              console.error("[MYREG] GAS 查询失败:", res);
 
-            if (!res || !res.success || !res.data || !res.data.length) {
-              showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
+              // 如果之前已经显示了缓存，
+              // 不要把缓存画面清掉
+              if (!document.getElementById("result").innerHTML.trim()) {
+                showMessage(
+                  "⚠️",
+                  t("error"),
+                  res && res.message ? res.message : t("unknown"),
+                );
+              }
+
               return;
             }
 
-            syncMyRegistrationsToCache(contactValue, res.data).catch(
-              function (error) {
-                console.error("[MYREG] 更新报名缓存失败:", error);
-              },
-            );
+            // =================================================
+            // 5. 服务器没有报名
+            // =================================================
 
-            renderRegistrations(res.data);
+            if (!res.data || !res.data.length) {
+              console.log("[MYREG] 服务器没有找到报名:", contactValue);
+
+              // 服务器是最新版本。
+              // 所以即使本地之前有缓存，
+              // 也要清理这个用户的旧缓存。
+              syncMyRegistrationsToCache(contactValue, [])
+                .then(function () {
+                  console.log("[MYREG] 已清理该用户旧报名缓存");
+
+                  showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
+                })
+                .catch(function (error) {
+                  console.error("[MYREG] 清理报名缓存失败:", error);
+
+                  // 如果缓存清理失败，
+                  // 仍然显示服务器结果
+                  showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
+                });
+
+              return;
+            }
+
+            // =================================================
+            // 6. 服务器返回最新报名
+            // =================================================
+
+            syncMyRegistrationsToCache(contactValue, res.data)
+              .then(function () {
+                console.log("[MYREG] 最新报名缓存同步完成");
+
+                // 服务器数据作为最终显示结果
+                renderRegistrations(res.data);
+              })
+              .catch(function (error) {
+                console.error("[MYREG] 更新报名缓存失败:", error);
+
+                // 缓存同步失败也不要影响服务器结果显示
+                renderRegistrations(res.data);
+              });
           })
           .catch(function (error) {
+            console.error("[MYREG] GAS 请求失败:", error);
+
+            // 网络失败时：
+            // 如果前面已经显示了缓存，
+            // 就继续保留缓存，不显示错误覆盖它
+            const hasResult = result.innerHTML.trim() !== "";
+
+            if (!hasResult) {
+              showMessage(
+                "⚠️",
+                t("error"),
+                error && error.message ? error.message : String(error),
+              );
+            }
+          })
+          .finally(function () {
             button.disabled = false;
-
             button.textContent = t("searchButton");
-
-            showMessage(
-              "⚠️",
-              t("error"),
-              error && error.message ? error.message : String(error),
-            );
           });
       }
 
