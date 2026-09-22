@@ -8,6 +8,11 @@
   "description": "羽毛球活动报名、签到与通知系统 / バドミントンの参加登録・チェックイン・通知システム",
   "icons": [
     {
+      "src": "./heian-bado-yoyaku-icon_192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
       "src": "./heian-bado-yoyaku-icon_512.png",
       "sizes": "512x512",
       "type": "image/png"
