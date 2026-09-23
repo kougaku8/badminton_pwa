@@ -482,9 +482,13 @@
           </button>
         </div>
 
+        <button class="secondary" onclick="goToHome()" data-i18n="homeButton">
+          返回主页
+        </button>
+
         <!-- =========================
          Step 1
-    ========================== -->
+         ========================== -->
 
         <div id="nameStep">
           <h1 data-i18n="title">通知设置</h1>
@@ -699,6 +703,8 @@
 
           goRegisterButton: "前往设备注册",
 
+          homeButton: "返回主页",
+
           backButton: "返回",
 
           emptyName: "请输入姓名。",
@@ -760,6 +766,8 @@
             "この端末は通知登録されていません。先に端末登録を行ってください。",
 
           goRegisterButton: "端末登録へ",
+
+          homeButton: "ホームへ戻る",
 
           backButton: "戻る",
 
@@ -1222,6 +1230,10 @@
        *************************************************/
       function goToRegistration() {
         window.top.location.href = REGISTRATION_URL;
+      }
+
+      function goToHome() {
+        window.location.href = "./";
       }
 
       /*************************************************
