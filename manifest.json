@@ -1,6 +1,7 @@
 {
   "name": "羽毛球报名系统 / バドミントン予約システム",
   "short_name": "羽毛球报名 / バドミントン",
+  "id": "/badminton_pwa/",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#ffffff",
