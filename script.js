@@ -102,10 +102,8 @@ async function loadActivities() {
     const list = Array.isArray(result) ? result : result.data || [];
 
     if (!list.length) {
-      if (!hasCachedActivities) {
-        renderActivities([]);
-      }
-
+      await dbClear("activities");
+      renderActivities([]);
       return;
     }
 
