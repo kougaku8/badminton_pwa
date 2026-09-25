@@ -454,6 +454,10 @@
         box-shadow: 0 12px 34px rgba(15, 23, 42, 0.09);
 
         overflow: hidden;
+
+        transition:
+          opacity 0.2s ease,
+          transform 0.2s ease;
       }
 
       .registration-card::before {
@@ -735,14 +739,10 @@
       }
 
       /* =========================================================
-   手机端样式
-   适用于：手机 / 小屏幕
-   目标：字体适当缩小，一屏显示更多内容
-   ========================================================= */
+         手机端样式
+      ========================================================= */
 
       @media (max-width: 600px) {
-        /* ---------- 页面整体 ---------- */
-
         body {
           font-size: 23px;
           line-height: 1.45;
@@ -754,8 +754,6 @@
           max-width: 100%;
           padding: 0;
         }
-
-        /* ---------- 页面标题 ---------- */
 
         h1 {
           font-size: 40px;
@@ -769,23 +767,17 @@
           margin-bottom: 16px;
         }
 
-        /* ---------- 区域标题 ---------- */
-
         .section-title {
           font-size: 30px;
           line-height: 1.3;
           margin: 16px 0 10px;
         }
 
-        /* ---------- Label ---------- */
-
         .label {
           font-size: 23px;
           line-height: 1.4;
           margin-bottom: 6px;
         }
-
-        /* ---------- 输入框 ---------- */
 
         input {
           width: 100%;
@@ -804,8 +796,6 @@
           font-size: 21px;
         }
 
-        /* ---------- 搜索按钮 ---------- */
-
         .search-button {
           width: 100%;
           min-height: 54px;
@@ -819,8 +809,6 @@
           border-radius: 8px;
         }
 
-        /* ---------- 提示信息 ---------- */
-
         .message-title {
           font-size: 30px;
           line-height: 1.3;
@@ -831,9 +819,7 @@
           line-height: 1.5;
         }
 
-        /* ---------- 活动卡片 ---------- */
-
-        .activity-card {
+        .registration-card {
           width: 100%;
           box-sizing: border-box;
 
@@ -843,15 +829,11 @@
           border-radius: 10px;
         }
 
-        /* ---------- 活动名称 ---------- */
-
         .activity-title {
           font-size: 30px;
           line-height: 1.35;
           margin-bottom: 8px;
         }
-
-        /* ---------- 活动信息 ---------- */
 
         .info-label {
           font-size: 20px;
@@ -863,16 +845,12 @@
           line-height: 1.4;
         }
 
-        /* ---------- 报名状态 ---------- */
-
         .status {
           font-size: 21px;
           line-height: 1.4;
 
           margin-top: 6px;
         }
-
-        /* ---------- 报名 ID ---------- */
 
         .registration-id-label {
           font-size: 20px;
@@ -883,8 +861,6 @@
           font-size: 25px;
           line-height: 1.3;
         }
-
-        /* ---------- 取消报名按钮 ---------- */
 
         .cancel-button {
           width: 100%;
@@ -899,8 +875,6 @@
           border-radius: 8px;
         }
 
-        /* ---------- 返回按钮 ---------- */
-
         .back-button {
           width: 100%;
           min-height: 52px;
@@ -914,8 +888,6 @@
           border-radius: 8px;
         }
 
-        /* ---------- 手机横向空间 ---------- */
-
         button,
         input,
         select,
@@ -923,15 +895,11 @@
           box-sizing: border-box;
         }
 
-        /* ---------- 防止手机浏览器自动放大输入框 ---------- */
-
         input,
         select,
         textarea {
           font-size: 23px;
         }
-
-        /* ---------- 小间距 ---------- */
 
         .form-group {
           margin-bottom: 12px;
@@ -939,9 +907,8 @@
       }
 
       /* =========================================================
-   超小屏手机
-   例如：iPhone SE / 小尺寸 Android
-   ========================================================= */
+         超小屏手机
+      ========================================================= */
 
       @media (max-width: 380px) {
         body {
@@ -989,7 +956,7 @@
           font-size: 21px;
         }
 
-        .activity-card {
+        .registration-card {
           padding: 12px;
         }
 
@@ -1098,6 +1065,7 @@
         }
       }
     </style>
+
     <script src="./db.js"></script>
   </head>
 
@@ -1392,17 +1360,17 @@
         }
       });
 
-      // ========================================
-      // 同步“我的报名”到本地缓存
-      // 服务器数据作为最新版本
-      // ========================================
+      /* =====================================================
+         同步“我的报名”到本地缓存
+         服务器数据作为最新版本
+      ===================================================== */
+
       async function syncMyRegistrationsToCache(
         contactValue,
         serverRegistrations,
       ) {
         console.log("[MYREG] 开始更新本地报名缓存:", contactValue);
 
-        // 读取这个用户目前的本地报名
         const localRegistrations = await dbGetByIndex(
           "registrations",
           "contactValue",
@@ -1411,14 +1379,12 @@
 
         console.log("[MYREG] 当前本地报名缓存:", localRegistrations);
 
-        // 服务器返回的 RegistrationID
         const serverIds = new Set(
           serverRegistrations.map(function (item) {
             return item.RegistrationID;
           }),
         );
 
-        // 删除服务器已经不存在的旧缓存
         for (const localItem of localRegistrations) {
           if (!serverIds.has(localItem.RegistrationID)) {
             console.log("[MYREG] 删除旧报名缓存:", localItem.RegistrationID);
@@ -1427,16 +1393,15 @@
           }
         }
 
-        // 保存服务器最新数据
         await dbPutAll("registrations", serverRegistrations);
 
         console.log("[MYREG] 我的报名缓存更新完成:", serverRegistrations);
       }
 
-      // ========================================
-      // 优先从本地缓存读取“我的报名”
-      // 用于快速显示
-      // ========================================
+      /* =====================================================
+         优先从本地缓存读取“我的报名”
+      ===================================================== */
+
       async function loadMyRegistrationsFromCache(contactValue) {
         console.log("[MYREG] 尝试读取本地报名缓存:", contactValue);
 
@@ -1466,19 +1431,23 @@
       }
 
       /* =====================================================
-         查询报名
-         离线优先：
-         1. 先读取 IndexedDB
-         2. 有缓存立即显示
-         3. 在线时再请求服务器
-         4. 服务器返回后更新缓存并刷新显示
-        ===================================================== */
+         网络恢复
+      ===================================================== */
 
       window.addEventListener("online", async function () {
         console.log("[MYREG-SYNC] ===== 检测到网络恢复 =====");
 
         await processCancelRegistrationQueue();
       });
+
+      /* =====================================================
+         查询报名
+         
+         1. 先读取 IndexedDB
+         2. 有缓存立即显示
+         3. 在线时再请求服务器
+         4. 服务器返回后更新缓存
+      ===================================================== */
 
       async function searchRegistrations() {
         const input = document.getElementById("contactValue");
@@ -1499,10 +1468,6 @@
           navigator.onLine,
         );
 
-        // =====================================================
-        // 1. 先读取本地缓存
-        // =====================================================
-
         button.disabled = true;
         button.textContent = t("searching");
 
@@ -1515,10 +1480,6 @@
 
           console.log("[MYREG] 本地报名缓存:", cachedRegistrations);
 
-          // ===================================================
-          // 2. 有缓存 → 立即显示
-          // ===================================================
-
           if (cachedRegistrations && cachedRegistrations.length) {
             console.log("[MYREG] 立即显示本地报名缓存:", cachedRegistrations);
 
@@ -1526,7 +1487,6 @@
           } else {
             console.log("[MYREG] 没有本地报名缓存:", contactValue);
 
-            // 离线且没有缓存
             if (!navigator.onLine) {
               showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
 
@@ -1539,8 +1499,6 @@
         } catch (error) {
           console.error("[MYREG] 读取本地报名缓存失败:", error);
 
-          // 本地读取失败时，如果也是离线状态，
-          // 就没有办法继续查询服务器
           if (!navigator.onLine) {
             showMessage(
               "⚠️",
@@ -1555,13 +1513,6 @@
           }
         }
 
-        // =====================================================
-        // 3. 离线 → 到这里直接结束
-        //
-        // 如果前面已经显示缓存，
-        // 就保持缓存画面
-        // =====================================================
-
         if (!navigator.onLine) {
           console.log("[MYREG] 当前离线，使用本地缓存结束查询");
 
@@ -1570,10 +1521,6 @@
 
           return;
         }
-
-        // =====================================================
-        // 4. 在线 → 请求服务器最新数据
-        // =====================================================
 
         console.log("[MYREG] 当前在线，开始请求 GAS 最新报名");
 
@@ -1597,8 +1544,6 @@
             if (!res || !res.success) {
               console.error("[MYREG] GAS 查询失败:", res);
 
-              // 如果之前已经显示了缓存，
-              // 不要把缓存画面清掉
               if (!document.getElementById("result").innerHTML.trim()) {
                 showMessage(
                   "⚠️",
@@ -1610,16 +1555,9 @@
               return;
             }
 
-            // =================================================
-            // 5. 服务器没有报名
-            // =================================================
-
             if (!res.data || !res.data.length) {
               console.log("[MYREG] 服务器没有找到报名:", contactValue);
 
-              // 服务器是最新版本。
-              // 所以即使本地之前有缓存，
-              // 也要清理这个用户的旧缓存。
               syncMyRegistrationsToCache(contactValue, [])
                 .then(function () {
                   console.log("[MYREG] 已清理该用户旧报名缓存");
@@ -1629,38 +1567,27 @@
                 .catch(function (error) {
                   console.error("[MYREG] 清理报名缓存失败:", error);
 
-                  // 如果缓存清理失败，
-                  // 仍然显示服务器结果
                   showMessage("🔍", t("noRecords"), t("noRecordsDescription"));
                 });
 
               return;
             }
 
-            // =================================================
-            // 6. 服务器返回最新报名
-            // =================================================
-
             syncMyRegistrationsToCache(contactValue, res.data)
               .then(function () {
                 console.log("[MYREG] 最新报名缓存同步完成");
 
-                // 服务器数据作为最终显示结果
                 renderRegistrations(res.data);
               })
               .catch(function (error) {
                 console.error("[MYREG] 更新报名缓存失败:", error);
 
-                // 缓存同步失败也不要影响服务器结果显示
                 renderRegistrations(res.data);
               });
           })
           .catch(function (error) {
             console.error("[MYREG] GAS 请求失败:", error);
 
-            // 网络失败时：
-            // 如果前面已经显示了缓存，
-            // 就继续保留缓存，不显示错误覆盖它
             const hasResult = result.innerHTML.trim() !== "";
 
             if (!hasResult) {
@@ -1735,7 +1662,10 @@
           (currentLanguage === "ja" ? "バドミントンイベント" : "羽球活动");
 
         return `
-          <div class="registration-card">
+          <div
+            class="registration-card"
+            data-registration-id="${escapeHtml(registrationID)}"
+          >
 
             <div class="activity-title">
               🏸
@@ -1861,7 +1791,10 @@
                     type="button"
                     class="cancel-button"
                     data-registration-id="${escapeHtml(registrationID)}"
-                    onclick="cancelRegistration('${escapeJs(registrationID)}')"
+                    onclick="cancelRegistration(
+                      '${escapeJs(registrationID)}',
+                      this
+                    )"
                   >
                     ${escapeHtml(t("cancelRegistration"))}
                   </button>
@@ -2032,9 +1965,48 @@
         return s || e || "-";
       }
 
+      /* =====================================================
+         从页面立即删除指定报名卡
+         
+         注意：
+         不请求 GAS。
+         不重新 searchRegistrations()。
+         只操作当前 DOM。
+      ===================================================== */
+
+      function removeRegistrationCard(registrationID) {
+        const cards = document.querySelectorAll(".registration-card");
+
+        let removed = false;
+
+        cards.forEach(function (card) {
+          const cardID = card.getAttribute("data-registration-id") || "";
+
+          if (cardID === String(registrationID)) {
+            card.remove();
+            removed = true;
+          }
+        });
+
+        if (removed) {
+          console.log("[MYREG] 已从当前页面删除报名卡:", registrationID);
+        }
+
+        const remainingCards = document.querySelectorAll(".registration-card");
+
+        if (!remainingCards.length) {
+          showMessage("✅", t("cancelSuccess"), "");
+        }
+      }
+
+      /* =====================================================
+         取消报名同步队列
+      ===================================================== */
+
       async function processCancelRegistrationQueue() {
         if (!navigator.onLine) {
           console.log("[MYREG-SYNC] 当前离线，不进行取消报名同步");
+
           return;
         }
 
@@ -2048,6 +2020,7 @@
 
         if (!cancelTasks.length) {
           console.log("[MYREG-SYNC] 没有需要同步的取消报名任务");
+
           return;
         }
 
@@ -2110,9 +2083,29 @@
 
       /* =====================================================
          取消报名
+         
+         重要修改：
+         
+         1. 在线：
+            GAS 成功
+            ↓
+            删除 IndexedDB
+            ↓
+            立即删除当前 DOM 卡片
+            ↓
+            不再 searchRegistrations()
+         
+         2. 离线：
+            加入同步队列
+            ↓
+            删除 IndexedDB
+            ↓
+            立即删除当前 DOM 卡片
+         
+         3. 不再因为 dbDelete 失败而重新请求 GAS
       ===================================================== */
 
-      function cancelRegistration(registrationID) {
+      async function cancelRegistration(registrationID, buttonElement) {
         if (!registrationID) {
           return;
         }
@@ -2121,130 +2114,149 @@
           return;
         }
 
-        // ========================================
-        // 离线取消报名：先加入同步队列
-        // ========================================
+        /* =================================================
+           防止重复点击
+        ================================================= */
+
+        if (buttonElement) {
+          buttonElement.disabled = true;
+          buttonElement.textContent = t("cancelling");
+        }
+
+        /* =================================================
+           离线取消报名
+        ================================================= */
+
         if (!navigator.onLine) {
           console.log("[MYREG] 当前离线，准备取消报名:", registrationID);
 
-          addSyncTask({
-            action: "cancelRegistration",
-            data: {
-              action: "pwaCheckin",
-              type: "cancelRegistration",
-              registrationID: registrationID,
-            },
-          })
-            .then(function () {
-              console.log(
-                "[MYREG] 离线取消报名已加入同步队列:",
-                registrationID,
-              );
+          try {
+            await addSyncTask({
+              action: "cancelRegistration",
+              data: {
+                action: "pwaCheckin",
+                type: "cancelRegistration",
+                registrationID: registrationID,
+              },
+            });
 
-              // 先从本地报名缓存删除
-              return dbDelete("registrations", registrationID);
-            })
-            .then(function () {
+            console.log("[MYREG] 离线取消报名已加入同步队列:", registrationID);
+
+            /* ---------------------------------------------
+               立即删除本地缓存
+            --------------------------------------------- */
+
+            try {
+              await dbDelete("registrations", registrationID);
+
               console.log(
                 "[MYREG] 离线取消报名已从本地缓存删除:",
                 registrationID,
               );
-
-              showMessage("✅", t("cancelSuccess"), "");
-
-              // 重新显示当前本地报名
-              setTimeout(function () {
-                searchRegistrations();
-              }, 600);
-            })
-            .catch(function (error) {
-              console.error("[MYREG] 离线取消报名失败:", error);
-
-              showMessage(
-                "⚠️",
-                t("cancelFailed"),
-                error && error.message ? error.message : String(error),
-              );
-            });
-
-          return;
-        }
-
-        const buttons = document.querySelectorAll(".cancel-button");
-
-        buttons.forEach(function (button) {
-          button.disabled = true;
-          button.textContent = t("cancelling");
-        });
-
-        fetch(
-          "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
-          {
-            method: "POST",
-            body: JSON.stringify({
-              action: "pwaCheckin",
-              type: "cancelRegistration",
-              registrationID: registrationID,
-            }),
-          },
-        )
-          .then(function (response) {
-            return response.json();
-          })
-          .then(function (res) {
-            if (!res || !res.success) {
-              buttons.forEach(function (button) {
-                button.disabled = false;
-                button.textContent = t("cancelRegistration");
-              });
-
-              showMessage(
-                "⚠️",
-                t("cancelFailed"),
-                res && res.message ? res.message : t("unknown"),
-              );
-
-              return;
+            } catch (error) {
+              console.error("[MYREG] 删除本地报名缓存失败:", error);
             }
 
-            showMessage("✅", t("cancelSuccess"), "");
+            /* ---------------------------------------------
+               无论 IndexedDB 删除是否成功，
+               当前页面都立即删除对应卡片
+            --------------------------------------------- */
 
-            console.log(
-              "[MYREG] 取消报名成功，开始更新本地缓存:",
-              registrationID,
-            );
+            removeRegistrationCard(registrationID);
 
-            dbDelete("registrations", registrationID)
-              .then(function () {
-                console.log(
-                  "[MYREG] 已从本地缓存删除取消的报名:",
-                  registrationID,
-                );
+            console.log("[MYREG] 离线取消报名完成:", registrationID);
+          } catch (error) {
+            console.error("[MYREG] 离线取消报名失败:", error);
 
-                setTimeout(function () {
-                  searchRegistrations();
-                }, 600);
-              })
-              .catch(function (error) {
-                console.error("[MYREG] 删除本地报名缓存失败:", error);
-
-                setTimeout(function () {
-                  searchRegistrations();
-                }, 600);
-              });
-          })
-          .catch(function (error) {
-            buttons.forEach(function (button) {
-              button.disabled = false;
-              button.textContent = t("cancelRegistration");
-            });
+            if (buttonElement) {
+              buttonElement.disabled = false;
+              buttonElement.textContent = t("cancelRegistration");
+            }
 
             showMessage(
               "⚠️",
               t("cancelFailed"),
               error && error.message ? error.message : String(error),
             );
-          });
+          }
+
+          return;
+        }
+
+        /* =================================================
+           在线取消报名
+        ================================================= */
+
+        console.log("[MYREG] 当前在线，开始取消报名:", registrationID);
+
+        try {
+          const response = await fetch(
+            "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec",
+            {
+              method: "POST",
+              body: JSON.stringify({
+                action: "pwaCheckin",
+                type: "cancelRegistration",
+                registrationID: registrationID,
+              }),
+            },
+          );
+
+          const res = await response.json();
+
+          console.log("[MYREG] 取消报名 GAS 返回:", res);
+
+          if (!res || !res.success) {
+            throw new Error(res && res.message ? res.message : t("unknown"));
+          }
+
+          console.log("[MYREG] GAS 取消报名成功:", registrationID);
+
+          /* ---------------------------------------------
+             GAS 已经成功。
+             
+             现在删除本地缓存。
+             注意：
+             这里绝对不再 searchRegistrations()。
+          --------------------------------------------- */
+
+          try {
+            await dbDelete("registrations", registrationID);
+
+            console.log("[MYREG] 已从本地缓存删除取消的报名:", registrationID);
+          } catch (error) {
+            console.error("[MYREG] 删除本地报名缓存失败:", error);
+
+            /*
+             * 即使 IndexedDB 删除失败，
+             * 服务器已经成功取消。
+             *
+             * 所以不要再次调用 GAS 查询。
+             * 当前页面仍然立即删除。
+             */
+          }
+
+          /* ---------------------------------------------
+             立即从页面删除
+          --------------------------------------------- */
+
+          removeRegistrationCard(registrationID);
+
+          console.log("[MYREG] 取消报名完成，未重新请求 GAS:", registrationID);
+        } catch (error) {
+          console.error("[MYREG] 在线取消报名失败:", error);
+
+          if (buttonElement) {
+            buttonElement.disabled = false;
+            buttonElement.textContent = t("cancelRegistration");
+          }
+
+          showMessage(
+            "⚠️",
+            t("cancelFailed"),
+            error && error.message ? error.message : String(error),
+          );
+        }
       }
 
       /* =====================================================
