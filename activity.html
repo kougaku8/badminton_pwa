@@ -171,9 +171,10 @@
         width: 32px;
       }
 
+      /* 名前列加宽 */
       th:nth-child(2),
       td:nth-child(2) {
-        width: 60px;
+        width: 90px;
       }
 
       th:nth-child(3),
@@ -194,6 +195,20 @@
       th {
         color: #666;
         font-weight: 600;
+      }
+
+      /* =========================
+         Status 颜色
+         ========================= */
+
+      .status-confirmed {
+        color: #2e7d32;
+        font-weight: 700;
+      }
+
+      .status-waitlist {
+        color: #e65c00;
+        font-weight: 700;
       }
 
       .empty {
@@ -275,6 +290,7 @@
         }
       }
     </style>
+
     <script src="./db.js"></script>
   </head>
 
@@ -396,6 +412,26 @@
           .replace(/'/g, "&#039;");
       }
 
+      // ==========================================
+      // Status 样式
+      // ==========================================
+
+      function getStatusClass(status) {
+        const value = String(status || "")
+          .trim()
+          .toUpperCase();
+
+        if (value === "CONFIRMED") {
+          return "status-confirmed";
+        }
+
+        if (value === "WAITLIST") {
+          return "status-waitlist";
+        }
+
+        return "";
+      }
+
       async function loadActivity() {
         const result = document.getElementById("result");
 
@@ -406,15 +442,7 @@
 
         let hasLocalCache = false;
 
-        // ==========================================
-        // 1. IndexedDB：立即读取本地缓存
-        // ==========================================
-
         try {
-          // ------------------------------------------
-          // 1.1 优先读取完整活动详情缓存
-          // ------------------------------------------
-
           const detailCache = await dbGet("activityDetails", activityID);
 
           if (detailCache && detailCache.Detail) {
@@ -422,13 +450,8 @@
 
             console.log("本地完整活动详情缓存:", detailCache.Detail);
 
-            // 立即显示缓存
             renderActivity(detailCache.Detail);
           }
-
-          // ------------------------------------------
-          // 1.2 没有完整详情，再读取基本活动缓存
-          // ------------------------------------------
 
           if (!hasLocalCache) {
             const activities = await dbGetAll("activities");
@@ -454,20 +477,12 @@
                 Participants: [],
               };
 
-              // 立即显示基本缓存
               renderActivity(cachedData);
             }
           }
         } catch (error) {
           console.error("读取本地活动缓存失败:", error);
         }
-
-        // ==========================================
-        // 2. 后台请求 GAS
-        //
-        // 有缓存：页面已经显示
-        // 没缓存：用户看到 loading
-        // ==========================================
 
         try {
           console.log(
@@ -498,10 +513,6 @@
 
           console.log("后台活动详情返回:", data);
 
-          // ==========================================
-          // 3. 保存最新完整详情到 IndexedDB
-          // ==========================================
-
           try {
             await dbPut("activityDetails", {
               ActivityID: activityID,
@@ -513,42 +524,26 @@
             console.error("保存活动详情缓存失败:", error);
           }
 
-          // ==========================================
-          // 4. 网络数据成功
-          // 更新当前页面
-          // ==========================================
-
           renderActivity(data);
 
           console.log("活动详情后台更新完成:", activityID);
         } catch (error) {
-          // ==========================================
-          // 5. 后台更新失败
-          //
-          // 已经有缓存：
-          //     保留当前页面，不显示错误
-          //
-          // 没有缓存：
-          //     显示错误
-          // ==========================================
-
           console.warn("后台更新活动详情失败:", error);
 
           if (hasLocalCache) {
             console.log("网络不可用，继续使用本地活动缓存");
-
             return;
           }
 
           result.innerHTML = `
-      <div class="error">
-        ${t("error")}
-        <br>
-        <small>
-          ${escapeHtml(error.message)}
-        </small>
-      </div>
-    `;
+            <div class="error">
+              ${t("error")}
+              <br>
+              <small>
+                ${escapeHtml(error.message)}
+              </small>
+            </div>
+          `;
         }
       }
 
@@ -557,7 +552,6 @@
 
         if (!data || !data.Activity) {
           result.innerHTML = `<div class="error">${t("noActivity")}</div>`;
-
           return;
         }
 
@@ -570,137 +564,119 @@
           a.Title || t("title");
 
         let html = `
+          <div class="card">
 
-    <div class="card">
+            <div class="info-grid">
 
-      <div class="info-grid">
+              <div class="info-item">
+                <div class="info-label">
+                  ${t("date")}
+                </div>
 
-        <div class="info-item">
+                <div class="info-value">
+                  📅 ${escapeHtml(formatDate(a.Date))}
+                </div>
+              </div>
 
-          <div class="info-label">
-            ${t("date")}
+              <div class="info-item">
+                <div class="info-label">
+                  ${t("time")}
+                </div>
+
+                <div class="info-value">
+                  ⏰ ${escapeHtml(formatTime(a.StartTime))}
+                  ～
+                  ${escapeHtml(formatTime(a.EndTime))}
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-label">
+                  ${t("venue")}
+                </div>
+
+                <div class="info-value">
+                  📍 ${escapeHtml(v.Name || "")}
+                </div>
+              </div>
+
+              <div class="info-item">
+                <div class="info-label">
+                  ${t("fee")}
+                </div>
+
+                <div class="info-value">
+                  💰 ${escapeHtml(a.Fee || 0)}
+                </div>
+              </div>
+
+            </div>
+
           </div>
 
-          <div class="info-value">
-            📅 ${escapeHtml(formatDate(a.Date))}
+          <div class="card count-card">
+
+            <div class="section-title">
+              ${t("joined")}
+            </div>
+
+            <div class="count-number">
+              ${Number(c.Joined || 0)}
+              /
+              ${Number(a.Capacity || 0)}
+            </div>
+
+            <div class="count-label">
+              ${t("joined")}
+            </div>
+
+            <div class="progress">
+              <div
+                class="progress-bar"
+                style="
+                  width:${getProgress(c.Joined, a.Capacity)}%;
+                "
+              ></div>
+            </div>
+
+            <div class="remaining">
+              ${t("remaining")}：
+              ${Math.max(0, Number(c.Remaining || 0))}
+            </div>
+
           </div>
-
-        </div>
-
-
-        <div class="info-item">
-
-          <div class="info-label">
-            ${t("time")}
-          </div>
-
-          <div class="info-value">
-            ⏰ ${escapeHtml(formatTime(a.StartTime))}
-            ～
-            ${escapeHtml(formatTime(a.EndTime))}
-          </div>
-
-        </div>
-
-
-        <div class="info-item">
-
-          <div class="info-label">
-            ${t("venue")}
-          </div>
-
-          <div class="info-value">
-            📍 ${escapeHtml(v.Name || "")}
-          </div>
-
-        </div>
-
-
-        <div class="info-item">
-
-          <div class="info-label">
-            ${t("fee")}
-          </div>
-
-          <div class="info-value">
-            💰 ${escapeHtml(a.Fee || 0)}
-          </div>
-
-        </div>
-
-      </div>
-
-    </div>
-
-
-    <div class="card count-card">
-
-      <div class="section-title">
-        ${t("joined")}
-      </div>
-
-      <div class="count-number">
-        ${Number(c.Joined || 0)}
-        /
-        ${Number(a.Capacity || 0)}
-      </div>
-
-      <div class="count-label">
-        ${t("joined")}
-      </div>
-
-      <div class="progress">
-
-        <div
-          class="progress-bar"
-          style="
-            width:${getProgress(c.Joined, a.Capacity)}%;
-          "
-        ></div>
-
-      </div>
-
-      <div class="remaining">
-        ${t("remaining")}：
-        ${Math.max(0, Number(c.Remaining || 0))}
-      </div>
-
-    </div>
-  `;
+        `;
 
         if (a.Description) {
           html += `
+            <div class="card">
 
-      <div class="card">
+              <div class="section-title">
+                ${t("description")}
+              </div>
 
-        <div class="section-title">
-          ${t("description")}
-        </div>
+              <div class="description">
+                ${escapeHtml(a.Description)}
+              </div>
 
-        <div class="description">
-          ${escapeHtml(a.Description)}
-        </div>
-
-      </div>
-
-    `;
+            </div>
+          `;
         }
 
         if (v.Name || v.Address || v.Description || v.Access || v.Parking) {
           html += `
+            <div class="card">
 
-      <div class="card">
+              <div class="section-title">
+                ${t("venueInfo")}
+              </div>
 
-        <div class="section-title">
-          ${t("venueInfo")}
-        </div>
+              <div class="venue-name">
+                ${escapeHtml(v.Name || "")}
+              </div>
 
-        <div class="venue-name">
-          ${escapeHtml(v.Name || "")}
-        </div>
-
-        <div class="venue-detail">
-    `;
+              <div class="venue-detail">
+          `;
 
           if (v.Address) {
             html += "📍 " + escapeHtml(v.Address) + "<br>";
@@ -719,110 +695,102 @@
           }
 
           html += `
+              </div>
 
-        </div>
-
-      </div>
-
-    `;
+            </div>
+          `;
         }
 
         html += `
+          <div class="card">
 
-    <div class="card">
+            <div class="section-title">
+              ${t("participants")}
+            </div>
 
-      <div class="section-title">
-        ${t("participants")}
-      </div>
-
-      <div class="participants">
-
-  `;
+            <div class="participants">
+        `;
 
         if (!participants.length) {
-          html += `<div class="empty">
-        ${t("noParticipants")}
-      </div>`;
+          html += `
+            <div class="empty">
+              ${t("noParticipants")}
+            </div>
+          `;
         } else {
           html += `
+            <table>
 
-      <table>
+              <thead>
 
-        <thead>
+                <tr>
+                  <th>#</th>
+                  <th>名前</th>
+                  <th>Level</th>
+                  <th>Status</th>
+                  <th>Message</th>
+                </tr>
 
-          <tr>
-            <th>#</th>
-            <th>名前</th>
-            <th>Level</th>
-            <th>Status</th>
-            <th>Message</th>
-          </tr>
+              </thead>
 
-        </thead>
-
-        <tbody>
-
-    `;
+              <tbody>
+          `;
 
           participants.forEach(function (p, index) {
+            const status = String(p.Status || "").trim();
+
+            const statusClass = getStatusClass(status);
+
             html += `
+              <tr>
 
-          <tr>
+                <td>
+                  ${index + 1}
+                </td>
 
-            <td>
-              ${index + 1}
-            </td>
+                <td>
+                  ${escapeHtml(p.Name || "")}
+                </td>
 
-            <td>
-              ${escapeHtml(p.Name || "")}
-            </td>
+                <td>
+                  ${escapeHtml(p.Level || "")}
+                </td>
 
-            <td>
-              ${escapeHtml(p.Level || "")}
-            </td>
+                <td class="${statusClass}">
+                  ${escapeHtml(status)}
+                </td>
 
-            <td>
-              ${escapeHtml(p.Status || "")}
-            </td>
+                <td>
+                  ${escapeHtml(p.Message || "")}
+                </td>
 
-            <td>
-              ${escapeHtml(p.Message || "")}
-            </td>
-
-          </tr>
-
-        `;
+              </tr>
+            `;
           });
 
           html += `
+              </tbody>
 
-        </tbody>
-
-      </table>
-
-    `;
+            </table>
+          `;
         }
 
         html += `
+            </div>
 
-      </div>
-
-    </div>
-
-  `;
+          </div>
+        `;
 
         result.innerHTML = html;
 
         document.getElementById("registerArea").innerHTML = `
-
-    <a
-      class="register-btn"
-      href="./registration.html?id=${encodeURIComponent(activityID)}"
-    >
-      ${t("register")}
-    </a>
-
-  `;
+          <a
+            class="register-btn"
+            href="./registration.html?id=${encodeURIComponent(activityID)}"
+          >
+            ${t("register")}
+          </a>
+        `;
       }
 
       function getProgress(joined, capacity) {
