@@ -915,6 +915,9 @@
         // 活动缓存有效时间
         activityCacheTTL: 60 * 1000,
 
+        // 活动缓存时间戳存储键
+        activityCacheKey: "activities_cache_meta",
+
         // 请求超时
         requestTimeout: 15000,
 
@@ -997,6 +1000,11 @@
           members: "人",
 
           offlineSaved: "📴 签到已保存，网络恢复后会自动同步。",
+          missingRegistrationID: "签到失败：缺少报名 ID",
+          paymentMethodNotFound: "签到失败：找不到付款方式",
+          requestTimeout: "服务器请求超时，请检查网络",
+          noServerData: "服务器没有返回数据",
+          responseFormatError: "服务器返回格式错误",
         },
 
         ja: {
@@ -1070,6 +1078,12 @@
 
           offlineSaved:
             "📴 チェックインを保存しました。通信復旧後に自動同期します。",
+          missingRegistrationID: "チェックイン失敗：参加 ID がありません",
+          paymentMethodNotFound: "チェックイン失敗：支払い方法が見つかりません",
+          requestTimeout:
+            "サーバーへの接続がタイムアウトしました。通信状態を確認してください",
+          noServerData: "サーバーからデータが返されませんでした",
+          responseFormatError: "サーバーの応答形式が正しくありません",
         },
       };
 
@@ -1159,8 +1173,11 @@
 
       window.addEventListener("DOMContentLoaded", () => {
         applyLanguage();
-
         initializeCheckin();
+
+        setTimeout(() => {
+          processSyncQueue();
+        }, 500);
       });
 
       async function initializeCheckin() {
@@ -1174,6 +1191,33 @@
       /* =====================================================
          今日活动
       ====================================================== */
+
+      async function getActivityCacheMeta() {
+        try {
+          return await dbGet("settings", CONFIG.activityCacheKey);
+        } catch (error) {
+          console.warn("[CHECKIN] 活动缓存元数据读取失败:", error);
+          return null;
+        }
+      }
+
+      async function setActivityCacheMeta() {
+        try {
+          await dbPut("settings", {
+            key: CONFIG.activityCacheKey,
+            updatedAt: Date.now(),
+          });
+        } catch (error) {
+          console.warn("[CHECKIN] 活动缓存元数据保存失败:", error);
+        }
+      }
+
+      function isActivityCacheFresh(meta) {
+        const updatedAt = Number(meta?.updatedAt || 0);
+        return (
+          updatedAt > 0 && Date.now() - updatedAt < CONFIG.activityCacheTTL
+        );
+      }
 
       async function loadTodayActivities(preferredActivityID = "") {
         // 防止重复调用
@@ -1254,6 +1298,14 @@
           return;
         }
 
+        const activityCacheMeta = await getActivityCacheMeta();
+        const cacheFresh = isActivityCacheFresh(activityCacheMeta);
+
+        if (cachedToday.length && cacheFresh && !preferredActivityID) {
+          console.log("[CHECKIN] 活动缓存仍有效，跳过本次网络刷新");
+          return;
+        }
+
         try {
           const activities = await gasRequest(
             {
@@ -1275,6 +1327,7 @@
 
           try {
             await dbPutAll("activities", activities);
+            await setActivityCacheMeta();
           } catch (cacheError) {
             console.warn("[CHECKIN] 活动缓存保存失败:", cacheError);
           }
@@ -1873,7 +1926,7 @@
 
       async function checkin(registrationID, button = null) {
         if (!registrationID) {
-          showMessage("签到失败：缺少报名 ID", true);
+          showMessage(t("missingRegistrationID"), true);
 
           return;
         }
@@ -1881,7 +1934,7 @@
         const select = $(`pay_${registrationID}`);
 
         if (!select) {
-          showMessage("签到失败：找不到付款方式", true);
+          showMessage(t("paymentMethodNotFound"), true);
 
           return;
         }
@@ -2087,7 +2140,7 @@
           const text = await response.text();
 
           if (!text) {
-            throw new Error("服务器没有返回数据");
+            throw new Error(t("noServerData"));
           }
 
           try {
@@ -2095,11 +2148,11 @@
           } catch (jsonError) {
             console.error("[GAS] 原始返回:", text);
 
-            throw new Error("服务器返回格式错误");
+            throw new Error(t("responseFormatError"));
           }
         } catch (error) {
           if (error?.name === "AbortError") {
-            throw new Error("服务器请求超时，请检查网络");
+            throw new Error(t("requestTimeout"));
           }
 
           throw error;
@@ -2199,12 +2252,6 @@
          只读取队列。
       ====================================================== */
 
-      window.addEventListener("DOMContentLoaded", () => {
-        setTimeout(() => {
-          processSyncQueue();
-        }, 500);
-      });
-
       /* =====================================================
          统计
       ====================================================== */
@@ -2270,17 +2317,22 @@
           return "";
         }
 
-        const date = new Date(value);
+        const raw = String(value).trim();
+
+        // 纯 YYYY-MM-DD 不经过 new Date，避免 UTC 时区导致日期偏移。
+        if (/^\d{4}-\d{2}-\d{2}$/.test(raw)) {
+          return raw;
+        }
+
+        const date = new Date(raw);
 
         if (isNaN(date.getTime())) {
-          return String(value).substring(0, 10);
+          return raw.substring(0, 10);
         }
 
         return [
           date.getFullYear(),
-
           String(date.getMonth() + 1).padStart(2, "0"),
-
           String(date.getDate()).padStart(2, "0"),
         ].join("-");
       }
