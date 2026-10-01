@@ -7,10 +7,6 @@
     />
 
     <style>
-      /* =====================================================
-         全局
-      ===================================================== */
-
       *,
       *::before,
       *::after {
@@ -33,34 +29,36 @@
 
       body {
         min-height: 100dvh;
+
         font-family:
           -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, sans-serif;
+
         color: #222;
+
         background: linear-gradient(180deg, #eef7ff 0%, #f7f9fc 100%);
+
         overflow-x: hidden;
+
         padding-top: env(safe-area-inset-top);
         padding-bottom: env(safe-area-inset-bottom);
+
         font-size: 22px;
         line-height: 1.55;
+
         -webkit-text-size-adjust: 100%;
       }
-
-      /* =====================================================
-         主容器
-      ===================================================== */
 
       .container {
         width: 100%;
         max-width: none;
+
         min-height: 100vh;
         min-height: 100dvh;
+
         margin: 0;
+
         padding: 8px 0 24px;
       }
-
-      /* =====================================================
-         顶部
-      ===================================================== */
 
       .header {
         width: 100%;
@@ -70,42 +68,52 @@
 
       .header-title {
         margin: 0;
+
         font-size: 30px;
         line-height: 1.25;
+
         font-weight: 900;
+
         color: #1565c0;
       }
 
       .header-subtitle {
         margin: 8px 0 0;
+
         font-size: 25px;
         line-height: 1.45;
+
         font-weight: 700;
+
         color: #667085;
       }
 
-      /* =====================================================
-         语言切换
-      ===================================================== */
-
       .language-switcher {
         display: flex;
+
         justify-content: center;
         align-items: center;
+
         gap: 10px;
+
         margin-bottom: 14px;
       }
 
       .language-button {
         width: auto;
+
         min-width: 112px;
         min-height: 58px;
+
         margin: 0;
         padding: 10px 20px;
+
         border: 2px solid #d0d7de;
         border-radius: 999px;
+
         background: #fff;
         color: #555;
+
         font-size: 23px;
         font-weight: 900;
       }
@@ -122,73 +130,86 @@
         font-weight: 700;
       }
 
-      /* =====================================================
-         返回首页
-      ===================================================== */
-
       .home-button {
         width: 100%;
+
         min-height: 70px;
+
         margin: 0 0 14px;
+
         padding: 12px;
+
         border: 2px solid #d8e5f2;
         border-radius: 0;
+
         background: #fff;
         color: #1565c0;
+
         font-size: 25px;
         font-weight: 900;
+
         box-shadow: 0 3px 12px rgba(21, 101, 192, 0.08);
       }
 
-      /* =====================================================
-         今日签到 ID
-      ===================================================== */
-
       .checkin-id-card {
         width: 100%;
+
         margin-bottom: 14px;
+
         padding: 24px 10px;
+
         text-align: center;
+
         color: #fff;
+
         background: linear-gradient(135deg, #1565c0, #42a5f5);
+
         border-radius: 0;
+
         box-shadow: 0 8px 24px rgba(21, 101, 192, 0.22);
       }
 
       .checkin-id-label {
         margin-bottom: 8px;
+
         font-size: 25px;
         line-height: 1.4;
+
         font-weight: 800;
+
         opacity: 0.95;
       }
 
       .checkin-id {
         font-size: 24px;
         line-height: 1.3;
+
         font-weight: 800;
+
         letter-spacing: 1px;
+
         word-break: break-all;
       }
 
       .checkin-activity-title {
         margin-top: 8px;
+
         font-size: 20px;
         line-height: 1.4;
+
         font-weight: 800;
       }
 
       .checkin-date {
         margin-top: 6px;
+
         font-size: 23px;
         line-height: 1.4;
+
         font-weight: 700;
+
         opacity: 0.95;
       }
-
-      /* =====================================================
-         卡片
-      ===================================================== */
 
       .card,
       .member-card,
@@ -199,51 +220,66 @@
 
       .card {
         margin-bottom: 10px;
+
         padding: 18px 10px;
+
         border-radius: 0;
+
         box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
       }
 
       .card-title {
         margin-bottom: 12px;
+
         font-size: 29px;
         line-height: 1.35;
+
         font-weight: 900;
       }
 
-      /* =====================================================
-         输入
-      ===================================================== */
-
       label {
         display: block;
+
         margin-top: 14px;
+
         font-size: 25px;
         line-height: 1.4;
+
         font-weight: 900;
       }
 
       input,
       select {
         display: block;
+
         width: 100%;
+
         min-height: 68px;
+
         margin-top: 8px;
+
         padding: 12px 14px;
+
         border: 2px solid #d5dbe3;
         border-radius: 11px;
+
         background: #fff;
         color: #222;
+
         font-size: 24px;
         line-height: 1.4;
+
         font-weight: 600;
+
         outline: none;
+
         -webkit-text-size-adjust: 100%;
       }
 
       input:focus,
       select:focus {
         border-color: #1976d2;
+
         box-shadow: 0 0 0 4px rgba(25, 118, 210, 0.12);
       }
 
@@ -253,24 +289,32 @@
         font-size: 23px;
       }
 
-      /* =====================================================
-         按钮
-      ===================================================== */
-
       button {
         width: 100%;
+
         min-height: 70px;
+
         margin-top: 12px;
+
         padding: 12px 14px;
+
         border: 0;
+
         border-radius: 11px;
+
         background: #1976d2;
         color: #fff;
+
         font-size: 25px;
+
         line-height: 1.35;
+
         font-weight: 900;
+
         cursor: pointer;
+
         -webkit-tap-highlight-color: transparent;
+
         touch-action: manipulation;
       }
 
@@ -279,71 +323,87 @@
       }
 
       button:disabled {
-        opacity: 0.65;
+        opacity: 0.55;
         cursor: not-allowed;
+        transform: none;
       }
 
       .load-button {
         background: linear-gradient(135deg, #1976d2, #42a5f5);
+
         box-shadow: 0 4px 12px rgba(25, 118, 210, 0.18);
       }
 
-      /* =====================================================
-         今日活动
-      ===================================================== */
-
       .today-activity-list {
         display: grid;
+
         gap: 8px;
+
         margin-top: 12px;
       }
 
       .activity-option {
         width: 100%;
+
         min-height: 82px;
+
         margin: 0;
+
         padding: 12px;
+
         text-align: left;
+
         background: #f7faff;
         color: #123;
+
         border: 2px solid #d9e8f8;
+
         border-radius: 10px;
       }
 
       .activity-option.active {
         background: #e3f2fd;
+
         border-color: #1976d2;
+
         color: #0d47a1;
       }
 
       .activity-option-title {
         font-size: 20px;
+
         line-height: 1.35;
+
         font-weight: 800;
       }
 
       .activity-option-info {
         margin-top: 4px;
+
         color: #666;
+
         font-size: 21px;
+
         line-height: 1.45;
+
         font-weight: 600;
       }
 
-      /* =====================================================
-         统计
-      ===================================================== */
-
       .summary {
         display: grid;
+
         grid-template-columns: 1fr 1fr;
+
         gap: 8px;
       }
 
       .summary-box {
         padding: 14px 8px;
+
         text-align: center;
+
         background: #f5f7fa;
+
         border-radius: 12px;
       }
 
@@ -353,8 +413,11 @@
 
       .summary-number {
         color: #1976d2;
+
         font-size: 50px;
+
         line-height: 1.05;
+
         font-weight: 900;
       }
 
@@ -364,121 +427,136 @@
 
       .summary-label {
         margin-top: 5px;
+
         color: #666;
+
         font-size: 22px;
+
         line-height: 1.3;
+
         font-weight: 800;
       }
-
-      /* =====================================================
-         搜索
-      ===================================================== */
 
       .search-input {
         margin-top: 0;
       }
 
-      /* =====================================================
-         会员卡片
-      ===================================================== */
-
       .member-card {
         margin-bottom: 9px;
+
         padding: 16px 12px;
+
         border-left: 7px solid #bdbdbd;
+
         border-radius: 0;
+
         box-shadow: 0 3px 12px rgba(0, 0, 0, 0.05);
       }
 
       .member-card.checked {
         background: #f0fff3;
+
         border-left-color: #2e7d32;
       }
 
       .member-name {
         margin-bottom: 7px;
+
         font-size: 34px;
+
         line-height: 1.25;
+
         font-weight: 900;
+
         word-break: break-word;
       }
 
       .member-info {
         color: #555;
+
         font-size: 23px;
+
         line-height: 1.55;
+
         font-weight: 600;
       }
 
-      /* =====================================================
-         签到状态
-      ===================================================== */
-
       .member-status {
         display: inline-block;
+
         margin-top: 9px;
+
         padding: 7px 13px;
+
         border-radius: 999px;
+
         font-size: 21px;
+
         line-height: 1.3;
+
         font-weight: 900;
       }
 
       .status-not {
         background: #fff3e0;
+
         color: #ef6c00;
       }
 
       .status-checked {
         background: #c8e6c9;
+
         color: #1b5e20;
       }
-
-      /* =====================================================
-         付款方式
-      ===================================================== */
 
       .payment-select {
         margin-top: 12px;
       }
 
-      /* =====================================================
-         签到按钮
-      ===================================================== */
-
       .checkin-button {
         min-height: 76px;
+
         margin-top: 12px;
+
         background: linear-gradient(135deg, #2e7d32, #43a047);
+
         font-size: 27px;
+
         box-shadow: 0 4px 12px rgba(46, 125, 50, 0.18);
       }
 
-      /* =====================================================
-         空状态
-      ===================================================== */
+      .checkin-button.loading {
+        background: #78909c;
+      }
 
       .empty {
         padding: 30px 12px;
+
         text-align: center;
+
         color: #777;
+
         font-size: 24px;
+
         line-height: 1.5;
+
         font-weight: 700;
       }
-
-      /* =====================================================
-         消息
-      ===================================================== */
 
       .error,
       .success-message {
         width: 100%;
+
         margin-bottom: 10px;
+
         padding: 15px 12px;
+
         border-radius: 0;
+
         font-size: 22px;
+
         line-height: 1.5;
+
         font-weight: 800;
       }
 
@@ -489,23 +567,25 @@
 
       .success-message {
         background: #e8f5e9;
+
         color: #2e7d32;
+
         font-size: 24px;
+
         font-weight: 900;
       }
-
-      /* =====================================================
-         手机
-      ===================================================== */
 
       @media (max-width: 600px) {
         html,
         body {
           width: 100%;
           max-width: 100%;
+
           margin: 0;
+
           padding-left: 0;
           padding-right: 0;
+
           overflow-x: hidden;
         }
 
@@ -515,7 +595,9 @@
 
         .container {
           width: 100%;
+
           margin: 0;
+
           padding: 6px 0 22px;
         }
 
@@ -541,11 +623,13 @@
         .language-button {
           min-width: 112px;
           min-height: 58px;
+
           font-size: 23px;
         }
 
         .home-button {
           min-height: 70px;
+
           font-size: 25px;
         }
 
@@ -564,10 +648,6 @@
         }
       }
 
-      /* =====================================================
-         小手机
-      ===================================================== */
-
       @media (max-width: 380px) {
         .header-title {
           font-size: 30px;
@@ -580,13 +660,16 @@
         .language-button {
           min-width: 100px;
           min-height: 54px;
+
           padding-left: 15px;
           padding-right: 15px;
+
           font-size: 21px;
         }
 
         .home-button {
           min-height: 66px;
+
           font-size: 23px;
         }
 
@@ -617,11 +700,13 @@
         input,
         select {
           min-height: 64px;
+
           font-size: 22px;
         }
 
         button {
           min-height: 66px;
+
           font-size: 23px;
         }
 
@@ -659,6 +744,7 @@
 
         .checkin-button {
           min-height: 70px;
+
           font-size: 25px;
         }
 
@@ -671,7 +757,9 @@
 
   <body>
     <div class="container">
-      <!-- 顶部 -->
+      <!-- =========================
+           顶部
+      ========================== -->
       <div class="header">
         <div class="language-switcher">
           <button
@@ -711,7 +799,9 @@
         </div>
       </div>
 
-      <!-- 今日签到 ID -->
+      <!-- =========================
+           今日签到 ID
+      ========================== -->
       <div class="checkin-id-card">
         <div class="checkin-id-label" data-i18n="todayCheckinID">
           📌 今日签到 ID
@@ -726,7 +816,9 @@
         <div id="displayDate" class="checkin-date"></div>
       </div>
 
-      <!-- 活动选择 -->
+      <!-- =========================
+           活动选择
+      ========================== -->
       <div class="card">
         <div class="card-title" data-i18n="selectActivity">📅 选择今日活动</div>
 
@@ -747,6 +839,7 @@
         <button
           type="button"
           class="load-button"
+          id="loadListButton"
           onclick="loadList()"
           data-i18n="loadList"
         >
@@ -754,7 +847,9 @@
         </button>
       </div>
 
-      <!-- 统计 -->
+      <!-- =========================
+           统计
+      ========================== -->
       <div class="card">
         <div class="summary">
           <div class="summary-box checked-summary">
@@ -771,7 +866,9 @@
         </div>
       </div>
 
-      <!-- 搜索 -->
+      <!-- =========================
+           搜索
+      ========================== -->
       <div class="card">
         <div class="card-title" data-i18n="search">🔎 搜索参加者</div>
 
@@ -785,125 +882,228 @@
         />
       </div>
 
-      <!-- 消息 -->
+      <!-- =========================
+           消息
+      ========================== -->
       <div id="messageArea"></div>
 
-      <!-- 名单 -->
+      <!-- =========================
+           名单
+      ========================== -->
       <div id="list">
         <div class="empty" data-i18n="pleaseSelect">请先选择活动</div>
       </div>
     </div>
 
+    <!-- =====================================================
+         主程序
+    ====================================================== -->
+
     <script>
       /* =====================================================
-         基础设置
-      ===================================================== */
+         GAS
+      ====================================================== */
 
       const GAS_URL =
         "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
 
+      /* =====================================================
+         配置
+      ====================================================== */
+
+      const CONFIG = {
+        // 活动缓存有效时间
+        activityCacheTTL: 60 * 1000,
+
+        // 请求超时
+        requestTimeout: 15000,
+
+        // 消息显示时间
+        messageDuration: 3500,
+      };
+
+      /* =====================================================
+         翻译
+      ====================================================== */
+
       const I18N = {
         zh: {
           home: "🏠 返回首页",
+
           title: "🏸 今日签到",
+
           subtitle: "找到你的报名，完成签到",
+
           todayCheckinID: "📌 今日签到 ID",
+
           selectActivity: "📅 选择今日活动",
+
           activityID: "活动 / 签到 ID",
+
           activityPlaceholder: "例如：ACT000001",
+
           loadList: "🔍 加载签到名单",
-          checked: "已签到",
-          total: "总人数",
-          search: "🔎 搜索参加者",
-          searchPlaceholder: "姓名 / 联系方式",
-          pleaseSelect: "请先选择活动",
-          loading: "正在读取今日活动……",
-          noTodayActivity: "今天没有可签到的活动",
-          noActivities: "今天没有可签到的活动",
+
           loadingList: "正在加载签到名单……",
+
+          checked: "已签到",
+
+          total: "总人数",
+
+          search: "🔎 搜索参加者",
+
+          searchPlaceholder: "姓名 / 联系方式",
+
+          pleaseSelect: "请先选择活动",
+
+          loading: "正在读取今日活动……",
+
+          noTodayActivity: "今天没有可签到的活动",
+
           noMembers: "没有找到参加者",
+
           notChecked: "⏳ 未签到",
+
           checkedStatus: "✅ 已签到",
+
           level: "等级",
+
           payment: "付款方式",
+
           cash: "现金",
+
           paypay: "PayPay",
+
           unpaid: "未付款",
+
           free: "免费",
+
           checkin: "✅ 签到",
-          checkingIn: "⏳ 签到中……",
+
+          checking: "正在签到……",
+
           checkinSuccess: "签到成功",
+
           loadFailed: "加载失败：",
+
           checkinFailed: "签到失败：",
+
           activityNotFound: "没有找到这个活动",
+
           activityLoaded: "签到名单已加载",
+
           today: "今天",
+
           members: "人",
+
+          offlineSaved: "📴 签到已保存，网络恢复后会自动同步。",
         },
 
         ja: {
           home: "🏠 ホームに戻る",
+
           title: "🏸 本日のチェックイン",
+
           subtitle: "参加者を確認してチェックイン",
+
           todayCheckinID: "📌 本日のチェックイン ID",
+
           selectActivity: "📅 本日のイベントを選択",
+
           activityID: "イベント / チェックイン ID",
+
           activityPlaceholder: "例：ACT000001",
+
           loadList: "🔍 参加者一覧を読み込む",
-          checked: "チェックイン済み",
-          total: "参加人数",
-          search: "🔎 参加者を検索",
-          searchPlaceholder: "名前 / 連絡先",
-          pleaseSelect: "イベントを選択してください",
-          loading: "本日のイベントを読み込んでいます……",
-          noTodayActivity: "本日のチェックイン可能なイベントはありません",
-          noActivities: "本日のチェックイン可能なイベントはありません",
+
           loadingList: "参加者一覧を読み込んでいます……",
+
+          checked: "チェックイン済み",
+
+          total: "参加人数",
+
+          search: "🔎 参加者を検索",
+
+          searchPlaceholder: "名前 / 連絡先",
+
+          pleaseSelect: "イベントを選択してください",
+
+          loading: "本日のイベントを読み込んでいます……",
+
+          noTodayActivity: "本日のチェックイン可能なイベントはありません",
+
           noMembers: "参加者が見つかりません",
+
           notChecked: "⏳ 未チェックイン",
+
           checkedStatus: "✅ チェックイン済み",
+
           level: "レベル",
+
           payment: "支払い方法",
+
           cash: "現金",
+
           paypay: "PayPay",
+
           unpaid: "未払い",
+
           free: "無料",
+
           checkin: "✅ チェックイン",
-          checkingIn: "⏳ チェックイン中……",
+
+          checking: "チェックイン中……",
+
           checkinSuccess: "チェックインしました",
+
           loadFailed: "読み込み失敗：",
+
           checkinFailed: "チェックイン失敗：",
+
           activityNotFound: "イベントが見つかりません",
+
           activityLoaded: "参加者一覧を読み込みました",
+
           today: "本日",
+
           members: "人",
+
+          offlineSaved:
+            "📴 チェックインを保存しました。通信復旧後に自動同期します。",
         },
       };
+
+      /* =====================================================
+         状态
+      ====================================================== */
 
       let currentLanguage = localStorage.getItem("language") || "zh";
 
       let members = [];
+
       let allTodayActivities = [];
+
       let currentActivityID = "";
 
-      // 防止活动列表重复请求
-      let activitiesRequest = null;
+      let activityLoadingPromise = null;
 
-      // 每个 ActivityID 独立管理请求
-      const listRequests = new Map();
+      let listLoadingPromise = null;
 
-      // 防止同一个会员重复签到
-      const checkingIn = new Set();
+      let currentListRequestID = 0;
+
+      let currentActivityRequestID = 0;
+
+      let syncRunning = false;
 
       /* =====================================================
          DOM
-      ===================================================== */
+      ====================================================== */
 
       const $ = (id) => document.getElementById(id);
 
       /* =====================================================
          翻译
-      ===================================================== */
+      ====================================================== */
 
       function t(key) {
         return I18N[currentLanguage]?.[key] ?? I18N.zh[key] ?? key;
@@ -947,35 +1147,51 @@
 
       /* =====================================================
          首页
-      ===================================================== */
+      ====================================================== */
 
       function goHome() {
         window.location.href = "./index.html";
       }
 
       /* =====================================================
-         页面初始化
-      ===================================================== */
+         初始化
+      ====================================================== */
 
       window.addEventListener("DOMContentLoaded", () => {
         applyLanguage();
+
         initializeCheckin();
-        testSyncQueue();
       });
 
-      function initializeCheckin() {
+      async function initializeCheckin() {
         const params = new URLSearchParams(window.location.search);
 
-        const activityID = params.get("activityID") || "";
+        const preferredActivityID = params.get("activityID") || "";
 
-        loadTodayActivities(activityID);
+        await loadTodayActivities(preferredActivityID);
       }
 
       /* =====================================================
          今日活动
-      ===================================================== */
+      ====================================================== */
 
-      function loadTodayActivities(preferredActivityID = "") {
+      async function loadTodayActivities(preferredActivityID = "") {
+        // 防止重复调用
+        if (activityLoadingPromise) {
+          return activityLoadingPromise;
+        }
+
+        activityLoadingPromise =
+          loadTodayActivitiesInternal(preferredActivityID);
+
+        try {
+          return await activityLoadingPromise;
+        } finally {
+          activityLoadingPromise = null;
+        }
+      }
+
+      async function loadTodayActivitiesInternal(preferredActivityID = "") {
         const box = $("todayActivityList");
 
         const today = getTodayString();
@@ -986,142 +1202,178 @@
           </div>
         `;
 
-        function handleActivities(activities, source) {
-          if (!Array.isArray(activities)) {
-            console.warn("[CHECKIN] 活动数据格式错误:", source);
-            return;
+        let cachedActivities = [];
+
+        /* ---------------------------------------------
+           1. 读取本地缓存
+        --------------------------------------------- */
+
+        try {
+          cachedActivities = await dbGetAll("activities");
+        } catch (error) {
+          console.warn("[CHECKIN] IndexedDB activities 读取失败:", error);
+        }
+
+        const cachedToday = filterTodayActivities(cachedActivities, today);
+
+        if (cachedToday.length) {
+          console.log("[CHECKIN] 使用本地活动缓存:", cachedToday);
+
+          allTodayActivities = cachedToday;
+
+          renderTodayActivities(cachedToday);
+
+          // 有明确 URL activityID
+          if (preferredActivityID && findActivity(preferredActivityID)) {
+            await selectActivity(preferredActivityID, {
+              autoLoad: true,
+            });
           }
 
-          const todayActivities = activities.filter((activity) => {
-            const date = String(activity.Date || "").substring(0, 10);
-
-            const activityDate = String(activity.ActivityDate || "").substring(
-              0,
-              10,
-            );
-
-            return date === today || activityDate === today;
-          });
-
-          allTodayActivities = todayActivities;
-
-          console.log("[CHECKIN] 今日活动来源:", source, todayActivities);
-
-          renderTodayActivities(todayActivities);
-
-          if (todayActivities.length === 0) {
-            return;
-          }
-
-          // URL 指定活动
-          if (preferredActivityID) {
-            const preferred = todayActivities.find(
-              (activity) =>
-                String(activity.ActivityID) === String(preferredActivityID),
-            );
-
-            if (preferred) {
-              selectActivity(preferred.ActivityID, true);
-
-              return;
-            }
-          }
-
-          // 只有一个活动时自动选择
-          if (todayActivities.length === 1) {
-            selectActivity(todayActivities[0].ActivityID, true);
+          // 只有一个活动
+          else if (cachedToday.length === 1 && !currentActivityID) {
+            await selectActivity(cachedToday[0].ActivityID, {
+              autoLoad: true,
+            });
           }
         }
 
-        // ===================================================
-        // ① IndexedDB：立即读取
-        // ===================================================
+        /* ---------------------------------------------
+           2. 网络刷新
+        --------------------------------------------- */
 
-        dbGetAll("activities")
-          .then((cachedActivities) => {
-            if (Array.isArray(cachedActivities) && cachedActivities.length) {
-              console.log("[CHECKIN] 立即使用 IndexedDB 活动缓存");
+        if (!navigator.onLine) {
+          if (!cachedToday.length) {
+            box.innerHTML = `
+              <div class="empty">
+                ${escapeHtml(t("noTodayActivity"))}
+              </div>
+            `;
+          }
 
-              handleActivities(cachedActivities, "IndexedDB");
-            }
+          return;
+        }
 
-            // =================================================
-            // ② 网络不可用
-            // =================================================
+        try {
+          const activities = await gasRequest(
+            {
+              action: "pwaCheckin",
+              type: "getActivities",
+            },
+            {
+              timeout: CONFIG.requestTimeout,
+            },
+          );
 
-            if (!navigator.onLine) {
-              console.log("[CHECKIN] 当前离线，不刷新 GAS");
+          if (!Array.isArray(activities)) {
+            throw new Error("活动数据格式错误");
+          }
 
-              return null;
-            }
+          /* ---------------------------------------------
+             保存缓存
+          --------------------------------------------- */
 
-            // =================================================
-            // ③ 已有请求则复用
-            // =================================================
+          try {
+            await dbPutAll("activities", activities);
+          } catch (cacheError) {
+            console.warn("[CHECKIN] 活动缓存保存失败:", cacheError);
+          }
 
-            if (activitiesRequest) {
-              return activitiesRequest;
-            }
+          const freshToday = filterTodayActivities(activities, today);
 
-            // =================================================
-            // ④ 后台刷新 GAS
-            // =================================================
+          const oldIDs = getActivityIDs(allTodayActivities);
 
-            activitiesRequest = fetch(GAS_URL, {
-              method: "POST",
-              body: JSON.stringify({
-                action: "pwaCheckin",
-                type: "getActivities",
-              }),
-            })
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error("HTTP " + response.status);
-                }
+          const newIDs = getActivityIDs(freshToday);
 
-                return response.json();
-              })
-              .then(async (activities) => {
-                if (!Array.isArray(activities)) {
-                  throw new Error("活动数据格式错误");
-                }
+          const activitiesChanged = !sameArray(oldIDs, newIDs);
 
-                await dbPutAll("activities", activities);
+          allTodayActivities = freshToday;
 
-                console.log("[CHECKIN] GAS 活动数据已更新缓存");
+          renderTodayActivities(freshToday);
 
-                handleActivities(activities, "GAS");
+          if (!freshToday.length) {
+            box.innerHTML = `
+              <div class="empty">
+                📅 ${escapeHtml(t("noTodayActivity"))}
+              </div>
+            `;
 
-                return activities;
-              })
-              .catch((error) => {
-                console.error("[CHECKIN] 后台刷新活动失败:", error);
+            return;
+          }
 
-                // 有缓存时不要覆盖页面
-                if (!allTodayActivities.length) {
-                  box.innerHTML = `
-                        <div class="error">
-                          ⚠️ ${escapeHtml(error.message || String(error))}
-                        </div>
-                      `;
-                }
+          /* ---------------------------------------------
+             关键优化：
 
-                return null;
-              })
-              .finally(() => {
-                activitiesRequest = null;
+             如果缓存阶段已经自动选择过同一个活动，
+             网络刷新后绝对不要再次 loadList()
+          --------------------------------------------- */
+
+          let targetActivityID = preferredActivityID || currentActivityID;
+
+          if (!targetActivityID && freshToday.length === 1) {
+            targetActivityID = freshToday[0].ActivityID;
+          }
+
+          if (targetActivityID && findActivity(targetActivityID)) {
+            const alreadySelected =
+              String(currentActivityID) === String(targetActivityID);
+
+            if (!alreadySelected) {
+              await selectActivity(targetActivityID, {
+                autoLoad: true,
               });
+            } else {
+              updateActivityHeader();
+            }
+          }
 
-            return activitiesRequest;
-          })
-          .catch((error) => {
-            console.error("[CHECKIN] IndexedDB 活动读取失败:", error);
+          console.log("[CHECKIN] 今日活动刷新完成", {
+            changed: activitiesChanged,
+            count: freshToday.length,
           });
+        } catch (error) {
+          console.error("[CHECKIN] 今日活动网络刷新失败:", error);
+
+          // 有缓存就继续使用缓存
+          if (cachedToday.length) {
+            console.log("[CHECKIN] 网络失败，继续使用缓存");
+
+            return;
+          }
+
+          box.innerHTML = `
+            <div class="error">
+              ⚠️
+              ${escapeHtml(t("loadFailed"))}
+              ${escapeHtml(error?.message || String(error))}
+            </div>
+          `;
+        }
       }
 
-      /* =====================================================
-         活动列表显示
-      ===================================================== */
+      function filterTodayActivities(activities, today) {
+        if (!Array.isArray(activities)) {
+          return [];
+        }
+
+        return activities.filter((activity) => {
+          return String(activity.Date || "").substring(0, 10) === today;
+        });
+      }
+
+      function getActivityIDs(activities) {
+        return (activities || [])
+          .map((activity) => String(activity.ActivityID || ""))
+          .sort();
+      }
+
+      function sameArray(a, b) {
+        if (a.length !== b.length) {
+          return false;
+        }
+
+        return a.every((value, index) => value === b[index]);
+      }
 
       function renderTodayActivities(list) {
         const box = $("todayActivityList");
@@ -1138,10 +1390,13 @@
           return;
         }
 
+        const fragment = document.createDocumentFragment();
+
         list.forEach((activity) => {
           const button = document.createElement("button");
 
           button.type = "button";
+
           button.className = "activity-option";
 
           if (String(activity.ActivityID) === String(currentActivityID)) {
@@ -1161,220 +1416,85 @@
             : "";
 
           button.innerHTML = `
-            <div class="activity-option-title">
-              🏸 ${escapeHtml(title)}
-            </div>
 
-            <div class="activity-option-info">
-              📅 ${escapeHtml(date)}
-              ${time}${end}
-              <br>
-              🆔 ${escapeHtml(activity.ActivityID || "")}
-            </div>
-          `;
+              <div class="activity-option-title">
+                🏸 ${escapeHtml(title)}
+              </div>
 
-          button.onclick = () => selectActivity(activity.ActivityID, true);
+              <div class="activity-option-info">
 
-          box.appendChild(button);
+                📅 ${escapeHtml(date)}
+
+                ${time}${end}
+
+                <br>
+
+                🆔 ${escapeHtml(activity.ActivityID || "")}
+
+              </div>
+
+            `;
+
+          button.onclick = () =>
+            selectActivity(activity.ActivityID, {
+              autoLoad: true,
+            });
+
+          fragment.appendChild(button);
         });
+
+        box.appendChild(fragment);
       }
 
       /* =====================================================
          选择活动
-      ===================================================== */
+      ====================================================== */
 
-      function selectActivity(activityID, shouldLoad = true) {
-        currentActivityID = String(activityID || "").trim();
+      async function selectActivity(activityID, options = {}) {
+        const id = String(activityID || "").trim();
 
-        if (!currentActivityID) {
+        if (!id) {
           return;
         }
 
-        $("activityID").value = currentActivityID;
+        const changed = currentActivityID !== id;
 
-        const activity = findActivity(currentActivityID);
+        currentActivityID = id;
 
-        $("displayCheckinID").textContent = currentActivityID;
+        $("activityID").value = id;
 
-        if (activity) {
-          $("displayActivityTitle").textContent =
-            "🏸 " + (activity.Title || "");
+        $("displayCheckinID").textContent = id;
 
-          $("displayDate").textContent =
-            "📅 " + formatDate(activity.ActivityDate || activity.Date);
-        }
+        updateActivityHeader();
 
         renderTodayActivities(allTodayActivities);
 
-        if (shouldLoad) {
-          loadList();
+        if (options.autoLoad && (changed || members.length === 0)) {
+          await loadList(id, {
+            force: false,
+          });
         }
       }
 
       function findActivity(activityID) {
-        return allTodayActivities.find(
-          (activity) => String(activity.ActivityID) === String(activityID),
+        return (
+          allTodayActivities.find(
+            (activity) => String(activity.ActivityID) === String(activityID),
+          ) || null
         );
       }
-
-      /* =====================================================
-         加载签到名单
-      ===================================================== */
-
-      async function loadList() {
-        const id = $("activityID").value.trim();
-
-        if (!id) {
-          showMessage(t("activityNotFound"), true);
-
-          return;
-        }
-
-        currentActivityID = id;
-
-        $("displayCheckinID").textContent = id;
-
-        // ===================================================
-        // ① 立即读取本地缓存
-        // ===================================================
-
-        try {
-          const cached = await dbGet("settings", "checkinList_" + id);
-
-          if (cached && Array.isArray(cached.value)) {
-            members = cached.value;
-
-            console.log("[CHECKIN] 立即使用签到名单缓存:", id, members.length);
-
-            updateSummary();
-            render(filterMembers());
-            updateActivityHeader();
-          } else {
-            $("list").innerHTML = `
-              <div class="empty">
-                ${escapeHtml(t("loadingList"))}
-              </div>
-            `;
-          }
-        } catch (error) {
-          console.error("[CHECKIN] 读取签到名单缓存失败:", error);
-
-          $("list").innerHTML = `
-            <div class="empty">
-              ${escapeHtml(t("loadingList"))}
-            </div>
-          `;
-        }
-
-        // ===================================================
-        // ② 离线
-        // ===================================================
-
-        if (!navigator.onLine) {
-          console.log("[CHECKIN] 离线，仅使用本地名单");
-
-          return;
-        }
-
-        // ===================================================
-        // ③ 当前活动已经有请求则复用
-        // ===================================================
-
-        if (listRequests.has(id)) {
-          console.log("[CHECKIN] 已经存在名单请求:", id);
-
-          return listRequests.get(id);
-        }
-
-        // ===================================================
-        // ④ 后台刷新 GAS
-        // ===================================================
-
-        const request = fetch(GAS_URL, {
-          method: "POST",
-          body: JSON.stringify({
-            action: "pwaCheckin",
-            type: "getCheckinList",
-            activityID: id,
-          }),
-        })
-          .then((response) => {
-            if (!response.ok) {
-              throw new Error("HTTP " + response.status);
-            }
-
-            return response.json();
-          })
-          .then(async (res) => {
-            if (!res?.success) {
-              console.warn("[CHECKIN] GAS 返回失败:", res);
-
-              // 有缓存时不要覆盖
-              if (!members.length) {
-                $("list").innerHTML = `
-                    <div class="error">
-                      ❌ ${escapeHtml(res?.message || t("activityNotFound"))}
-                    </div>
-                  `;
-              }
-
-              return;
-            }
-
-            // 防止用户已经切换活动
-            // 旧请求回来后覆盖新活动
-            if (currentActivityID !== id) {
-              console.log("[CHECKIN] 活动已切换，忽略旧名单响应:", id);
-
-              return;
-            }
-
-            members = Array.isArray(res.data) ? res.data : [];
-
-            await dbPut("settings", {
-              key: "checkinList_" + id,
-
-              value: members,
-
-              updatedAt: new Date().toISOString(),
-            });
-
-            console.log("[CHECKIN] GAS 名单已更新:", id, members.length);
-
-            updateSummary();
-            render(filterMembers());
-            updateActivityHeader();
-          })
-          .catch((error) => {
-            console.error("[CHECKIN] 后台刷新签到名单失败:", error);
-
-            // 有缓存就不要覆盖
-            if (currentActivityID === id && !members.length) {
-              $("list").innerHTML = `
-                  <div class="error">
-                    ❌ ${escapeHtml(t("loadFailed"))}
-                    ${escapeHtml(error.message || String(error))}
-                  </div>
-                `;
-            }
-          })
-          .finally(() => {
-            listRequests.delete(id);
-          });
-
-        listRequests.set(id, request);
-
-        return request;
-      }
-
-      /* =====================================================
-         更新活动标题
-      ===================================================== */
 
       function updateActivityHeader() {
         const activity = findActivity(currentActivityID);
 
         if (!activity) {
+          $("displayActivityTitle").textContent =
+            currentLanguage === "ja"
+              ? "イベントを選択してください"
+              : "请先选择活动";
+
+          $("displayDate").textContent = "";
+
           return;
         }
 
@@ -1385,8 +1505,192 @@
       }
 
       /* =====================================================
+         签到名单
+      ====================================================== */
+
+      async function loadList(forcedID = "", options = {}) {
+        const id = String(forcedID || $("activityID").value || "").trim();
+
+        if (!id) {
+          showMessage(t("activityNotFound"), true);
+
+          return;
+        }
+
+        currentActivityID = id;
+
+        $("activityID").value = id;
+
+        $("displayCheckinID").textContent = id;
+
+        updateActivityHeader();
+
+        /* ---------------------------------------------
+           防止同一个 ID 同时发多个请求
+        --------------------------------------------- */
+
+        if (listLoadingPromise && listLoadingPromise.activityID === id) {
+          return listLoadingPromise.promise;
+        }
+
+        const requestID = ++currentListRequestID;
+
+        const promise = loadListInternal(id, requestID, options);
+
+        listLoadingPromise = {
+          activityID: id,
+          promise,
+        };
+
+        try {
+          return await promise;
+        } finally {
+          if (listLoadingPromise?.promise === promise) {
+            listLoadingPromise = null;
+          }
+        }
+      }
+
+      async function loadListInternal(id, requestID, options = {}) {
+        const cacheKey = "checkinList_" + id;
+
+        /* ---------------------------------------------
+           1. 先读取本地缓存
+        --------------------------------------------- */
+
+        let cachedMembers = null;
+
+        try {
+          const cached = await dbGet("settings", cacheKey);
+
+          if (cached && Array.isArray(cached.value)) {
+            cachedMembers = cached.value;
+          }
+        } catch (error) {
+          console.warn("[CHECKIN] 本地签到名单读取失败:", error);
+        }
+
+        if (requestID !== currentListRequestID) {
+          return;
+        }
+
+        if (cachedMembers) {
+          members = cachedMembers;
+
+          updateSummary();
+
+          render(filterMembers());
+
+          updateActivityHeader();
+        } else {
+          $("list").innerHTML = `
+            <div class="empty">
+              ${escapeHtml(t("loadingList"))}
+            </div>
+          `;
+        }
+
+        /* ---------------------------------------------
+           2. 离线
+        --------------------------------------------- */
+
+        if (!navigator.onLine) {
+          return;
+        }
+
+        /* ---------------------------------------------
+           3. 请求服务器
+        --------------------------------------------- */
+
+        try {
+          const res = await gasRequest(
+            {
+              action: "pwaCheckin",
+
+              type: "getCheckinList",
+
+              activityID: id,
+            },
+            {
+              timeout: CONFIG.requestTimeout,
+            },
+          );
+
+          if (requestID !== currentListRequestID) {
+            return;
+          }
+
+          if (!res?.success) {
+            // 如果本地有缓存，
+            // 网络失败时不要把缓存清掉
+            if (cachedMembers) {
+              console.warn("[CHECKIN] 服务器返回失败，继续使用缓存", res);
+
+              return;
+            }
+
+            members = [];
+
+            updateSummary();
+
+            $("list").innerHTML = `
+              <div class="error">
+                ❌
+                ${escapeHtml(res?.message || t("activityNotFound"))}
+              </div>
+            `;
+
+            return;
+          }
+
+          const freshMembers = Array.isArray(res.data) ? res.data : [];
+
+          members = freshMembers;
+
+          /* ---------------------------------------------
+             4. 保存缓存
+          --------------------------------------------- */
+
+          try {
+            await dbPut("settings", {
+              key: cacheKey,
+
+              value: freshMembers,
+
+              updatedAt: new Date().toISOString(),
+            });
+          } catch (cacheError) {
+            console.warn("[CHECKIN] 签到名单缓存保存失败:", cacheError);
+          }
+
+          updateSummary();
+
+          render(filterMembers());
+
+          updateActivityHeader();
+
+          console.log("[CHECKIN] 签到名单加载完成:", id, freshMembers.length);
+        } catch (error) {
+          console.error("[CHECKIN] loadList error:", error);
+
+          if (cachedMembers) {
+            // 有缓存就不要把页面变成错误
+            return;
+          }
+
+          $("list").innerHTML = `
+            <div class="error">
+              ❌
+              ${escapeHtml(t("loadFailed"))}
+              ${escapeHtml(error?.message || String(error))}
+            </div>
+          `;
+        }
+      }
+
+      /* =====================================================
          搜索
-      ===================================================== */
+      ====================================================== */
 
       function search() {
         render(filterMembers());
@@ -1410,7 +1714,7 @@
 
       /* =====================================================
          显示名单
-      ===================================================== */
+      ====================================================== */
 
       function render(data) {
         const box = $("list");
@@ -1427,14 +1731,14 @@
           return;
         }
 
-        data.forEach((member) => {
-          box.appendChild(createMemberCard(member));
-        });
-      }
+        const fragment = document.createDocumentFragment();
 
-      /* =====================================================
-         会员卡片
-      ===================================================== */
+        data.forEach((member) => {
+          fragment.appendChild(createMemberCard(member));
+        });
+
+        box.appendChild(fragment);
+      }
 
       function createMemberCard(member) {
         const div = document.createElement("div");
@@ -1444,30 +1748,44 @@
         div.className = "member-card" + (checked ? " checked" : "");
 
         div.innerHTML = `
+
           <div class="member-name">
+
             ${escapeHtml(member.Name || "")}
+
           </div>
 
           <div class="member-info">
+
             ${escapeHtml(t("level"))}：
+
             ${escapeHtml(member.Level || "-")}
+
           </div>
 
-          <div class="member-status ${
-            checked ? "status-checked" : "status-not"
-          }">
+          <div
+            class="member-status ${checked ? "status-checked" : "status-not"}"
+          >
+
             ${escapeHtml(checked ? t("checkedStatus") : t("notChecked"))}
+
           </div>
+
         `;
 
         if (checked) {
           div.insertAdjacentHTML(
             "beforeend",
             `
+
               <div class="member-info">
+
                 ${escapeHtml(t("payment"))}：
+
                 ${escapeHtml(paymentText(member.PaymentMethod))}
+
               </div>
+
             `,
           );
 
@@ -1483,21 +1801,31 @@
         select.className = "payment-select";
 
         select.innerHTML = `
+
           <option value="CASH">
+
             ${escapeHtml(t("cash"))}
+
           </option>
 
           <option value="PAYPAY">
+
             ${escapeHtml(t("paypay"))}
+
           </option>
 
           <option value="UNPAID">
+
             ${escapeHtml(t("unpaid"))}
+
           </option>
 
           <option value="FREE">
+
             ${escapeHtml(t("free"))}
+
           </option>
+
         `;
 
         const button = document.createElement("button");
@@ -1508,11 +1836,12 @@
 
         button.textContent = t("checkin");
 
-        button.addEventListener("click", async function () {
-          await checkin(registrationID, select, button);
+        button.addEventListener("click", async () => {
+          await checkin(registrationID, button);
         });
 
         div.appendChild(select);
+
         div.appendChild(button);
 
         return div;
@@ -1520,15 +1849,18 @@
 
       /* =====================================================
          付款方式
-      ===================================================== */
+      ====================================================== */
 
       function paymentText(payment) {
         const value = String(payment || "").toUpperCase();
 
         const map = {
           CASH: "cash",
+
           PAYPAY: "paypay",
+
           FREE: "free",
+
           UNPAID: "unpaid",
         };
 
@@ -1537,75 +1869,52 @@
 
       /* =====================================================
          签到
-      ===================================================== */
+      ====================================================== */
 
-      async function checkin(
-        registrationID,
-        selectElement = null,
-        buttonElement = null,
-      ) {
-        console.log("[CHECKIN] ===== 进入 checkin() =====", registrationID);
-
+      async function checkin(registrationID, button = null) {
         if (!registrationID) {
           showMessage("签到失败：缺少报名 ID", true);
 
           return;
         }
 
-        // ===================================================
-        // 防止重复点击
-        // ===================================================
+        const select = $(`pay_${registrationID}`);
 
-        if (checkingIn.has(registrationID)) {
-          console.log("[CHECKIN] 正在签到，忽略重复点击:", registrationID);
+        if (!select) {
+          showMessage("签到失败：找不到付款方式", true);
 
           return;
         }
 
-        checkingIn.add(registrationID);
+        const payment = select.value || "UNPAID";
 
-        if (buttonElement) {
-          buttonElement.disabled = true;
-
-          buttonElement.textContent = t("checkingIn");
+        // 防止用户连续快速点击
+        if (button?.dataset.busy === "1") {
+          return;
         }
 
+        if (button) {
+          button.dataset.busy = "1";
+
+          button.disabled = true;
+
+          button.classList.add("loading");
+
+          button.textContent = t("checking");
+        }
+
+        const clientRequestID =
+          "CHECKIN-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substring(2, 10);
+
         try {
-          // =================================================
-          // 获取付款方式
-          // =================================================
-
-          const select = selectElement || $(`pay_${registrationID}`);
-
-          if (!select) {
-            showMessage("签到失败：找不到付款方式", true);
-
-            return;
-          }
-
-          const payment = select.value || "UNPAID";
-
-          console.log("[CHECKIN] 付款方式:", payment);
-
-          // =================================================
-          // 幂等请求 ID
-          // =================================================
-
-          const clientRequestID =
-            "CHECKIN-" +
-            Date.now() +
-            "-" +
-            Math.random().toString(36).substring(2, 10);
-
-          console.log("[CHECKIN] clientRequestID:", clientRequestID);
-
-          // =================================================
-          // 离线签到
-          // =================================================
+          /* ---------------------------------------------
+             离线签到
+          --------------------------------------------- */
 
           if (!navigator.onLine) {
-            console.log("[CHECKIN] 当前离线，保存到 syncQueue");
-
             await addSyncTask({
               action: "checkin",
 
@@ -1614,110 +1923,46 @@
 
                 type: "checkin",
 
-                registrationID: registrationID,
+                registrationID,
 
                 paymentMethod: payment,
 
-                clientRequestID: clientRequestID,
+                clientRequestID,
               },
             });
 
-            // 本地立即更新
-            const member = members.find(
-              (item) => String(item.RegistrationID) === String(registrationID),
+            await updateLocalMemberAfterCheckin(
+              registrationID,
+              payment,
+              clientRequestID,
+              "PENDING",
             );
 
-            if (member) {
-              member.CheckedIn = true;
-
-              member.PaymentMethod = payment;
-
-              member.ClientRequestID = clientRequestID;
-
-              member.CheckinStatus = "PENDING";
-
-              member.CheckedInAt = new Date().toISOString();
-
-              await dbPut("settings", {
-                key: "checkinList_" + currentActivityID,
-
-                value: members,
-
-                updatedAt: new Date().toISOString(),
-              });
-
-              updateSummary();
-              render(filterMembers());
-            }
-
-            showMessage("📴 签到已保存，网络恢复后会自动同步。", false);
+            showMessage(t("offlineSaved"), false);
 
             return;
           }
 
-          // =================================================
-          // 在线签到
-          // =================================================
+          /* ---------------------------------------------
+             在线签到
+          --------------------------------------------- */
 
-          const payload = {
-            action: "pwaCheckin",
+          const res = await gasRequest(
+            {
+              action: "pwaCheckin",
 
-            type: "checkin",
+              type: "checkin",
 
-            registrationID: registrationID,
+              registrationID,
 
-            paymentMethod: payment,
+              paymentMethod: payment,
 
-            clientRequestID: clientRequestID,
-          };
-
-          console.log("[CHECKIN] 请求 GAS:", payload);
-
-          const controller = new AbortController();
-
-          const timeoutID = setTimeout(() => {
-            console.error("[CHECKIN] GAS 请求超过 15 秒");
-
-            controller.abort();
-          }, 15000);
-
-          let response;
-
-          try {
-            response = await fetch(GAS_URL, {
-              method: "POST",
-
-              body: JSON.stringify(payload),
-
-              signal: controller.signal,
-            });
-          } finally {
-            clearTimeout(timeoutID);
-          }
-
-          console.log("[CHECKIN] GAS HTTP:", response.status);
-
-          const text = await response.text();
-
-          console.log("[CHECKIN] GAS 原始返回:", text);
-
-          let res;
-
-          try {
-            res = JSON.parse(text);
-          } catch (jsonError) {
-            console.error("[CHECKIN] JSON 解析失败:", jsonError);
-
-            showMessage("签到失败：服务器返回格式错误", true);
-
-            return;
-          }
-
-          console.log("[CHECKIN] GAS JSON:", res);
-
-          // =================================================
-          // 服务器明确失败
-          // =================================================
+              clientRequestID,
+            },
+            {
+              timeout: CONFIG.requestTimeout,
+            },
+          );
 
           if (res?.success === false) {
             showMessage(res.message || t("checkinFailed"), true);
@@ -1725,36 +1970,70 @@
             return;
           }
 
-          // =================================================
-          // 签到成功
-          // =================================================
+          /* ---------------------------------------------
+             关键优化：
 
-          console.log("[CHECKIN] ===== 签到成功 =====");
+             成功以后直接更新本地会员，
+             不再调用 loadList()
+          --------------------------------------------- */
 
-          showMessage("✅ " + (res?.message || t("checkinSuccess")), false);
-
-          // =================================================
-          // 关键优化：
-          // 不再重新请求整个名单
-          // =================================================
-
-          const member = members.find(
-            (item) => String(item.RegistrationID) === String(registrationID),
+          await updateLocalMemberAfterCheckin(
+            registrationID,
+            payment,
+            clientRequestID,
+            "SYNCED",
           );
 
-          if (member) {
-            member.CheckedIn = true;
+          showMessage("✅ " + (res?.message || t("checkinSuccess")), false);
+        } catch (error) {
+          console.error("[CHECKIN] 签到异常:", error);
 
-            member.PaymentMethod = payment;
+          showMessage(
+            t("checkinFailed") + " " + (error?.message || String(error)),
+            true,
+          );
+        } finally {
+          if (button) {
+            button.dataset.busy = "0";
 
-            member.ClientRequestID = clientRequestID;
+            button.disabled = false;
 
-            member.CheckinStatus = "SUCCESS";
+            button.classList.remove("loading");
 
-            member.CheckedInAt = new Date().toISOString();
+            button.textContent = t("checkin");
           }
+        }
+      }
 
-          // 更新 IndexedDB
+      /* =====================================================
+         本地立即更新签到状态
+      ====================================================== */
+
+      async function updateLocalMemberAfterCheckin(
+        registrationID,
+        payment,
+        clientRequestID,
+        status,
+      ) {
+        const member = members.find(
+          (item) => String(item.RegistrationID) === String(registrationID),
+        );
+
+        if (!member) {
+          return;
+        }
+
+        member.CheckedIn = true;
+
+        member.PaymentMethod = payment;
+
+        member.ClientRequestID = clientRequestID;
+
+        member.CheckinStatus = status;
+
+        member.CheckedInAt = new Date().toISOString();
+
+        try {
           await dbPut("settings", {
             key: "checkinList_" + currentActivityID,
 
@@ -1762,194 +2041,173 @@
 
             updatedAt: new Date().toISOString(),
           });
-
-          // 立即刷新画面
-          updateSummary();
-
-          render(filterMembers());
-
-          console.log("[CHECKIN] 本地签到状态已更新，无需重新请求名单");
         } catch (error) {
-          console.error("[CHECKIN] checkin() 异常:", error);
+          console.warn("[CHECKIN] 本地签到状态保存失败:", error);
+        }
 
+        updateSummary();
+
+        render(filterMembers());
+      }
+
+      /* =====================================================
+         网络请求
+
+         统一处理：
+         - timeout
+         - JSON
+         - 302 redirect
+         - HTTP 错误
+      ====================================================== */
+
+      async function gasRequest(payload, options = {}) {
+        const timeout = options.timeout || CONFIG.requestTimeout;
+
+        const controller = new AbortController();
+
+        const timeoutID = setTimeout(() => {
+          controller.abort();
+        }, timeout);
+
+        try {
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+
+            body: JSON.stringify(payload),
+
+            signal: controller.signal,
+
+            redirect: "follow",
+          });
+
+          if (!response.ok) {
+            throw new Error("HTTP " + response.status);
+          }
+
+          const text = await response.text();
+
+          if (!text) {
+            throw new Error("服务器没有返回数据");
+          }
+
+          try {
+            return JSON.parse(text);
+          } catch (jsonError) {
+            console.error("[GAS] 原始返回:", text);
+
+            throw new Error("服务器返回格式错误");
+          }
+        } catch (error) {
           if (error?.name === "AbortError") {
-            showMessage("签到失败：服务器请求超时，请检查网络或稍后重试", true);
-
-            return;
+            throw new Error("服务器请求超时，请检查网络");
           }
 
-          showMessage(
-            t("checkinFailed") + " " + (error?.message || String(error)),
-            true,
-          );
+          throw error;
         } finally {
-          checkingIn.delete(registrationID);
-
-          if (buttonElement) {
-            buttonElement.disabled = false;
-
-            buttonElement.textContent = t("checkin");
-          }
+          clearTimeout(timeoutID);
         }
       }
 
       /* =====================================================
          离线同步队列
-      ===================================================== */
+
+         只保留一套同步逻辑
+      ====================================================== */
 
       async function processSyncQueue() {
+        if (syncRunning) {
+          console.log("[SYNC] 已经在同步，跳过重复执行");
+
+          return;
+        }
+
         if (!navigator.onLine) {
-          console.log("[SYNC] 当前离线，不进行同步");
-
           return;
         }
 
-        let queue;
-
-        try {
-          queue = await getSyncQueue();
-        } catch (error) {
-          console.error("[SYNC] 读取同步队列失败:", error);
-
-          return;
-        }
-
-        console.log("[SYNC] 待同步任务数量:", queue.length);
-
-        if (!queue || queue.length === 0) {
-          return;
-        }
-
-        console.log("[SYNC] ===== 开始自动同步 =====");
-
-        for (const task of queue) {
-          try {
-            console.log("[SYNC] 正在同步任务:", task.id);
-
-            const response = await fetch(GAS_URL, {
-              method: "POST",
-
-              body: JSON.stringify(task.data),
-            });
-
-            console.log("[SYNC] HTTP 状态:", task.id, response.status);
-
-            const result = await response.json();
-
-            console.log("[SYNC] GAS 返回:", task.id, result);
-
-            // 已经签到
-            if (result?.success === false && result.message === "已经签到") {
-              await removeSyncTask(task.id);
-
-              console.log("[SYNC] 已经签到，删除任务:", task.id);
-
-              continue;
-            }
-
-            // 服务器明确失败
-            if (result?.success === false) {
-              console.warn(
-                "[SYNC] GAS 返回失败，不删除任务:",
-                task.id,
-                result.message,
-              );
-
-              continue;
-            }
-
-            // 成功
-            await removeSyncTask(task.id);
-
-            console.log("[SYNC] 同步成功，删除任务:", task.id);
-          } catch (error) {
-            console.error("[SYNC] 同步任务失败:", task.id, error);
-
-            // 网络异常时停止本轮
-            break;
-          }
-        }
-
-        console.log("[SYNC] ===== 自动同步结束 =====");
-      }
-
-      /* =====================================================
-         测试同步队列
-      ===================================================== */
-
-      async function testSyncQueue() {
-        console.log("[SYNC] ===== 检查同步队列 =====");
-
-        try {
-          const queue = await getSyncQueue();
-
-          console.log("[SYNC] 当前队列:", queue);
-
-          console.log("[SYNC] 待同步数量:", queue.length);
-        } catch (error) {
-          console.error("[SYNC] 读取队列失败:", error);
-        }
-      }
-
-      /* =====================================================
-         测试发送第一条同步任务
-      ===================================================== */
-
-      async function testSendOneSyncTask() {
-        console.log("[SYNC] ===== 测试发送第一条任务 =====");
+        syncRunning = true;
 
         try {
           const queue = await getSyncQueue();
 
           if (!queue || queue.length === 0) {
-            console.log("[SYNC] 没有待同步任务");
-
             return;
           }
 
-          const task = queue[0];
+          console.log("[SYNC] 待同步任务:", queue.length);
 
-          console.log("[SYNC] 准备发送任务:", task.id, task.data);
+          for (const task of queue) {
+            if (!task || task.action !== "checkin") {
+              continue;
+            }
 
-          const response = await fetch(GAS_URL, {
-            method: "POST",
+            try {
+              console.log("[SYNC] 同步:", task.id);
 
-            body: JSON.stringify(task.data),
-          });
+              const result = await gasRequest(task.data, {
+                timeout: CONFIG.requestTimeout,
+              });
 
-          console.log("[SYNC] HTTP 状态:", response.status);
+              if (result?.success === false) {
+                // 已经签到：
+                // 服务器实际上已经完成
+                if (result.message === "已经签到") {
+                  await removeSyncTask(task.id);
 
-          const result = await response.json();
+                  continue;
+                }
 
-          console.log("[SYNC] GAS 返回:", result);
+                console.warn("[SYNC] 服务器拒绝任务:", result.message);
 
-          console.log("[SYNC] 测试完成，暂时不删除任务:", task.id);
+                // 当前任务失败，
+                // 不继续疯狂请求后面的任务
+                break;
+              }
+
+              await removeSyncTask(task.id);
+
+              console.log("[SYNC] 同步成功:", task.id);
+            } catch (error) {
+              console.error("[SYNC] 同步失败:", task.id, error);
+
+              // 网络失败：
+              // 停止本轮，等下一次网络恢复
+              break;
+            }
+          }
         } catch (error) {
-          console.error("[SYNC] 测试发送失败:", error);
+          console.error("[SYNC] 读取同步队列失败:", error);
+        } finally {
+          syncRunning = false;
         }
       }
 
       /* =====================================================
          网络恢复
-      ===================================================== */
+      ====================================================== */
 
-      window.addEventListener("online", async () => {
-        console.log("[SYNC] ===== 检测到网络恢复 =====");
+      window.addEventListener("online", () => {
+        console.log("[SYNC] 网络恢复");
 
-        await processSyncQueue();
+        processSyncQueue();
+      });
 
-        // 网络恢复后，如果当前已有活动，
-        // 后台重新刷新一次名单
-        if (currentActivityID) {
-          console.log("[CHECKIN] 网络恢复，刷新当前活动名单");
+      /* =====================================================
+         页面启动后：
 
-          await loadList();
-        }
+         不立即做同步网络请求，
+         只读取队列。
+      ====================================================== */
+
+      window.addEventListener("DOMContentLoaded", () => {
+        setTimeout(() => {
+          processSyncQueue();
+        }, 500);
       });
 
       /* =====================================================
          统计
-      ===================================================== */
+      ====================================================== */
 
       function updateSummary() {
         const checked = members.filter((member) =>
@@ -1963,7 +2221,7 @@
 
       /* =====================================================
          消息
-      ===================================================== */
+      ====================================================== */
 
       let messageTimer = null;
 
@@ -1975,20 +2233,25 @@
         }
 
         box.innerHTML = `
-          <div class="${isError ? "error" : "success-message"}">
+
+          <div
+            class="${isError ? "error" : "success-message"}"
+          >
+
             ${escapeHtml(message)}
+
           </div>
+
         `;
 
         messageTimer = setTimeout(() => {
           box.innerHTML = "";
-          messageTimer = null;
-        }, 3500);
+        }, CONFIG.messageDuration);
       }
 
       /* =====================================================
          日期
-      ===================================================== */
+      ====================================================== */
 
       function getTodayString() {
         const date = new Date();
@@ -2024,7 +2287,7 @@
 
       /* =====================================================
          安全处理
-      ===================================================== */
+      ====================================================== */
 
       function escapeHtml(value) {
         if (value === null || value === undefined) {
@@ -2040,7 +2303,10 @@
       }
     </script>
 
-    <!-- IndexedDB -->
+    <!-- =====================================================
+         IndexedDB
+    ====================================================== -->
+
     <script src="./db.js"></script>
   </body>
 </html>
