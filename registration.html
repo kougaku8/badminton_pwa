@@ -19,7 +19,7 @@
     <style>
       /* =====================================================
        Registration Page
-       V7 操作结构移植到 PWA
+       多活动一次提交版本
     ===================================================== */
 
       *,
@@ -56,7 +56,6 @@
         min-height: 100dvh;
 
         padding-top: env(safe-area-inset-top);
-
         padding-bottom: env(safe-area-inset-bottom);
       }
 
@@ -411,7 +410,6 @@
 
       /* =====================================================
        ① 活动列表
-       V7：两列
     ===================================================== */
 
       .activity-list {
@@ -884,7 +882,7 @@
   <body>
     <!-- =====================================================
        顶部工具
-  ===================================================== -->
+    ===================================================== -->
 
     <div class="top-tools">
       <button type="button" class="tool-btn" id="homeBtn" onclick="goHome()">
@@ -904,7 +902,7 @@
     <div class="container">
       <!-- =====================================================
          页面标题
-    ===================================================== -->
+      ===================================================== -->
 
       <div class="page-header">
         <div class="page-icon">🏸</div>
@@ -918,19 +916,19 @@
 
       <!-- =====================================================
          消息
-    ===================================================== -->
+      ===================================================== -->
 
       <div id="messageBox" class="message"></div>
 
       <!-- =====================================================
          ① 选择活动
-    ===================================================== -->
+      ===================================================== -->
 
       <div class="card">
         <div class="card-title">
-          <span class="section-number"> ① </span>
+          <span class="section-number">①</span>
 
-          <span data-i18n="selectActivity"> 选择活动 </span>
+          <span data-i18n="selectActivity">选择活动</span>
         </div>
 
         <div id="activityList" class="activity-list">
@@ -944,17 +942,17 @@
 
       <!-- =====================================================
          ② 报名人
-    ===================================================== -->
+      ===================================================== -->
 
       <div class="card">
         <div class="card-title">
-          <span class="section-number"> ② </span>
+          <span class="section-number">②</span>
 
-          <span data-i18n="booker"> 报名人 </span>
+          <span data-i18n="booker">报名人</span>
         </div>
 
         <div class="form-group">
-          <label data-i18n="bookerName"> 报名人姓名 </label>
+          <label data-i18n="bookerName">报名人姓名</label>
 
           <input
             id="bookerName"
@@ -965,21 +963,21 @@
           />
 
           <div class="booker-tip" data-i18n="bookerTip">
-            💡 第 1 位参加人员默认使用报名人的姓名。
-            如果需要替别人报名，可以继续添加参加人员。
+            💡 第 1
+            位参加人员默认使用报名人的姓名。如果需要替别人报名，可以继续添加参加人员。
           </div>
         </div>
       </div>
 
       <!-- =====================================================
          ③ 参加人员
-    ===================================================== -->
+      ===================================================== -->
 
       <div class="card">
         <div class="card-title">
-          <span class="section-number"> ③ </span>
+          <span class="section-number">③</span>
 
-          <span data-i18n="participants"> 参加人员 </span>
+          <span data-i18n="participants">参加人员</span>
         </div>
 
         <div id="participantsContainer"></div>
@@ -996,13 +994,13 @@
 
       <!-- =====================================================
          ④ 备注
-    ===================================================== -->
+      ===================================================== -->
 
       <div class="card">
         <div class="card-title">
-          <span class="section-number"> ④ </span>
+          <span class="section-number">④</span>
 
-          <span data-i18n="remark"> 备注 </span>
+          <span data-i18n="remark">备注</span>
         </div>
 
         <div class="form-group">
@@ -1016,7 +1014,7 @@
 
       <!-- =====================================================
          提交
-    ===================================================== -->
+      ===================================================== -->
 
       <div class="card">
         <button
@@ -1036,13 +1034,13 @@
 
       <!-- =====================================================
          报名结果
-    ===================================================== -->
+      ===================================================== -->
 
       <div id="resultCard" class="card" style="display: none">
         <div class="card-title">
-          <span class="section-number"> ✓ </span>
+          <span class="section-number">✓</span>
 
-          <span data-i18n="result"> 报名结果 </span>
+          <span data-i18n="result">报名结果</span>
         </div>
 
         <div id="resultBox" class="result-box"></div>
@@ -1051,8 +1049,8 @@
 
     <script>
       /* =====================================================
-             全局数据
-          ===================================================== */
+       全局数据
+      ===================================================== */
 
       let activities = [];
 
@@ -1063,21 +1061,21 @@
       let currentLanguage = "zh";
 
       /* =====================================================
-             GAS API
-          ===================================================== */
+       GAS API
+      ===================================================== */
 
       const GAS_URL =
         "https://script.google.com/macros/s/AKfycbytMNkX7m-3KE79Izj1i4o2TucGVoJB6vAqjsl3RjTxe-bPfkKWBwHh_gg3Ag4guLgGtg/exec";
 
       /* =====================================================
-             首页
-          ===================================================== */
+       首页
+      ===================================================== */
 
       const HOME_URL = "./index.html";
 
       /* =====================================================
-             多语言
-          ===================================================== */
+       多语言
+      ===================================================== */
 
       const I18N = {
         zh: {
@@ -1216,6 +1214,10 @@
           homeButton: "← 返回主页",
 
           homeConfirm: "确定返回主页吗？",
+
+          offlineSaved: "当前没有网络，报名已保存，网络恢复后会自动发送。",
+
+          syncSaved: "网络暂时不可用，报名已保存到同步队列。",
         },
 
         ja: {
@@ -1358,29 +1360,32 @@
           homeButton: "← ホームへ戻る",
 
           homeConfirm: "ホームへ戻りますか？",
+
+          offlineSaved:
+            "現在オフラインです。申込内容を保存しました。ネットワーク復旧後に自動送信します。",
+
+          syncSaved:
+            "ネットワーク接続を確認できないため、申込内容を同期キューに保存しました。",
         },
       };
 
       /* =====================================================
-             文字
-          ===================================================== */
+       文字
+      ===================================================== */
 
       function t(key) {
         return I18N[currentLanguage][key] || I18N.zh[key] || key;
       }
 
       /* =====================================================
-             Level说明
-          ===================================================== */
+       Level说明
+      ===================================================== */
 
       function getLevelDescription(level) {
         const keyMap = {
           L1: "levelL1Description",
-
           L2: "levelL2Description",
-
           L3: "levelL3Description",
-
           L4: "levelL4Description",
         };
 
@@ -1394,8 +1399,8 @@
       }
 
       /* =====================================================
-             初始化
-          ===================================================== */
+       初始化
+      ===================================================== */
 
       document.addEventListener("DOMContentLoaded", function () {
         applyLanguage();
@@ -1409,11 +1414,21 @@
         });
 
         loadActivities();
+
+        /*
+         * 页面加载时，如果之前存在离线任务，
+         * 且当前已经联网，则尝试自动同步。
+         */
+        if (navigator.onLine) {
+          processSyncQueue().catch(function (error) {
+            console.warn("[SYNC] 初始化同步失败:", error);
+          });
+        }
       });
 
       /* =====================================================
-             中日文切换
-          ===================================================== */
+       中日文切换
+      ===================================================== */
 
       function toggleLanguage() {
         currentLanguage = currentLanguage === "zh" ? "ja" : "zh";
@@ -1428,8 +1443,8 @@
       }
 
       /* =====================================================
-             应用语言
-          ===================================================== */
+       应用语言
+      ===================================================== */
 
       function applyLanguage() {
         document.documentElement.lang =
@@ -1466,33 +1481,16 @@
       }
 
       /* =====================================================
-             返回主页
-          ===================================================== */
+       返回主页
+      ===================================================== */
 
       function goHome() {
         window.location.href = HOME_URL;
       }
 
       /* =====================================================
-             加载活动
-             PWA → GAS
-          ===================================================== */
-
-      /* =====================================================
-         加载活动
-         Offline First
-
-         ① 有 IndexedDB 缓存
-            → 立即显示
-            → 后台更新
-
-         ② 没有 IndexedDB 缓存
-            → 请求服务器
-            → 成功后保存 IndexedDB
-
-         ③ 网络失败
-            → 有缓存：继续使用缓存
-            → 无缓存：显示加载失败
+       加载活动
+       Offline First
       ===================================================== */
 
       async function loadActivities() {
@@ -1506,9 +1504,9 @@
 
         let hasLocalCache = false;
 
-        // =====================================================
-        // 1. 先读取 IndexedDB
-        // =====================================================
+        /*
+         * 1. 先读取 IndexedDB
+         */
 
         try {
           const cachedActivities = await dbGetAll("activities");
@@ -1520,12 +1518,10 @@
 
             activities = cachedActivities;
 
-            // 立即显示
             renderActivities(activities);
 
             console.log("已有本地活动列表缓存，开始后台更新...");
 
-            // 后台更新
             updateActivitiesInBackground();
 
             return;
@@ -1534,19 +1530,14 @@
           console.warn("读取本地活动缓存失败:", error);
         }
 
-        // =====================================================
-        // 2. 没有本地缓存
-        // 第一次必须联网
-        // =====================================================
+        /*
+         * 2. 没有本地缓存
+         */
 
         try {
           await fetchActivitiesFromServer();
         } catch (error) {
           console.error("活动加载失败:", error);
-
-          // ===================================================
-          // 没有缓存 + 网络失败
-          // ===================================================
 
           if (!hasLocalCache) {
             box.innerHTML = `
@@ -1569,7 +1560,7 @@
       }
 
       /* =====================================================
-         从服务器获取活动
+       从服务器获取活动
       ===================================================== */
 
       async function fetchActivitiesFromServer() {
@@ -1600,27 +1591,11 @@
             ? result.data
             : null;
 
-        // =====================================================
-        // 返回格式错误
-        // =====================================================
-
         if (!Array.isArray(list)) {
           throw new Error("服务器返回的活动数据格式错误");
         }
 
-        // =====================================================
-        // 更新内存
-        // =====================================================
-
         activities = list;
-
-        // =====================================================
-        // 保存 IndexedDB
-        //
-        // 注意：
-        // 这里暂时不 clear activities。
-        // dbPutAll 会按照 ActivityID 更新已有数据。
-        // =====================================================
 
         if (list.length > 0) {
           await dbPutAll("activities", list);
@@ -1628,18 +1603,13 @@
           console.log("活动列表已缓存到 IndexedDB:", list.length);
         }
 
-        // =====================================================
-        // 更新页面
-        // =====================================================
-
         renderActivities(activities);
 
         return activities;
       }
 
       /* =====================================================
-         后台更新活动
-         不阻塞当前页面
+       后台更新活动
       ===================================================== */
 
       async function updateActivitiesInBackground() {
@@ -1649,36 +1619,22 @@
           console.log("活动列表后台更新完成");
         } catch (error) {
           console.warn("活动列表后台更新失败，继续使用本地缓存:", error);
-
-          /*
-           * 这里故意什么都不做。
-           *
-           * 当前页面已经有：
-           *
-           * activities = 本地缓存
-           *
-           * 所以后台失败时：
-           * → 不清空
-           * → 不重新 render
-           * → 用户继续正常使用
-           */
         }
       }
 
       /* =====================================================
-             显示活动
-             V7：checkbox + 多选
-          ===================================================== */
+       显示活动
+      ===================================================== */
 
       function renderActivities(list) {
         const container = document.getElementById("activityList");
 
         if (!list || list.length === 0) {
           container.innerHTML = `
-                <div class="empty">
-                  ${escapeHtml(t("noActivities"))}
-                </div>
-              `;
+            <div class="empty">
+              ${escapeHtml(t("noActivities"))}
+            </div>
+          `;
 
           updateSelectedActivitySummary();
 
@@ -1686,14 +1642,6 @@
         }
 
         container.innerHTML = "";
-
-        /*
-         * 从 URL 取得当前 ActivityID
-         *
-         * 活动详情 → 我要报名
-         *
-         * registration.html?id=ACTxxxx
-         */
 
         const params = new URLSearchParams(window.location.search);
 
@@ -1733,97 +1681,88 @@
           item.dataset.id = activityID;
 
           item.innerHTML = `
+            <div class="activity-top">
+              <input
+                class="activity-checkbox"
+                type="checkbox"
+                value="${escapeHtml(activityID)}"
+              >
 
-                  <div class="activity-top">
+              <div class="activity-title">
+                🏸
+                ${escapeHtml(title)}
+              </div>
+            </div>
 
-                    <input
-                      class="activity-checkbox"
-                      type="checkbox"
-                      value="${escapeHtml(activityID)}"
-                    >
+            <div class="activity-info">
 
-                    <div class="activity-title">
-                      🏸
-                      ${escapeHtml(title)}
+              ${
+                date
+                  ? `
+                    <div class="activity-info-row">
+                      📅
+                      ${escapeHtml(t("activityDate"))}：
+                      ${escapeHtml(formatDate(date))}
                     </div>
+                  `
+                  : ""
+              }
 
-                  </div>
+              ${
+                startTime
+                  ? `
+                    <div class="activity-info-row">
+                      ⏰
+                      ${escapeHtml(t("activityTime"))}：
+                      ${escapeHtml(formatTime(startTime))}
+                      ${endTime ? " ～ " + escapeHtml(formatTime(endTime)) : ""}
+                    </div>
+                  `
+                  : ""
+              }
 
+              ${
+                activity.VenueName
+                  ? `
+                    <div class="activity-info-row">
+                      📍
+                      ${escapeHtml(activity.VenueName)}
+                    </div>
+                  `
+                  : ""
+              }
 
-                  <div class="activity-info">
+              ${
+                capacity
+                  ? `
+                    <div class="activity-info-row">
+                      👥
+                      ${escapeHtml(t("capacity"))}：
+                      ${escapeHtml(capacity)}
+                    </div>
+                  `
+                  : ""
+              }
 
-                    ${
-                      date
-                        ? `
-                          <div class="activity-info-row">
-                            📅
-                            ${escapeHtml(t("activityDate"))}：
-                            ${escapeHtml(formatDate(date))}
-                          </div>
-                        `
-                        : ""
-                    }
+              ${
+                fee !== ""
+                  ? `
+                    <div class="activity-info-row">
+                      💴
+                      ${escapeHtml(t("fee"))}：
+                      ${escapeHtml(fee)}
+                    </div>
+                  `
+                  : ""
+              }
 
-
-                    ${
-                      startTime
-                        ? `
-                          <div class="activity-info-row">
-                            ⏰
-                            ${escapeHtml(t("activityTime"))}：
-                            ${escapeHtml(formatTime(startTime))}
-                            ${endTime ? " ～ " + escapeHtml(formatTime(endTime)) : ""}
-                          </div>
-                        `
-                        : ""
-                    }
-
-
-                    ${
-                      activity.VenueName
-                        ? `
-                          <div class="activity-info-row">
-                            📍
-                            ${escapeHtml(activity.VenueName)}
-                          </div>
-                        `
-                        : ""
-                    }
-
-
-                    ${
-                      capacity
-                        ? `
-                          <div class="activity-info-row">
-                            👥
-                            ${escapeHtml(t("capacity"))}：
-                            ${escapeHtml(capacity)}
-                          </div>
-                        `
-                        : ""
-                    }
-
-
-                    ${
-                      fee !== ""
-                        ? `
-                          <div class="activity-info-row">
-                            💴
-                            ${escapeHtml(t("fee"))}：
-                            ${escapeHtml(fee)}
-                          </div>
-                        `
-                        : ""
-                    }
-
-                  </div>
-
-                `;
+            </div>
+          `;
 
           const checkbox = item.querySelector(".activity-checkbox");
 
           /*
-           * 如果从活动详情进入，
+           * 从活动详情进入：
            * 自动选择当前活动
            */
 
@@ -1858,9 +1797,8 @@
       }
 
       /* =====================================================
-             获取选择的活动
-             V7 核心逻辑
-          ===================================================== */
+       获取选择的活动
+      ===================================================== */
 
       function getSelectedActivityIDs() {
         const checkboxes = document.querySelectorAll(
@@ -1877,8 +1815,8 @@
       }
 
       /* =====================================================
-             已选择活动显示
-          ===================================================== */
+       已选择活动显示
+      ===================================================== */
 
       function updateSelectedActivitySummary() {
         const ids = getSelectedActivityIDs();
@@ -1916,9 +1854,8 @@
       }
 
       /* =====================================================
-             添加参加人员
-             V7 原逻辑
-          ===================================================== */
+       添加参加人员
+      ===================================================== */
 
       function addParticipant(data) {
         participantCounter++;
@@ -1983,9 +1920,8 @@
       }
 
       /* =====================================================
-             第一位参加人员跟随报名人
-             V7 原逻辑
-          ===================================================== */
+       第一位参加人员跟随报名人
+      ===================================================== */
 
       function syncFirstParticipantWithBooker() {
         const first = selectedMembers[0];
@@ -2028,9 +1964,8 @@
       }
 
       /* =====================================================
-             删除参加人员
-             V7：不能删除最后一人
-          ===================================================== */
+       删除参加人员
+      ===================================================== */
 
       function removeParticipant(id) {
         if (selectedMembers.length <= 1) {
@@ -2069,8 +2004,8 @@
       }
 
       /* =====================================================
-             显示参加人员
-          ===================================================== */
+       显示参加人员
+      ===================================================== */
 
       function renderParticipants() {
         const container = document.getElementById("participantsContainer");
@@ -2085,169 +2020,139 @@
           div.dataset.id = member.id;
 
           div.innerHTML = `
+              <div class="participant-header">
 
-                  <div class="participant-header">
+                <div class="participant-title-wrap">
 
-                    <div class="participant-title-wrap">
-
-                      <div class="participant-badge">
-                        ${index + 1}
-                      </div>
-
-                      <div class="participant-title">
-
-                        ${escapeHtml(t("participant"))}
-                        ${index + 1}
-
-                      </div>
-
-                    </div>
-
-
-                    ${
-                      selectedMembers.length > 1
-                        ? `
-                          <button
-                            type="button"
-                            class="remove-btn"
-                            onclick="removeParticipant('${escapeHtml(member.id)}')"
-                          >
-                            ${escapeHtml(t("delete"))}
-                          </button>
-                        `
-                        : ""
-                    }
-
+                  <div class="participant-badge">
+                    ${index + 1}
                   </div>
 
+                  <div class="participant-title">
+                    ${escapeHtml(t("participant"))}
+                    ${index + 1}
+                  </div>
 
-                  ${
-                    index === 0
-                      ? `
-                        <div class="participant-main">
-                          ${escapeHtml(t("firstParticipantTip"))}
-                        </div>
-                      `
-                      : ""
-                  }
+                </div>
 
-
-                  <div class="participant-grid">
-
-                    <!-- 姓名 -->
-
-                    <div class="form-group">
-
-                      <label>
-                        ${escapeHtml(t("name"))}
-                      </label>
-
-
-                      <input
-                        type="text"
-                        data-field="name"
-                        value="${escapeHtml(member.name)}"
-                        placeholder="${escapeHtml(t("namePlaceholder"))}"
+                ${
+                  selectedMembers.length > 1
+                    ? `
+                      <button
+                        type="button"
+                        class="remove-btn"
+                        onclick="removeParticipant('${escapeHtml(member.id)}')"
                       >
+                        ${escapeHtml(t("delete"))}
+                      </button>
+                    `
+                    : ""
+                }
 
+              </div>
+
+              ${
+                index === 0
+                  ? `
+                    <div class="participant-main">
+                      ${escapeHtml(t("firstParticipantTip"))}
                     </div>
+                  `
+                  : ""
+              }
 
+              <div class="participant-grid">
 
-                    <!-- Level -->
+                <div class="form-group">
 
-                    <div class="form-group">
+                  <label>
+                    ${escapeHtml(t("name"))}
+                  </label>
 
-                      <label>
-                        ${escapeHtml(t("level"))}
-                      </label>
+                  <input
+                    type="text"
+                    data-field="name"
+                    value="${escapeHtml(member.name)}"
+                    placeholder="${escapeHtml(t("namePlaceholder"))}"
+                  >
 
+                </div>
 
-                      <select
-                        data-field="level"
-                      >
+                <div class="form-group">
 
-                        <option value="">
-                          ${escapeHtml(t("select"))}
-                        </option>
+                  <label>
+                    ${escapeHtml(t("level"))}
+                  </label>
 
+                  <select
+                    data-field="level"
+                  >
 
-                        <option
-                          value="L1"
-                          ${member.level === "L1" ? "selected" : ""}
-                        >
-                          L1 ·
-                          ${escapeHtml(t("levelL1Name"))}
-                        </option>
+                    <option value="">
+                      ${escapeHtml(t("select"))}
+                    </option>
 
-
-                        <option
-                          value="L2"
-                          ${member.level === "L2" ? "selected" : ""}
-                        >
-                          L2 ·
-                          ${escapeHtml(t("levelL2Name"))}
-                        </option>
-
-
-                        <option
-                          value="L3"
-                          ${member.level === "L3" ? "selected" : ""}
-                        >
-                          L3 ·
-                          ${escapeHtml(t("levelL3Name"))}
-                        </option>
-
-
-                        <option
-                          value="L4"
-                          ${member.level === "L4" ? "selected" : ""}
-                        >
-                          L4 ·
-                          ${escapeHtml(t("levelL4Name"))}
-                        </option>
-
-                      </select>
-
-
-                      <div
-                        class="level-description"
-                      >
-                        ${escapeHtml(getLevelDescription(member.level))}
-                      </div>
-
-                    </div>
-
-
-                    <!-- 检索键 -->
-
-                    <div
-                      class="form-group full-width"
+                    <option
+                      value="L1"
+                      ${member.level === "L1" ? "selected" : ""}
                     >
+                      L1 ·
+                      ${escapeHtml(t("levelL1Name"))}
+                    </option>
 
-                      <label>
-                        ${escapeHtml(t("searchKey"))}
-                      </label>
+                    <option
+                      value="L2"
+                      ${member.level === "L2" ? "selected" : ""}
+                    >
+                      L2 ·
+                      ${escapeHtml(t("levelL2Name"))}
+                    </option>
 
+                    <option
+                      value="L3"
+                      ${member.level === "L3" ? "selected" : ""}
+                    >
+                      L3 ·
+                      ${escapeHtml(t("levelL3Name"))}
+                    </option>
 
-                      <input
-                        type="text"
-                        data-field="searchKey"
-                        value="${escapeHtml(member.searchKey)}"
-                        placeholder="${escapeHtml(t("searchKeyPlaceholder"))}"
-                      >
+                    <option
+                      value="L4"
+                      ${member.level === "L4" ? "selected" : ""}
+                    >
+                      L4 ·
+                      ${escapeHtml(t("levelL4Name"))}
+                    </option>
 
+                  </select>
 
-                      <div
-                        class="booker-tip"
-                      >
-                        ${escapeHtml(t("searchKeyTip"))}
-                      </div>
-
-                    </div>
-
+                  <div class="level-description">
+                    ${escapeHtml(getLevelDescription(member.level))}
                   </div>
 
-                `;
+                </div>
+
+                <div class="form-group full-width">
+
+                  <label>
+                    ${escapeHtml(t("searchKey"))}
+                  </label>
+
+                  <input
+                    type="text"
+                    data-field="searchKey"
+                    value="${escapeHtml(member.searchKey)}"
+                    placeholder="${escapeHtml(t("searchKeyPlaceholder"))}"
+                  >
+
+                  <div class="booker-tip">
+                    ${escapeHtml(t("searchKeyTip"))}
+                  </div>
+
+                </div>
+
+              </div>
+            `;
 
           const inputs = div.querySelectorAll("[data-field]");
 
@@ -2266,8 +2171,8 @@
       }
 
       /* =====================================================
-             从HTML更新参加人员
-          ===================================================== */
+       从HTML更新参加人员
+      ===================================================== */
 
       function updateParticipantFromDOM(id, input) {
         const member = selectedMembers.find(function (item) {
@@ -2320,8 +2225,8 @@
       }
 
       /* =====================================================
-             收集参加人员
-          ===================================================== */
+       收集参加人员
+      ===================================================== */
 
       function collectParticipants() {
         const cards = document.querySelectorAll(".participant");
@@ -2368,8 +2273,8 @@
       }
 
       /* =====================================================
-             检查重复姓名
-          ===================================================== */
+       检查重复姓名
+      ===================================================== */
 
       function checkDuplicateParticipantNames(participants) {
         const nameMap = {};
@@ -2404,13 +2309,13 @@
       }
 
       /* =====================================================
-             提交报名
-             PWA → GAS
-          ===================================================== */
+       同步离线队列
+      ===================================================== */
 
       async function processSyncQueue() {
         if (!navigator.onLine) {
           console.log("[SYNC] 当前没有网络，不进行同步");
+
           return;
         }
 
@@ -2418,6 +2323,7 @@
 
         if (!queue || queue.length === 0) {
           console.log("[SYNC] 没有需要同步的任务");
+
           return;
         }
 
@@ -2429,20 +2335,27 @@
 
             const response = await fetch(GAS_URL, {
               method: "POST",
+
               mode: "cors",
+
               headers: {
                 "Content-Type": "text/plain;charset=utf-8",
               },
+
               body: JSON.stringify(task.data),
             });
 
             console.log("[SYNC] response.type =", response.type);
+
             console.log("[SYNC] response.status =", response.status);
+
             console.log("[SYNC] response.ok =", response.ok);
 
-            // ==========================================
-            // opaque response
-            // ==========================================
+            /*
+             * opaque response：
+             * 无法确认 GAS 是否成功，
+             * 所以保留任务。
+             */
 
             if (response.type === "opaque") {
               console.warn(
@@ -2453,17 +2366,9 @@
               continue;
             }
 
-            // ==========================================
-            // HTTP 错误
-            // ==========================================
-
             if (!response.ok) {
               throw new Error("HTTP错误: " + response.status);
             }
-
-            // ==========================================
-            // 读取 GAS JSON
-            // ==========================================
 
             let result;
 
@@ -2481,9 +2386,14 @@
 
             console.log("[SYNC] GAS 返回:", result);
 
-            // ==========================================
-            // GAS 明确返回失败
-            // ==========================================
+            /*
+             * 只有 GAS 明确确认成功，
+             * 才删除整个同步任务。
+             *
+             * 如果 partial === true，
+             * 这里仍然视为服务器已经处理，
+             * 因为请求本身已经被 GAS 接收并完成处理。
+             */
 
             if (!result || result.success !== true) {
               console.warn(
@@ -2495,10 +2405,6 @@
               continue;
             }
 
-            // ==========================================
-            // 只有明确 success:true 才删除
-            // ==========================================
-
             await removeSyncTask(task.id);
 
             console.log("[SYNC] 同步成功，已删除任务:", task.id);
@@ -2508,19 +2414,60 @@
         }
       }
 
+      /* =====================================================
+       网络恢复
+      ===================================================== */
+
       window.addEventListener("online", function () {
         console.log("[SYNC] 网络恢复，开始自动同步");
 
-        processSyncQueue();
+        processSyncQueue().catch(function (error) {
+          console.error("[SYNC] 自动同步异常:", error);
+        });
       });
+
+      /* =====================================================
+       提交报名
+       
+       核心：
+       
+       多个活动
+       
+       [A, B, C]
+       
+       ↓
+       
+       一个 requestData
+       
+       ↓
+       
+       一次 POST
+       
+       ↓
+       
+       registerActivities
+       
+       ↓
+       
+       GAS
+       
+       ↓
+       
+       一个统一结果
+      ===================================================== */
 
       async function submitRegistration() {
         clearMessage();
 
         const activityIDs = getSelectedActivityIDs();
 
+        /*
+         * 至少选择一个活动
+         */
+
         if (activityIDs.length === 0) {
           showMessage(t("atLeastActivity"), "error");
+
           return;
         }
 
@@ -2530,13 +2477,24 @@
 
         if (participants.length === 0) {
           showMessage(t("atLeastParticipant"), "error");
+
           return;
         }
 
+        /*
+         * 如果报名人为空，
+         * 使用第一位参加人员姓名。
+         */
+
         if (!bookerName) {
           bookerName = participants[0].name;
+
           document.getElementById("bookerName").value = bookerName;
         }
+
+        /*
+         * 检查参加人员姓名
+         */
 
         for (let i = 0; i < participants.length; i++) {
           if (!participants[i].name) {
@@ -2544,9 +2502,14 @@
               t("fillParticipantName").replace("{n}", i + 1),
               "error",
             );
+
             return;
           }
         }
+
+        /*
+         * 检查重复姓名
+         */
 
         const duplicateCheck = checkDuplicateParticipantNames(participants);
 
@@ -2566,59 +2529,64 @@
 
         /*
          * =====================================================
-         * 为每个活动生成独立请求
+         * 核心：
+         *
+         * 所有活动只生成一个 clientRequestID
+         * 所有活动只生成一个 requestData
+         *
+         * activityIDs = [A, B, C]
          * =====================================================
          */
 
-        const requestList = activityIDs.map(function (activityID) {
-          const clientRequestID =
-            "REQ-" +
-            Date.now() +
-            "-" +
-            Math.random().toString(36).substring(2, 10);
+        const clientRequestID =
+          "REQ-" +
+          Date.now() +
+          "-" +
+          Math.random().toString(36).substring(2, 10);
 
-          const data = {
-            activityIDs: [activityID],
+        const requestData = {
+          action: "pwaCheckin",
+
+          type: "registerActivities",
+
+          data: {
+            activityIDs: activityIDs,
+
             bookerName: bookerName,
+
             participants: participants,
+
             message: message,
+
             clientRequestID: clientRequestID,
-          };
+          },
+        };
 
-          return {
-            action: "pwaCheckin",
-            type: "registerActivities",
-            data: data,
-          };
-        });
-
-        console.log("registerActivities requestList:", requestList);
+        console.log("[REGISTER] 多活动统一请求:", requestData);
 
         setSubmitting(true);
 
         /*
          * =====================================================
          * 离线模式
+         *
+         * 一个请求 → 一个同步任务
          * =====================================================
          */
 
         if (!navigator.onLine) {
           try {
-            for (const requestData of requestList) {
-              await addSyncTask({
-                action: "registerActivities",
-                data: requestData,
-              });
+            await addSyncTask({
+              action: "registerActivities",
 
-              console.log("[SYNC] 活动已保存到离线同步队列:", requestData);
-            }
+              data: requestData,
+            });
+
+            console.log("[SYNC] 多活动报名已保存到离线同步队列:", requestData);
 
             setSubmitting(false);
 
-            showMessage(
-              "当前没有网络，报名已保存，网络恢复后会自动发送。",
-              "success",
-            );
+            showMessage(t("offlineSaved"), "success");
 
             return;
           } catch (error) {
@@ -2638,111 +2606,103 @@
         /*
          * =====================================================
          * 在线模式
+         *
+         * 这里非常重要：
+         *
+         * 只有一次 fetch()
+         *
+         * 不再：
+         *
+         * for activity
+         *   fetch()
+         *
          * =====================================================
          */
 
-        const results = [];
+        let result;
 
-        for (const requestData of requestList) {
+        try {
+          console.log("[REGISTER] 一次提交多个活动:", activityIDs);
+
+          console.log("[REGISTER] clientRequestID:", clientRequestID);
+
+          const response = await fetch(GAS_URL, {
+            method: "POST",
+
+            headers: {
+              "Content-Type": "text/plain;charset=utf-8",
+            },
+
+            body: JSON.stringify(requestData),
+          });
+
+          console.log("[REGISTER] response.status =", response.status);
+
+          console.log("[REGISTER] response.ok =", response.ok);
+
+          if (!response.ok) {
+            throw new Error("HTTP错误: " + response.status);
+          }
+
+          result = await response.json();
+
+          console.log("[REGISTER] GAS 多活动统一结果:", result);
+        } catch (error) {
+          /*
+           * ===================================================
+           * 整个多活动请求失败
+           *
+           * 整组活动进入一个同步任务。
+           *
+           * 不拆分。
+           * ===================================================
+           */
+
+          console.error("[REGISTER] 多活动报名请求失败:", error);
+
           try {
-            console.log(
-              "[REGISTER] 正在提交活动:",
-              requestData.data.activityIDs[0],
-              requestData.data.clientRequestID,
-            );
+            await addSyncTask({
+              action: "registerActivities",
 
-            const response = await fetch(GAS_URL, {
-              method: "POST",
-
-              headers: {
-                "Content-Type": "text/plain;charset=utf-8",
-              },
-
-              body: JSON.stringify(requestData),
+              data: requestData,
             });
 
-            if (!response.ok) {
-              throw new Error("HTTP错误: " + response.status);
-            }
+            console.log("[SYNC] 多活动报名已进入同步队列:", activityIDs);
 
-            const result = await response.json();
+            setSubmitting(false);
 
-            console.log(
-              "[REGISTER] 活动报名结果:",
-              requestData.data.activityIDs[0],
-              result,
+            showMessage(t("syncSaved"), "success");
+
+            return;
+          } catch (queueError) {
+            console.error("[SYNC] 保存同步队列失败:", queueError);
+
+            setSubmitting(false);
+
+            showMessage(
+              "报名发送失败，且无法保存离线任务：" +
+                (queueError.message || queueError),
+              "error",
             );
 
-            results.push(result);
-          } catch (error) {
-            console.error(
-              "[REGISTER] 活动报名失败:",
-              requestData.data.activityIDs[0],
-              error,
-            );
-
-            /*
-             * 只有当前失败的活动进入同步队列
-             */
-
-            try {
-              await addSyncTask({
-                action: "registerActivities",
-                data: requestData,
-              });
-
-              console.log(
-                "[SYNC] 单个活动已进入同步队列:",
-                requestData.data.activityIDs[0],
-              );
-            } catch (queueError) {
-              console.error("[SYNC] 保存同步队列失败:", queueError);
-            }
+            return;
           }
         }
-
-        setSubmitting(false);
 
         /*
          * =====================================================
-         * 处理在线报名结果
+         * GAS 已返回统一结果
          * =====================================================
          */
 
-        if (results.length === 1) {
-          handleRegistrationResult(results[0]);
-        } else if (results.length > 1) {
-          console.log("[REGISTER] 多个活动报名结果:", results);
+        setSubmitting(false);
 
-          const successCount = results.filter(function (result) {
-            return result && result.success === true;
-          }).length;
-
-          const failedCount = results.length - successCount;
-
-          if (failedCount === 0) {
-            showMessage(
-              "报名成功！共 " + successCount + " 个活动全部报名成功。",
-              "success",
-            );
-          } else {
-            showMessage(
-              "报名完成：成功 " +
-                successCount +
-                " 个，失败 " +
-                failedCount +
-                " 个。",
-              failedCount > 0 ? "error" : "success",
-            );
-          }
-        } else {
-          showMessage("网络暂时不可用，报名已保存到同步队列。", "success");
-        }
+        handleRegistrationResult(result);
       }
 
       /* =====================================================
-             处理报名结果
-          ===================================================== */
+       处理报名结果
+      ===================================================== */
 
       function handleRegistrationResult(result) {
         if (!result) {
@@ -2781,8 +2741,8 @@
       }
 
       /* =====================================================
-             显示报名结果
-          ===================================================== */
+       显示报名结果
+      ===================================================== */
 
       function showResult(result) {
         const card = document.getElementById("resultCard");
@@ -2795,84 +2755,81 @@
 
         if (result.registrationGroupID) {
           html += `
+            <div class="result-item">
 
-                <div class="result-item">
+              <strong>
+                ${escapeHtml(t("groupID"))}
+              </strong>
 
-                  <strong>
-                    ${escapeHtml(t("groupID"))}
-                  </strong>
+              ${escapeHtml(result.registrationGroupID)}
 
-                  ${escapeHtml(result.registrationGroupID)}
-
-                </div>
-
-              `;
+            </div>
+          `;
         }
 
         if (result.bookerName) {
           html += `
+            <div class="result-item">
 
-                <div class="result-item">
+              <strong>
+                ${escapeHtml(t("bookerResult"))}
+              </strong>
 
-                  <strong>
-                    ${escapeHtml(t("bookerResult"))}
-                  </strong>
+              ${escapeHtml(result.bookerName)}
 
-                  ${escapeHtml(result.bookerName)}
-
-                </div>
-
-              `;
+            </div>
+          `;
         }
 
         if (result.total !== undefined) {
           html += `
+            <div class="result-item">
 
-                <div class="result-item">
+              <strong>
+                ${escapeHtml(t("total"))}
+              </strong>
 
-                  <strong>
-                    ${escapeHtml(t("total"))}
-                  </strong>
+              ${result.total}
 
-                  ${result.total}
+              &nbsp;&nbsp;
 
-                  &nbsp;&nbsp;
+              <span class="status-confirmed">
 
-                  <span class="status-confirmed">
+                ${escapeHtml(t("success"))}
 
-                    ${escapeHtml(t("success"))}
+                ${result.successCount || 0}
 
-                    ${result.successCount || 0}
+              </span>
 
-                  </span>
+              &nbsp;&nbsp;
 
-                  &nbsp;&nbsp;
+              <span class="status-failed">
 
-                  <span class="status-failed">
+                ${escapeHtml(t("failed"))}
 
-                    ${escapeHtml(t("failed"))}
+                ${result.failedCount || 0}
 
-                    ${result.failedCount || 0}
+              </span>
 
-                  </span>
-
-                </div>
-
-              `;
+            </div>
+          `;
         }
+
+        /*
+         * GAS 可以把多个活动、
+         * 多个参加人员的结果统一放在 data。
+         */
 
         if (Array.isArray(result.data) && result.data.length > 0) {
           html += `
+            <div class="result-item">
 
-                <div class="result-item">
+              <strong>
+                ${escapeHtml(t("detail"))}
+              </strong>
 
-                  <strong>
-                    ${escapeHtml(t("detail"))}
-                  </strong>
-
-                </div>
-
-              `;
+            </div>
+          `;
 
           result.data.forEach(function (item) {
             const participantName = normalize(item.participantName);
@@ -2898,47 +2855,43 @@
             }
 
             html += `
+                <div class="result-item">
 
-                    <div class="result-item">
+                  <div>
 
-                      <div>
+                    <strong>
+                      ${escapeHtml(participantName)}
+                    </strong>
 
-                        <strong>
-                          ${escapeHtml(participantName)}
-                        </strong>
+                    →
 
-                        →
+                    ${escapeHtml(activityID)}
 
-                        ${escapeHtml(activityID)}
+                  </div>
 
-                      </div>
+                  <div
+                    class="${statusClass}"
+                  >
 
+                    ${escapeHtml(statusText)}
 
-                      <div
-                        class="${statusClass}"
-                      >
+                    ${r.message ? "： " + escapeHtml(r.message) : ""}
 
-                        ${escapeHtml(statusText)}
+                  </div>
 
-                        ${r.message ? "： " + escapeHtml(r.message) : ""}
+                  ${
+                    r.title
+                      ? `
+                        <div>
+                          ${escapeHtml(t("activity"))}
+                          ${escapeHtml(r.title)}
+                        </div>
+                      `
+                      : ""
+                  }
 
-                      </div>
-
-
-                      ${
-                        r.title
-                          ? `
-                            <div>
-                              ${escapeHtml(t("activity"))}
-                              ${escapeHtml(r.title)}
-                            </div>
-                          `
-                          : ""
-                      }
-
-                    </div>
-
-                  `;
+                </div>
+              `;
           });
         }
 
@@ -2956,8 +2909,8 @@
       }
 
       /* =====================================================
-             提交按钮状态
-          ===================================================== */
+       提交按钮状态
+      ===================================================== */
 
       function setSubmitting(submitting) {
         const button = document.getElementById("submitBtn");
@@ -2972,8 +2925,8 @@
       }
 
       /* =====================================================
-             显示消息
-          ===================================================== */
+       显示消息
+      ===================================================== */
 
       function showMessage(text, type) {
         const box = document.getElementById("messageBox");
@@ -2992,8 +2945,8 @@
       }
 
       /* =====================================================
-             清除消息
-          ===================================================== */
+       清除消息
+      ===================================================== */
 
       function clearMessage() {
         const box = document.getElementById("messageBox");
@@ -3006,8 +2959,8 @@
       }
 
       /* =====================================================
-             Normalize
-          ===================================================== */
+       Normalize
+      ===================================================== */
 
       function normalize(value) {
         if (value === null || value === undefined) {
@@ -3018,8 +2971,8 @@
       }
 
       /* =====================================================
-             日期
-          ===================================================== */
+       日期
+      ===================================================== */
 
       function formatDate(value) {
         if (!value) {
@@ -3042,17 +2995,13 @@
       }
 
       /* =====================================================
-             时间
-          ===================================================== */
+       时间
+      ===================================================== */
 
       function formatTime(value) {
         if (!value) {
           return "";
         }
-
-        /*
-         * GAS 已经返回 HH:mm
-         */
 
         const text = String(value).trim();
 
@@ -3066,19 +3015,15 @@
       }
 
       /* =====================================================
-             HTML Escape
-          ===================================================== */
+       HTML Escape
+      ===================================================== */
 
       function escapeHtml(value) {
         return String(value === null || value === undefined ? "" : value)
           .replace(/&/g, "&amp;")
-
           .replace(/</g, "&lt;")
-
           .replace(/>/g, "&gt;")
-
           .replace(/"/g, "&quot;")
-
           .replace(/'/g, "&#039;");
       }
     </script>
