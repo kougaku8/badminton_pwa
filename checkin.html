@@ -1553,8 +1553,18 @@
 
         $("displayActivityTitle").textContent = "🏸 " + (activity.Title || "");
 
+        const fee = Number(activity.Fee || 0);
+
+        const feeText =
+          currentLanguage === "ja"
+            ? "参加費：" + fee + "円"
+            : "参加费：" + fee + "日元";
+
         $("displayDate").textContent =
-          "📅 " + formatDate(activity.ActivityDate || activity.Date);
+          "📅 " +
+          formatDate(activity.ActivityDate || activity.Date) +
+          "　💰 " +
+          feeText;
       }
 
       /* =====================================================
